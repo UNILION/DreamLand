@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/connectItem"
+        android:title="블루투스 연결" />
+    <item
+        android:id="@+id/insertSleep"
+        android:title="insert sleep" />
+    <item
+        android:id="@+id/deleteSleep"
+        android:title="delete sleep" />
+</menu>

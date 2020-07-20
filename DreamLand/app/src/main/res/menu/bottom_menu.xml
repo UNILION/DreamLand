@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/tab_home"
+        android:title="홈"
+        android:icon="@drawable/ic_home_24dp"
+        />
+    <item
+        android:id="@+id/tab_management"
+        android:title="수면관리"
+        android:icon="@drawable/ic_moon_24dp"
+        />
+    <item
+        android:id="@+id/tab_statistics"
+        android:title="통계"
+        android:icon="@drawable/ic_statistics_24dp"
+        />
+    <item
+        android:id="@+id/tab_setting"
+        android:title="설정"
+        android:icon="@drawable/ic_setting_24dp"
+        />
+</menu>

@@ -1,0 +1,21 @@
+package com.example.dreamland.asynctask;
+
+import android.os.AsyncTask;
+
+import com.example.dreamland.database.Sleep;
+import com.example.dreamland.database.SleepDao;
+
+public class InsertSleepAsyncTask extends AsyncTask<Sleep, Void, Void> {
+
+    SleepDao sleepDao;
+
+    public InsertSleepAsyncTask(SleepDao sleepDao) {
+        this.sleepDao = sleepDao;
+    }
+
+    @Override
+    protected Void doInBackground(Sleep... sleeps) {
+        sleepDao.insert(sleeps[0]);
+        return null;
+    }
+}
