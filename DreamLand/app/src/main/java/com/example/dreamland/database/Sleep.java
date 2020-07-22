@@ -22,12 +22,14 @@ public class Sleep {
     int adjCount; // 교정 횟수
     int satLevel;  // 수면 만족도 *
     int oxyStr;  // 산소 포화도 *
+    int recommPos; // 추천 자세
+    int nonRecommPos; // 비추천 자세
 
     public Sleep(
             String sleepDate, String whenStart, String whenSleep, String sleepWaitTime,
             String whenWake, String sleepTime, String conStartTime, String conStopTime,
             String conTime, int conStartPos, int conStopPos, int adjCount,
-            int satLevel, int oxyStr) {
+            int satLevel, int oxyStr, int recommPos, int nonRecommPos) {
         this.sleepDate = sleepDate;
         this.whenStart = whenStart;
         this.whenSleep = whenSleep;
@@ -42,6 +44,8 @@ public class Sleep {
         this.adjCount = adjCount;
         this.satLevel = satLevel;
         this.oxyStr = oxyStr;
+        this.recommPos = recommPos;
+        this.nonRecommPos = nonRecommPos;
     }
 
     public int getSleepId() {
@@ -163,4 +167,12 @@ public class Sleep {
     public void setOxyStr(int oxyStr) {
         this.oxyStr = oxyStr;
     }
+
+    public int getRecommPos() { return recommPos; }
+
+    public void setRecommPos(int recommPos) { this.recommPos = recommPos; }
+
+    public int getNonRecommPos() { return nonRecommPos; }
+
+    public void setNonRecommPos(int nonRecommPos) { this.nonRecommPos = nonRecommPos; }
 }
