@@ -6,24 +6,23 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "sleep")
 public class Sleep {
     @PrimaryKey(autoGenerate = true)
-    int sleepId;  // ID
-
-    String sleepDate;  // 날짜 *
-    String whenStart;  // 측정 시작 시간
-    String whenSleep;  // 수면 시작 시간 *
-    String sleepWaitTime;  // 잠들기까지 걸린 시간 *
-    String whenWake;  // 기상 시간 *
-    String sleepTime;  // 수면 시간
-    String conStartTime;  // 상태 시작 시간
-    String conStopTime;  //  상태 정지 시간
-    String conTime;  // 상태 지속 시간 *
-    int conStartPos;  // 상태 시작 자세
-    int conStopPos;  // 상태 정지 자세
-    int adjCount; // 교정 횟수
-    int satLevel;  // 수면 만족도 *
-    int oxyStr;  // 산소 포화도 *
-    int recommPos; // 추천 자세
-    int nonRecommPos; // 비추천 자세
+    private int sleepId;  // ID
+    private String sleepDate;  // 날짜 *
+    private String whenStart;  // 측정 시작 시간
+    private String whenSleep;  // 수면 시작 시간 *
+    private String sleepWaitTime;  // 잠들기까지 걸린 시간 *
+    private String whenWake;  // 기상 시간 *
+    private String sleepTime;  // 수면 시간
+    private String conStartTime;  // 상태 시작 시간
+    private String conStopTime;  //  상태 정지 시간
+    private String conTime;  // 상태 지속 시간 *
+    private int conStartPos;  // 상태 시작 자세
+    private int conStopPos;  // 상태 정지 자세
+    private int adjCount; // 교정 횟수
+    private int satLevel;  // 수면 만족도 *
+    private int oxyStr;  // 산소 포화도 *
+    private int recommPos; // 추천 자세
+    private int nonRecommPos; // 비추천 자세
 
     public Sleep(
             String sleepDate, String whenStart, String whenSleep, String sleepWaitTime,
