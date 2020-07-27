@@ -62,12 +62,16 @@ public class ManagementFragment extends Fragment {
     private ImageView[] starImageViews;
     HorizontalCalendar horizontalCalendar;
     List<Sleep> sleepList;
+    int[] posImages;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_management, container, false);
+
+        posImages = new int[] {R.drawable.pos1, R.drawable.pos2, R.drawable.pos3,
+                R.drawable.pos4, R.drawable.pos5};
 
         // 캘린더
         /* start before 1 month from now */
