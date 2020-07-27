@@ -9,8 +9,8 @@ import java.util.List;
 
 public class GetSleepByDateAsyncTask extends AsyncTask<Sleep, Void, Sleep> {
 
-    SleepDao sleepDao;
-    String date;
+    private SleepDao sleepDao;
+    private String date;
 
     public GetSleepByDateAsyncTask(SleepDao sleepDao, String date) {
         this.sleepDao = sleepDao;

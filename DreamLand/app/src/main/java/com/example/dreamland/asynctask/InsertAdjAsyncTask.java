@@ -7,7 +7,7 @@ import com.example.dreamland.database.AdjustmentDao;
 
 public class InsertAdjAsyncTask extends AsyncTask<Adjustment, Void, Void> {
 
-    AdjustmentDao adjustmentDao;
+    private AdjustmentDao adjustmentDao;
 
     public InsertAdjAsyncTask(AdjustmentDao adjustmentDao) {
         this.adjustmentDao = adjustmentDao;

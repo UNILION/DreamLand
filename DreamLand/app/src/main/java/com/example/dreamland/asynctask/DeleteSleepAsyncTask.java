@@ -7,7 +7,7 @@ import com.example.dreamland.database.SleepDao;
 
 public class DeleteSleepAsyncTask extends AsyncTask<Sleep, Void, Void> {
 
-    SleepDao sleepDao;
+    private SleepDao sleepDao;
 
     public DeleteSleepAsyncTask(SleepDao sleepDao) {
         this.sleepDao = sleepDao;

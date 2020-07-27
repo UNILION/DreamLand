@@ -7,8 +7,8 @@ import com.example.dreamland.database.AdjustmentDao;
 
 public class GetAdjsByIdAsyncTask extends AsyncTask<Adjustment, Void, Adjustment[]> {
 
-    AdjustmentDao AdjustmentDao;
-    int id;
+    private AdjustmentDao AdjustmentDao;
+    private int id;
 
     public GetAdjsByIdAsyncTask(AdjustmentDao AdjustmentDao, int id) {
         this.AdjustmentDao = AdjustmentDao;

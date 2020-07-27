@@ -30,21 +30,20 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    HomeFragment homeFragment;
-    ManagementFragment managementFragment;
-    SettingFragment settingFragment;
-    StatisticsFragment statisticsFragment;
-    Fragment curFragment;
+    private HomeFragment homeFragment;
+    private ManagementFragment managementFragment;
+    private SettingFragment settingFragment;
+    private StatisticsFragment statisticsFragment;
+    private Fragment curFragment;
 
-    AppDatabase db;
-    ActionBar actionBar;
-    BottomNavigationView bottomNavigation;
-    SharedPreferences sf;
-    List<Sleep> sleepList;
-    SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMdd");
+    private AppDatabase db;
+    private ActionBar actionBar;
+    private BottomNavigationView bottomNavigation;
+    private SharedPreferences sf;
+    private List<Sleep> sleepList;
+    private SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMdd");
 
-    // 침대 정보
-    int mode;  // 모드
+    private int mode;  // 모드
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

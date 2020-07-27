@@ -7,7 +7,7 @@ import com.example.dreamland.database.SleepDao;
 
 public class InsertSleepAsyncTask extends AsyncTask<Sleep, Void, Void> {
 
-    SleepDao sleepDao;
+    private SleepDao sleepDao;
 
     public InsertSleepAsyncTask(SleepDao sleepDao) {
         this.sleepDao = sleepDao;

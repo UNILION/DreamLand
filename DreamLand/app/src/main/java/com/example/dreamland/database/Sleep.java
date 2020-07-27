@@ -7,27 +7,28 @@ import androidx.room.PrimaryKey;
 public class Sleep {
     @PrimaryKey(autoGenerate = true)
     private int sleepId;  // ID
-    private String sleepDate;  // 날짜 *
+    private String sleepDate;  // 날짜
     private String whenStart;  // 측정 시작 시간
-    private String whenSleep;  // 수면 시작 시간 *
-    private String sleepWaitTime;  // 잠들기까지 걸린 시간 *
-    private String whenWake;  // 기상 시간 *
+    private String whenSleep;  // 수면 시작 시간
+    private String sleepWaitTime;  // 잠들기까지 걸린 시간
+    private String whenWake;  // 기상 시간
     private String sleepTime;  // 수면 시간
     private String conStartTime;  // 상태 시작 시간
     private String conStopTime;  //  상태 정지 시간
-    private String conTime;  // 상태 지속 시간 *
-    private int conStartPos;  // 상태 시작 자세
-    private int conStopPos;  // 상태 정지 자세
+    private String conTime;  // 상태 지속 시간
+    private int beforeAdjPos;  // 교정 전 자세
+    private int afterAdjPos;  // 교정 후 자세
     private int adjCount; // 교정 횟수
-    private int satLevel;  // 수면 만족도 *
-    private int oxyStr;  // 산소 포화도 *
-    private int recommPos; // 추천 자세
-    private int nonRecommPos; // 비추천 자세
+    private int satLevel;  // 수면 만족도
+    private int oxyStr;  // 산소 포화도
+    private int sysAdjPos; // 시스템 교정 자세(전날 교정 후 자세)
+    private int recommPos; // 추천 자세(지난주 추천 빈도수가 높은 자세)
+    private int nonRecommPos; // 비추천 자세(전날 교정 전 자세)
 
     public Sleep(
             String sleepDate, String whenStart, String whenSleep, String sleepWaitTime,
             String whenWake, String sleepTime, String conStartTime, String conStopTime,
-            String conTime, int conStartPos, int conStopPos, int adjCount,
+            String conTime, int beforeAdjPos, int afterAdjPos, int adjCount,
             int satLevel, int oxyStr, int recommPos, int nonRecommPos) {
         this.sleepDate = sleepDate;
         this.whenStart = whenStart;
@@ -38,11 +39,12 @@ public class Sleep {
         this.conStartTime = conStartTime;
         this.conStopTime = conStopTime;
         this.conTime = conTime;
-        this.conStartPos = conStartPos;
-        this.conStopPos = conStopPos;
+        this.beforeAdjPos = beforeAdjPos;
+        this.afterAdjPos = afterAdjPos;
         this.adjCount = adjCount;
         this.satLevel = satLevel;
         this.oxyStr = oxyStr;
+        this.sysAdjPos = sysAdjPos;
         this.recommPos = recommPos;
         this.nonRecommPos = nonRecommPos;
     }
@@ -127,20 +129,20 @@ public class Sleep {
         this.conTime = conTime;
     }
 
-    public int getConStartPos() {
-        return conStartPos;
+    public int getBeforeAdjPos() {
+        return beforeAdjPos;
     }
 
-    public void setConStartPos(int conStartPos) {
-        this.conStartPos = conStartPos;
+    public void setBeforeAdjPos(int beforeAdjPos) {
+        this.beforeAdjPos = beforeAdjPos;
     }
 
-    public int getConStopPos() {
-        return conStopPos;
+    public int getAfterAdjPos() {
+        return afterAdjPos;
     }
 
-    public void setConStopPos(int conStopPos) {
-        this.conStopPos = conStopPos;
+    public void setAfterAdjPos(int afterAdjPos) {
+        this.afterAdjPos = afterAdjPos;
     }
 
     public int getAdjCount() {
@@ -167,11 +169,27 @@ public class Sleep {
         this.oxyStr = oxyStr;
     }
 
-    public int getRecommPos() { return recommPos; }
+    public int getSysAdjPos() {
+        return sysAdjPos;
+    }
 
-    public void setRecommPos(int recommPos) { this.recommPos = recommPos; }
+    public void setSysAdjPos(int sysAdjPos) {
+        this.sysAdjPos = sysAdjPos;
+    }
 
-    public int getNonRecommPos() { return nonRecommPos; }
+    public int getRecommPos() {
+        return recommPos;
+    }
 
-    public void setNonRecommPos(int nonRecommPos) { this.nonRecommPos = nonRecommPos; }
+    public void setRecommPos(int recommPos) {
+        this.recommPos = recommPos;
+    }
+
+    public int getNonRecommPos() {
+        return nonRecommPos;
+    }
+
+    public void setNonRecommPos(int nonRecommPos) {
+        this.nonRecommPos = nonRecommPos;
+    }
 }
