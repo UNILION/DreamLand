@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import com.example.dreamland.asynctask.GetSleepByDateAsyncTask;
 import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
+import com.willy.ratingbar.BaseRatingBar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -53,7 +55,8 @@ public class ManagementFragment extends Fragment {
     private ImageView ivCondition;
     private ScrollView scrollView;
     private LinearLayout infoLayout;
-    private LinearLayout starLayout;
+    private View ratingBar;
+
     private Sleep firstSleep;
     private Sleep lastSleep;
     private Sleep selectedSleep;
@@ -101,7 +104,6 @@ public class ManagementFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //tvSleepDate = view.findViewById(R.id.tvSleepDate);
         tvWhenWake = view.findViewById(R.id.tvWhenWake);
         tvWhenSleep = view.findViewById(R.id.tvWhenSleep);
         tvConTime = view.findViewById(R.id.tvConTime);
@@ -111,17 +113,11 @@ public class ManagementFragment extends Fragment {
         tvPos = view.findViewById(R.id.tvPos);
         infoLayout = view.findViewById(R.id.infoLayout);
         scrollView = view.findViewById(R.id.scrollView);
-        starLayout = view.findViewById(R.id.starLayout);
         ivCondition = view.findViewById(R.id.iv_condition);
         tvCondition = view.findViewById(R.id.tv_condition);
+        BaseRatingBar ratingBar = view.findViewById(R.id.ratingBar);
 
         sf = getContext().getSharedPreferences("bed", Context.MODE_PRIVATE);
-
-        // 수면 만족도 별 5개의 뷰
-        int[] starsIds = { R.id.ivStar1, R.id.ivStar2, R.id.ivStar3, R.id.ivStar4, R.id.ivStar5 };
-        starImageViews = new ImageView[5];
-        for (int i = 0; i < 5; i++) { starImageViews[i] = view.findViewById(starsIds[i]); }
-
 
         // 초기 화면 세팅
         switchScreen();
@@ -175,13 +171,13 @@ public class ManagementFragment extends Fragment {
 
         });
 
-        // 수면 만족도 평가
-        starLayout.setOnClickListener(new View.OnClickListener() {
+        ratingBar.setOnRatingChangeListener(new BaseRatingBar.OnRatingChangeListener() {
             @Override
-            public void onClick(View v) {
-                int satLevel = selectedSleep.getSatLevel();
+            public void onRatingChange(BaseRatingBar ratingBar, float rating, boolean fromUser) {
+
             }
         });
+
 
         updateUI();
     }
@@ -193,16 +189,6 @@ public class ManagementFragment extends Fragment {
             return new GetSleepByDateAsyncTask(db.sleepDao(), strDate).execute().get();
         } catch (ExecutionException | InterruptedException e) {
             return null;
-        }
-    }
-
-    // 별 이미지 세팅
-    private void setStarImages(int satLevel) {
-        for (int i = 0; i < 5; i++) {
-            starImageViews[i].setImageResource(R.drawable.ic_star_24dp);
-        }
-        for (int i = 0; i < satLevel; i++) {
-            starImageViews[i].setImageResource(R.drawable.ic_yellow_star_24dp);
         }
     }
 
@@ -221,7 +207,6 @@ public class ManagementFragment extends Fragment {
                     tvSleepTime.setText(sleep.getSleepTime());
                     tvOxy.setText(Integer.toString(sleep.getOxyStr()));
                     tvPos.setText(Integer.toString(sleep.getAdjCount()));
-                    setStarImages(sleep.getSatLevel());
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
