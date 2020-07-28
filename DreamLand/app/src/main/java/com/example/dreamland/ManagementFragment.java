@@ -25,6 +25,7 @@ import com.example.dreamland.asynctask.GetSleepByDateAsyncTask;
 import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
 import com.willy.ratingbar.BaseRatingBar;
+import com.willy.ratingbar.ScaleRatingBar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,14 +56,13 @@ public class ManagementFragment extends Fragment {
     private ImageView ivCondition;
     private ScrollView scrollView;
     private LinearLayout infoLayout;
-    private View ratingBar;
+    private ScaleRatingBar ratingBar;
 
     private Sleep firstSleep;
     private Sleep lastSleep;
     private Sleep selectedSleep;
     Calendar startDate;
     Calendar endDate;
-    private ImageView[] starImageViews;
     HorizontalCalendar horizontalCalendar;
     List<Sleep> sleepList;
     int[] posImages;
@@ -115,7 +115,7 @@ public class ManagementFragment extends Fragment {
         scrollView = view.findViewById(R.id.scrollView);
         ivCondition = view.findViewById(R.id.iv_condition);
         tvCondition = view.findViewById(R.id.tv_condition);
-        BaseRatingBar ratingBar = view.findViewById(R.id.ratingBar);
+        ratingBar = view.findViewById(R.id.ratingBar);
 
         sf = getContext().getSharedPreferences("bed", Context.MODE_PRIVATE);
 
@@ -207,6 +207,7 @@ public class ManagementFragment extends Fragment {
                     tvSleepTime.setText(sleep.getSleepTime());
                     tvOxy.setText(Integer.toString(sleep.getOxyStr()));
                     tvPos.setText(Integer.toString(sleep.getAdjCount()));
+                    ratingBar.setRating(sleep.getSatLevel());
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
