@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(initIntent, 1000);
         }
 
-        bottomNavigation = findViewById(R.id.bottomNavigation);
+        bottomNavigation = (BottomNavigationView) findViewById(R.id.bottomNavigation);
 
         homeFragment = new HomeFragment();
         managementFragment = new ManagementFragment();
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                 String s7 = format2.format(c.getTime());
 
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-                        s1, "01:00", "01:10","00:10",
+                        s1, "01:00", "01:10", "00:10",
                         "07:10", "08:00", "05:00", "05:50",
                         "00:50", 1, 2, 1, 3, 40,
                         1, 1, 1)
@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
                 ));
                 return true;
 
-                // 수면 데이터 모두 삭제
+            // 수면 데이터 모두 삭제
             case R.id.deleteSleep:
                 new DeleteSleepAsyncTask(db.sleepDao()).execute();
                 new DeleteAdjAsyncTask(db.adjustmentDao()).execute();

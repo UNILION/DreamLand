@@ -21,7 +21,7 @@
             android:layout_marginBottom="8dp"
             android:buttonTint="@color/colorAccent"
             android:checked="true"
-            android:text="desease1"
+            android:text="허리디스크"
             android:textColor="@color/colorWhite" />
 
         <RadioButton
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:buttonTint="@color/colorAccent"
-            android:text="desease2"
+            android:text="강직성척추염"
             android:textColor="@color/colorWhite" />
 
         <RadioButton
@@ -39,7 +39,17 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:buttonTint="@color/colorAccent"
-            android:text="desease3"
+            android:text="척추관협착증"
             android:textColor="@color/colorWhite" />
+
+        <RadioButton
+            android:id="@+id/radioButton4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:buttonTint="@color/colorAccent"
+            android:text="척추전방전위증"
+            android:textColor="@color/colorWhite" />
+
     </RadioGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>

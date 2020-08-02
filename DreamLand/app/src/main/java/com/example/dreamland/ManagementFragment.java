@@ -1,7 +1,10 @@
 package com.example.dreamland;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,10 +14,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -26,6 +29,8 @@ import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
 import com.willy.ratingbar.BaseRatingBar;
 import com.willy.ratingbar.ScaleRatingBar;
+
+import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,6 +62,8 @@ public class ManagementFragment extends Fragment {
     private ScrollView scrollView;
     private LinearLayout infoLayout;
     private ScaleRatingBar ratingBar;
+    private Button posButton;
+    private Button posDismissButton;
 
     private Sleep firstSleep;
     private Sleep lastSleep;
@@ -66,6 +73,7 @@ public class ManagementFragment extends Fragment {
     HorizontalCalendar horizontalCalendar;
     List<Sleep> sleepList;
     int[] posImages;
+    AlertDialog posDiaglog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,7 +81,7 @@ public class ManagementFragment extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_management, container, false);
 
-        posImages = new int[] {R.drawable.pos1, R.drawable.pos2, R.drawable.pos3,
+        posImages = new int[]{R.drawable.pos1, R.drawable.pos2, R.drawable.pos3,
                 R.drawable.pos4, R.drawable.pos5};
 
         // 캘린더
@@ -104,18 +112,19 @@ public class ManagementFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tvWhenWake = view.findViewById(R.id.tvWhenWake);
-        tvWhenSleep = view.findViewById(R.id.tvWhenSleep);
-        tvConTime = view.findViewById(R.id.tvConTime);
-        tvWaitTime = view.findViewById(R.id.tvWaitTime);
-        tvSleepTime = view.findViewById(R.id.tvSleepTime);
-        tvOxy = view.findViewById(R.id.tvOxy);
-        tvPos = view.findViewById(R.id.tvPos);
-        infoLayout = view.findViewById(R.id.infoLayout);
-        scrollView = view.findViewById(R.id.scrollView);
-        ivCondition = view.findViewById(R.id.iv_condition);
-        tvCondition = view.findViewById(R.id.tv_condition);
-        ratingBar = view.findViewById(R.id.ratingBar);
+        tvWhenWake = (TextView) view.findViewById(R.id.tvWhenWake);
+        tvWhenSleep = (TextView) view.findViewById(R.id.tvWhenSleep);
+        tvConTime = (TextView) view.findViewById(R.id.tvConTime);
+        tvWaitTime = (TextView) view.findViewById(R.id.tvWaitTime);
+        tvSleepTime = (TextView) view.findViewById(R.id.tvSleepTime);
+        tvOxy = (TextView) view.findViewById(R.id.tvOxy);
+        tvPos = (TextView) view.findViewById(R.id.tvPos);
+        infoLayout = (LinearLayout) view.findViewById(R.id.infoLayout);
+        scrollView = (ScrollView) view.findViewById(R.id.scrollView);
+        ivCondition = (ImageView) view.findViewById(R.id.iv_condition);
+        tvCondition = (TextView) view.findViewById(R.id.tv_condition);
+        ratingBar = (ScaleRatingBar) view.findViewById(R.id.ratingBar);
+        posButton = (Button) view.findViewById(R.id.posButton);
 
         sf = getContext().getSharedPreferences("bed", Context.MODE_PRIVATE);
 
@@ -171,13 +180,26 @@ public class ManagementFragment extends Fragment {
 
         });
 
-        ratingBar.setOnRatingChangeListener(new BaseRatingBar.OnRatingChangeListener() {
-            @Override
-            public void onRatingChange(BaseRatingBar ratingBar, float rating, boolean fromUser) {
 
+        // 수면 자세 확인 버튼
+        posButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
+                View dlgView = getLayoutInflater().from(getContext()).inflate(
+                        R.layout.diaglog_pos, null);
+                posDismissButton = (Button) dlgView.findViewById(R.id.posDismissButton);
+                // 수면 자세 확인 다이얼로그 나가기 버튼
+                posDismissButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        posDiaglog.dismiss();
+                    }
+                });
+                posDiaglog = builder.setView(dlgView).create();
+                posDiaglog.show();
             }
         });
-
 
         updateUI();
     }

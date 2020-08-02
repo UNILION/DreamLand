@@ -32,7 +32,6 @@
                     android:layout_marginBottom="8dp"
                     android:background="@color/colorPrimary"
                     app:textColorSelected="#FFFF">
-
                 </devs.mulham.horizontalcalendar.HorizontalCalendarView>
 
                 <LinearLayout
@@ -340,6 +339,12 @@
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
+
+                    <Button
+                        android:id="@+id/posButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="추천 자세" />
                 </LinearLayout>
 
             </LinearLayout>

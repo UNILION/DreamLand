@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -46,13 +47,13 @@ public class SettingFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        resetButton = view.findViewById(R.id.resetButtonLayout);
-        myDiseaseButton = view.findViewById(R.id.myDiseaseLayout);
-        comfortableDirectionButton = view.findViewById(R.id.comfortableDirectionLayout);
-        tvDesease = view.findViewById(R.id.textView16);
-        bubbleSeekBar4 = view.findViewById(R.id.bubbleSeekBar4);
-        line1 = view.findViewById(R.id.view1);
-        line2 = view.findViewById(R.id.view2);
+        resetButton = (LinearLayout) view.findViewById(R.id.resetButtonLayout);
+        myDiseaseButton = (LinearLayout) view.findViewById(R.id.myDiseaseLayout);
+        comfortableDirectionButton = (LinearLayout) view.findViewById(R.id.comfortableDirectionLayout);
+        tvDesease = (TextView) view.findViewById(R.id.textView16);
+        bubbleSeekBar4 = (BubbleSeekBar) view.findViewById(R.id.bubbleSeekBar4);
+        line1 = (View) view.findViewById(R.id.view1);
+        line2 = (View) view.findViewById(R.id.view2);
 
         sf = getContext().getSharedPreferences("bed", getContext().MODE_PRIVATE);
 
@@ -73,7 +74,7 @@ public class SettingFragment extends Fragment {
                                 // Main Activity 재시작
                                 startActivity(new Intent(getContext(), MainActivity.class)
                                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                                ((MainActivity)getActivity()).resetData();
+                                ((MainActivity) getActivity()).resetData();
                             }
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -95,18 +96,18 @@ public class SettingFragment extends Fragment {
                         R.layout.select_desease_layout, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
                 builder.setTitle("나의 질환")
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        //TODO 질환을 저장하고 라디오 버튼과 프래그먼트의 상태를 해당 질환으로 변경
-                    }
-                })
-                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // 아무 동작 없음
-                    }
-                });
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //TODO 질환을 저장하고 라디오 버튼과 프래그먼트의 상태를 해당 질환으로 변경
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // 아무 동작 없음
+                            }
+                        });
                 builder.setView(dlgView).create().show();
             }
         });

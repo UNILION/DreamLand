@@ -18,8 +18,8 @@ public class InitActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_init);
 
-        modeButton1 = findViewById(R.id.button_layout1);
-        modeButton2 = findViewById(R.id.button_layout2);
+        modeButton1 = (LinearLayout) findViewById(R.id.button_layout1);
+        modeButton2 = (LinearLayout) findViewById(R.id.button_layout2);
 
         sf = getSharedPreferences("bed", MODE_PRIVATE);
         final SharedPreferences.Editor editor = sf.edit();
