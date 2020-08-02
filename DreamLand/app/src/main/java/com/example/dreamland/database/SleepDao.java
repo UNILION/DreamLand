@@ -22,6 +22,9 @@ public interface SleepDao {
     @Query("SELECT * FROM sleep WHERE sleepDate=:date")
     Sleep getSleepByDate(String date);
 
+    @Query("SELECT * FROM sleep WHERE sleepId=:id")
+    Sleep getSleepById(int id);
+
     @Query("DELETE FROM sleep")
     void deleteAll();
 

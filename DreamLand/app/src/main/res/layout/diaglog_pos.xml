@@ -7,20 +7,20 @@
     android:background="@color/colorDialogBackground">
 
     <ImageView
-        android:id="@+id/imageView5"
+        android:id="@+id/recommImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView9"
+        app:layout_constraintEnd_toStartOf="@+id/nonRecommImageView"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/pos1" />
+        app:srcCompat="@drawable/untitle" />
 
     <ImageView
-        android:id="@+id/imageView9"
+        android:id="@+id/nonRecommImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -28,9 +28,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imageView5"
+        app:layout_constraintStart_toEndOf="@+id/recommImageView"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/pos3" />
+        app:srcCompat="@drawable/untitle" />
 
     <TextView
         android:id="@+id/textView4"
@@ -40,7 +40,7 @@
         android:layout_marginBottom="32dp"
         android:text="추천자세"
         android:textColor="@color/colorWhite"
-        app:layout_constraintBottom_toTopOf="@+id/imageView5"
+        app:layout_constraintBottom_toTopOf="@+id/recommImageView"
         app:layout_constraintEnd_toStartOf="@+id/textView5"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,7 +54,7 @@
         android:layout_marginBottom="32dp"
         android:text="비추천자세"
         android:textColor="@color/colorWhite"
-        app:layout_constraintBottom_toTopOf="@+id/imageView9"
+        app:layout_constraintBottom_toTopOf="@+id/nonRecommImageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/textView4"
@@ -70,5 +70,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView9" />
+        app:layout_constraintTop_toBottomOf="@+id/recommImageView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

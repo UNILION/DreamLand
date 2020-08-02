@@ -202,43 +202,43 @@ public class MainActivity extends AppCompatActivity {
                         s1, "01:00", "01:10", "00:10",
                         "07:10", "08:00", "05:00", "05:50",
                         "00:50", 1, 2, 1, 3, 40,
-                        1, 1, 1)
+                        1, 1, 2)
                 );
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s2, "02:12", "02:24", "00:12",
                         "07:24", "05:00", "04:15", "04:50",
                         "00:35", 3, 4, 2, 5, 30,
-                        1, 1, 1)
+                        1, 1, 3)
                 );
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s3, "01:40", "01:50", "00:10",
                         "08:10", "06:20", "07:30", "07:40",
                         "00:10", 3, 5, 3, 5, 20,
-                        1, 1, 1)
+                        1, 1, 4)
                 );
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s4, "23:55", "00:20", "00:25",
                         "05:20", "05:00", "03:30", "03:40",
                         "00:10", 3, 5, 3, 1, 10,
-                        1, 1, 1)
+                        1, 1, 2)
                 );
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s5, "01:10", "01:30", "00:20",
                         "08:15", "06:45", "06:30", "06:45",
                         "00:15", 3, 5, 2, 2, 60,
-                        1, 1, 1)
+                        1, 1, 3)
                 );
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s6, "00:51", "01:00", "00:09",
                         "06:40", "05:40", "", "",
                         "00:00", 3, 5, 0, 4, 60,
-                        1, 1, 1)
+                        1, 1, 2)
                 );
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s7, "03:20", "03:25", "00:05",
                         "08:55", "05:30", "", "",
                         "00:00", 3, 5, 0, 0, 80,
-                        1, 1, 1)
+                        1, 1, 3)
                 );
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
                         1, "00:32"

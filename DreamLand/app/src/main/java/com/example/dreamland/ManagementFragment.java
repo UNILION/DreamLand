@@ -1,10 +1,7 @@
 package com.example.dreamland;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -25,12 +22,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dreamland.asynctask.GetSleepByDateAsyncTask;
+import com.example.dreamland.asynctask.NonRecommImageAsyncTask;
 import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
-import com.willy.ratingbar.BaseRatingBar;
 import com.willy.ratingbar.ScaleRatingBar;
-
-import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -64,6 +59,8 @@ public class ManagementFragment extends Fragment {
     private ScaleRatingBar ratingBar;
     private Button posButton;
     private Button posDismissButton;
+    private ImageView recommImageView;
+    private ImageView nonRecommImageView;
 
     private Sleep firstSleep;
     private Sleep lastSleep;
@@ -189,6 +186,12 @@ public class ManagementFragment extends Fragment {
                 View dlgView = getLayoutInflater().from(getContext()).inflate(
                         R.layout.diaglog_pos, null);
                 posDismissButton = (Button) dlgView.findViewById(R.id.posDismissButton);
+                recommImageView = (ImageView) dlgView.findViewById(R.id.recommImageView);
+                nonRecommImageView = (ImageView) dlgView.findViewById(R.id.nonRecommImageView);
+
+                int id = selectedSleep.getSleepId() -1;
+                new NonRecommImageAsyncTask(db.sleepDao(), nonRecommImageView, id).execute();
+
                 // 수면 자세 확인 다이얼로그 나가기 버튼
                 posDismissButton.setOnClickListener(new View.OnClickListener() {
                     @Override
