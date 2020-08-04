@@ -1,5 +1,6 @@
 package com.example.dreamland;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 public class HomeFragment extends Fragment {
 
+    Button startButton;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -32,6 +34,15 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        startButton = (Button) view.findViewById(R.id.startButton);
+
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), SleepingActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 }
