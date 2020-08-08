@@ -8,12 +8,17 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.dreamland.asynctask.DeleteAdjAsyncTask;
 import com.example.dreamland.asynctask.DeleteSleepAsyncTask;
@@ -24,9 +29,13 @@ import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sf;
     private List<Sleep> sleepList;
     private SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMdd");
+    BluetoothAdapter bluetoothAdapter;
+    ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
+
+    final int REQUEST_ENABLE_BT = 111;
 
     private int mode;  // 모드
 
@@ -49,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        bluetoothSocketArrayList = new ArrayList<>();
+        enableBluetooth();
 
         sf = getSharedPreferences("bed", MODE_PRIVATE);
 
@@ -162,10 +178,56 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // from InitActivity
-        if (requestCode == 1000) {
+        if (requestCode == 1000) { // 모드에 따른 UI 수정
             if (resultCode == 1001) {
                 settingFragment.hideDeseaseView();
                 managementFragment.changeConditionView();
+            }
+        } else if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == RESULT_OK) { // 블루투스 활성화 성공
+                Log.d("BLT", "블루투스 활성화 성공");
+                aa();
+            } else if (resultCode == RESULT_CANCELED) { // 블루투스 활성화 실패
+                Log.d("BLT", "블루투스 활성화 실패");
+            }
+        }
+    }
+
+    public void enableBluetooth() { // 블루투스 활성화 함수
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter == null) {
+            Toast.makeText(this, "블루투스를 지원하지 않는 기기", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!bluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        } else {
+            aa();
+        }
+    }
+
+    public void aa() {
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            // There are paired devices. Get the name and address of each paired device.
+            for (BluetoothDevice device : pairedDevices) {
+                String deviceName = device.getName();
+                String deviceHardwareAddress = device.getAddress(); // MAC address
+                Log.d("BLT", deviceName + " " + deviceHardwareAddress);
+                try {
+                    bluetoothSocketArrayList.add(device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for(int i = 0;i < bluetoothSocketArrayList.size(); i++){
+                try {
+                    bluetoothSocketArrayList.get(i).connect();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
