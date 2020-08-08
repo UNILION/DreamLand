@@ -215,11 +215,7 @@ public class MainActivity extends AppCompatActivity {
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
                 Log.d("BLT", deviceName + " " + deviceHardwareAddress);
-                try {
-                    bluetoothSocketArrayList.add(device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new ConnectBLT1Thread(device, bluetoothAdapter).start();
             }
 
             for(int i = 0;i < bluetoothSocketArrayList.size(); i++){
