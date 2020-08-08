@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == RESULT_OK) { // 블루투스 활성화 성공
                 Log.d("BLT", "블루투스 활성화 성공");
-                aa();
+                connectDevices();
             } else if (resultCode == RESULT_CANCELED) { // 블루투스 활성화 실패
                 Log.d("BLT", "블루투스 활성화 실패");
             }
@@ -203,11 +203,12 @@ public class MainActivity extends AppCompatActivity {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } else {
-            aa();
+            connectDevices();
         }
     }
 
-    public void aa() {
+    // 기기 연결 함수
+    public void connectDevices() {
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
         if (pairedDevices.size() > 0) {
             // There are paired devices. Get the name and address of each paired device.
@@ -215,15 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
                 Log.d("BLT", deviceName + " " + deviceHardwareAddress);
-                new ConnectBLT1Thread(device, bluetoothAdapter).start();
-            }
-
-            for(int i = 0;i < bluetoothSocketArrayList.size(); i++){
-                try {
-                    bluetoothSocketArrayList.get(i).connect();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new ConnectThread(device, bluetoothAdapter).start();
             }
         }
     }

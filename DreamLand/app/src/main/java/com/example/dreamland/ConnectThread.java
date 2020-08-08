@@ -9,14 +9,14 @@ import java.io.IOException;
 import java.util.UUID;
 
 
-class ConnectBLT1Thread extends Thread {
+class ConnectThread extends Thread {
     private static final String TAG = "BLT";
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
     private final BluetoothSocket mmSocket;
     private final BluetoothDevice mmDevice;
     private BluetoothAdapter bluetoothAdapter;
 
-    public ConnectBLT1Thread(BluetoothDevice device, BluetoothAdapter bluetoothAdapter) {
+    public ConnectThread(BluetoothDevice device, BluetoothAdapter bluetoothAdapter) {
         // Use a temporary object that is later assigned to mmSocket
         // because mmSocket is final.
         BluetoothSocket tmp = null;
