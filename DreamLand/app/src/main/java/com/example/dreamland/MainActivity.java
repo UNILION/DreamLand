@@ -14,6 +14,8 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,7 +54,10 @@ public class MainActivity extends AppCompatActivity {
     private List<Sleep> sleepList;
     private SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMdd");
     BluetoothAdapter bluetoothAdapter;
+    BluetoothService bluetoothService;
     ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
+    Handler handler;
+
 
     final int REQUEST_ENABLE_BT = 111;
 
@@ -62,8 +67,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         bluetoothSocketArrayList = new ArrayList<>();
+        handler = new Handler() {
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                byte[] readBuf = (byte[]) msg.obj;
+                String readMessage = new String(readBuf, 0, msg.arg1);
+                Log.d("BLT", readMessage);
+            }
+        };
+        bluetoothService = new BluetoothService(handler);
+
         enableBluetooth();
 
         sf = getSharedPreferences("bed", MODE_PRIVATE);
@@ -216,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
                 Log.d("BLT", deviceName + " " + deviceHardwareAddress);
-                new ConnectThread(device, bluetoothAdapter).start();
+                bluetoothService.connect(device);
             }
         }
     }
