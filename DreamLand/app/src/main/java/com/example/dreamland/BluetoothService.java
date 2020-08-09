@@ -11,6 +11,8 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class BluetoothService {
@@ -20,10 +22,12 @@ public class BluetoothService {
     private BluetoothAdapter bluetoothAdapter;
     private ConnectThread connectThread;
     private ConnectedThread connectedThread;
+    ArrayList<BluetoothSocket> bltSockets;
 
     public BluetoothService(Handler handler) {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         this.handler = handler;
+        bltSockets = new ArrayList<BluetoothSocket>();
     }
 
     // Defines several constants used when transmitting messages between the
@@ -46,6 +50,16 @@ public class BluetoothService {
     void connect(BluetoothDevice device) {
         connectThread = new ConnectThread(device);
         connectThread.start();
+    }
+
+    void cancel() {
+        for (BluetoothSocket socket : bltSockets) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     // 기기 연결 후 사용
@@ -149,6 +163,7 @@ public class BluetoothService {
                 Log.e(TAG, "Socket's create() method failed", e);
             }
             mmSocket = tmp;
+            bltSockets.add(mmSocket);
         }
 
         public void run() {

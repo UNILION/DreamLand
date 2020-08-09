@@ -181,6 +181,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        bluetoothService.cancel(); // 소켓 close
+        super.onDestroy();
+    }
+
     public void resetData() {
         sf.edit().putInt("mode", 0).apply();
         new DeleteSleepAsyncTask(db.sleepDao()).execute();
