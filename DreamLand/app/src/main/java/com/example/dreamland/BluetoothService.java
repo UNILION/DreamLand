@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.io.IOException;
@@ -52,6 +53,7 @@ public class BluetoothService {
         connectThread.start();
     }
 
+    // 기기 연결 해제 함수
     void cancel() {
         for (BluetoothSocket socket : bltSockets) {
             try {
@@ -98,13 +100,17 @@ public class BluetoothService {
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
                 try {
-                    // Read from the InputStream.
-                    numBytes = mmInStream.read(mmBuffer);
-                    // Send the obtained bytes to the UI activity.
-                    Message readMsg = handler.obtainMessage(
-                            MessageConstants.MESSAGE_READ, numBytes, -1,
-                            mmBuffer);
-                    readMsg.sendToTarget();
+                    numBytes = mmInStream.available();
+                    if (numBytes != 0) {
+                        SystemClock.sleep(100);
+                        // Read from the InputStream.
+                        numBytes = mmInStream.read(mmBuffer);
+                        // Send the obtained bytes to the UI activity.
+                        Message readMsg = handler.obtainMessage(
+                                MessageConstants.MESSAGE_READ, numBytes, -1,
+                                mmBuffer);
+                        readMsg.sendToTarget();
+                    }
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
                     break;
