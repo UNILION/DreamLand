@@ -20,6 +20,7 @@ public class AlarmService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("AlarmTest", "on start commmand");
         Toast.makeText(this, "일어날 시간", Toast.LENGTH_SHORT).show();
+
         return START_NOT_STICKY;
     }
 }

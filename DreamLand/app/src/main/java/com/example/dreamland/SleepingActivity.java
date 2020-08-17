@@ -53,6 +53,7 @@ public class SleepingActivity extends AppCompatActivity {
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
         // 이미 지난 시간을 지정했다면 다음날 같은 시간으로 설정
         if (calendar.before(Calendar.getInstance())) {
             calendar.add(Calendar.DATE, 1);
