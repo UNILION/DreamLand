@@ -1,5 +1,9 @@
 package com.example.dreamland;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Paint;
@@ -19,14 +23,17 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.lang.reflect.Field;
+import java.util.Calendar;
 
 public class HomeFragment extends Fragment {
 
     Button startButton;
     TimePicker timePicker;
     Resources system;
+    Context context;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -44,11 +51,16 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         startButton = (Button) view.findViewById(R.id.startButton);
         timePicker = view.findViewById(R.id.timePicker);
+        context = getContext();
+
+
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), SleepingActivity.class);
+                intent.putExtra("hour", timePicker.getHour());
+                intent.putExtra("minute", timePicker.getMinute());
                 startActivity(intent);
             }
         });
