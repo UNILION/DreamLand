@@ -7,8 +7,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -16,23 +20,32 @@ import java.util.Calendar;
 public class SleepingActivity extends AppCompatActivity {
 
     Button stopButton;
+    ImageView ivSleepSate;
+    TextView tvTime;
+    AlarmManager alarmManager;
+    AlarmManager.OnAlarmListener onAlarmListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sleeping);
         stopButton = findViewById(R.id.stopButton);
+        ivSleepSate = findViewById(R.id.ivSleepState);
+        tvTime = findViewById(R.id.tvTime);
 
         // 설정한 시간을 가져옴
         int hour = getIntent().getIntExtra("hour", -1);
         int minute = getIntent().getIntExtra("minute", -1);
+        tvTime.setText(hour + ":" + minute);
 
         // 알람 설정
         setAlarm(hour, minute);
 
+        // 중지 버튼
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                alarmManager.cancel(onAlarmListener); // 알람 취소
                 finish();
             }
         });
@@ -40,14 +53,6 @@ public class SleepingActivity extends AppCompatActivity {
 
     // 알람 시작 함수
     public void setAlarm(int hour, int minute) {
-        Intent alarmIntent = new Intent("ALARM_START");
-        PendingIntent pendingIntent =
-                PendingIntent.getBroadcast(
-                        this,
-                        0,
-                        alarmIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
         // 설정한 시간으로 날짜를 설정
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -61,11 +66,20 @@ public class SleepingActivity extends AppCompatActivity {
         Toast.makeText(this, hour + "시 " + minute + "분에 깨워드릴게요", Toast.LENGTH_SHORT).show();
 
         // 알람매니저 설정
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(
-                AlarmManager.RTC_WAKEUP,
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        onAlarmListener = new AlarmManager.OnAlarmListener() {
+            @Override
+            public void onAlarm() { // 알람 시간이 되었을때
+                Log.d("AlarmTest", "onAlarm");
+                ivSleepSate.setImageResource(R.drawable.ic_crying_256dp);
+            }
+        };
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP,
                 calendar.getTimeInMillis(),
-                pendingIntent
+                "Alarm",
+                onAlarmListener,
+                null
         );
     }
 }

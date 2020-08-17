@@ -15,15 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
 
-        <receiver
-            android:name=".AlarmReceiver"
-            android:enabled="true"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="ALARM_START" />
-            </intent-filter>
-        </receiver>
-
         <activity android:name=".SleepingActivity" />
         <activity android:name=".InitActivity" />
         <activity
