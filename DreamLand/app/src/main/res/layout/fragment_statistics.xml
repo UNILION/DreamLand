@@ -27,7 +27,7 @@
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="320dp"
                 android:layout_margin="16dp" />
 
             <TextView
@@ -41,7 +41,7 @@
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart2"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="320dp"
                 android:layout_margin="16dp" />
 
             <TextView
@@ -55,7 +55,7 @@
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart3"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="320dp"
                 android:layout_margin="16dp" />
 
             <TextView
@@ -69,7 +69,7 @@
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart4"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="320dp"
                 android:layout_margin="16dp" />
 
             <TextView
@@ -83,7 +83,7 @@
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart5"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="320dp"
                 android:layout_margin="16dp" />
 
             <TextView
@@ -97,7 +97,7 @@
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart6"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="320dp"
                 android:layout_margin="16dp" />
 
             <TextView
@@ -111,7 +111,7 @@
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart7"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="320dp"
                 android:layout_margin="16dp" />
 
             <TextView
@@ -125,7 +125,7 @@
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart8"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="320dp"
                 android:layout_margin="16dp" />
 
         </LinearLayout>
