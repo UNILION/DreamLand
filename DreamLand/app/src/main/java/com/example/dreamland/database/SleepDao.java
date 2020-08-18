@@ -28,6 +28,9 @@ public interface SleepDao {
     @Query("DELETE FROM sleep")
     void deleteAll();
 
+    @Query("SELECT * FROM sleep ORDER BY sleepId DESC LIMIT 7")
+    LiveData<Sleep> getRecentSleeps();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Sleep sleep);
 }

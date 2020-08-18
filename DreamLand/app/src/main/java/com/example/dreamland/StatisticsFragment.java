@@ -22,9 +22,11 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
 import java.lang.reflect.Array;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 
 public class StatisticsFragment extends Fragment {
@@ -51,14 +53,13 @@ public class StatisticsFragment extends Fragment {
         lineChart = view.findViewById(R.id.lineChart);
         ArrayList<Entry> entries = new ArrayList<>();
 
-
-
-        for (int i = 0; i < 7; i++) {
-            Calendar c1 = Calendar.getInstance();
-            c1.add(Calendar.MINUTE, 20 * i);
-            entries.add(new Entry(i, timeToFloat(c1)));
-        }
-
+        entries.add(new Entry(0, timeToFloat("23:40")));
+        entries.add(new Entry(1, timeToFloat("23:00")));
+        entries.add(new Entry(2, timeToFloat("23:50")));
+        entries.add(new Entry(3, timeToFloat("24:40")));
+        entries.add(new Entry(4, timeToFloat("24:10")));
+        entries.add(new Entry(5, timeToFloat("01:20")));
+        entries.add(new Entry(6, timeToFloat("02:50")));
 
         XAxis xAxis = lineChart.getXAxis(); // X축
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // X축 아래로
@@ -67,6 +68,8 @@ public class StatisticsFragment extends Fragment {
         xAxis.setGranularity(1f);
         xAxis.setGranularityEnabled(true);
         xAxis.setTextSize(12.0f);
+        xAxis.setSpaceMin(0.5f);
+        xAxis.setSpaceMax(0.5f);
 
         YAxis yAxis = lineChart.getAxisLeft(); // Y축
         yAxis.setTextColor(Color.GRAY);
@@ -128,19 +131,28 @@ public class StatisticsFragment extends Fragment {
     }
 
     // 입력된 시간을 차트의 y좌표 값으로 변환
-    private float timeToFloat(Calendar cal) {
-        long millis = cal.getTimeInMillis(); // 입력된 날짜의 millis
+    private float timeToFloat(String time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        try {
+            Date date = sdf.parse(time);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            long millis = cal.getTimeInMillis(); // 입력된 날짜의 millis
 
-        // 시간을 당일 18시로 설정
-        cal.set(Calendar.HOUR_OF_DAY, 18);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.MILLISECOND, 0);
+            // 시간을 당일 18시로 설정
+            cal.set(Calendar.HOUR_OF_DAY, 18);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.MILLISECOND, 0);
 
-        long diff = millis - cal.getTimeInMillis(); // 입력된 날과 18시의 차
+            long diff = millis - cal.getTimeInMillis(); // 입력된 날과 18시의 차
 
-        if (diff < 0) { // 음수이면 하루를 더함
-            diff += (1000 * 60 * 60 * 24);
+            if (diff < 0) { // 음수이면 하루를 더함
+                diff += (1000 * 60 * 60 * 24);
+            }
+            return (float) diff / (1000 * 60 * 30); // 30분 간격으로 나눈 값
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        return (float) diff / (1000 * 60 * 30); // 30분 간격으로 나눈 값
+        return 0f;
     }
 }
