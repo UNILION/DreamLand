@@ -186,7 +186,7 @@ public class ManagementFragment extends Fragment {
                 View dlgView = getLayoutInflater().from(getContext()).inflate(
                         R.layout.diaglog_pos, null);
                 posDismissButton = (Button) dlgView.findViewById(R.id.posDismissButton);
-                recommImageView = (ImageView) dlgView.findViewById(R.id.recommImageView);
+                recommImageView = (ImageView) dlgView.findViewById(R.id.ivPredicPos);
                 nonRecommImageView = (ImageView) dlgView.findViewById(R.id.nonRecommImageView);
 
                 int id = selectedSleep.getSleepId() -1;

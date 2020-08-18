@@ -7,7 +7,7 @@
     android:background="@color/colorDialogBackground">
 
     <ImageView
-        android:id="@+id/recommImageView"
+        android:id="@+id/ivPredicPos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -28,7 +28,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/recommImageView"
+        app:layout_constraintStart_toEndOf="@+id/ivPredicPos"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/untitle" />
 
@@ -40,7 +40,7 @@
         android:layout_marginBottom="32dp"
         android:text="추천자세"
         android:textColor="@color/colorWhite"
-        app:layout_constraintBottom_toTopOf="@+id/recommImageView"
+        app:layout_constraintBottom_toTopOf="@+id/ivPredicPos"
         app:layout_constraintEnd_toStartOf="@+id/textView5"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,5 +70,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recommImageView" />
+        app:layout_constraintTop_toBottomOf="@+id/ivPredicPos" />
 </androidx.constraintlayout.widget.ConstraintLayout>

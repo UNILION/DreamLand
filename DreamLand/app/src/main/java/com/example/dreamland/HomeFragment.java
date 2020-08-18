@@ -1,6 +1,7 @@
 package com.example.dreamland;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -24,6 +25,8 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.example.dreamland.asynctask.NonRecommImageAsyncTask;
 
 import java.lang.reflect.Field;
 import java.util.Calendar;
@@ -53,16 +56,28 @@ public class HomeFragment extends Fragment {
         context = getContext();
 
 
-
+        // 수면 시작 버튼
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), SleepingActivity.class);
-                intent.putExtra("hour", timePicker.getHour());
-                intent.putExtra("minute", timePicker.getMinute());
-                startActivity(intent);
+                showDialog();
             }
         });
 
+
+    }
+
+    private void startSleep() {
+        Intent intent = new Intent(getContext(), SleepingActivity.class);
+        intent.putExtra("hour", timePicker.getHour());
+        intent.putExtra("minute", timePicker.getMinute());
+        startActivity(intent);
+    }
+
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
+        View dlgView = getLayoutInflater().from(getContext()).inflate(
+                R.layout.diaglog_before_sleep, null);
+        builder.setView(dlgView).create().show();
     }
 }

@@ -88,6 +88,7 @@ public class SleepingActivity extends AppCompatActivity {
             }
         };
 
+        // 알람매니저에 리스너와 시간을 설정
         alarmManager.set(AlarmManager.RTC_WAKEUP,
                 calendar.getTimeInMillis(),
                 "Alarm",
