@@ -63,7 +63,7 @@
         app:srcCompat="@drawable/ic_sleep_256dp" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/tvSleepState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="수면 중이에요"

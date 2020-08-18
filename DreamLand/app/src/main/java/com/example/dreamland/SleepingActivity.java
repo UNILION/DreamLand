@@ -21,9 +21,11 @@ public class SleepingActivity extends AppCompatActivity {
 
     Button stopButton;
     ImageView ivSleepSate;
+    TextView tvSleepState;
     TextView tvTime;
     AlarmManager alarmManager;
     AlarmManager.OnAlarmListener onAlarmListener;
+    boolean isSleep = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +33,18 @@ public class SleepingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sleeping);
         stopButton = findViewById(R.id.stopButton);
         ivSleepSate = findViewById(R.id.ivSleepState);
+        tvSleepState = findViewById(R.id.tvSleepState);
         tvTime = findViewById(R.id.tvTime);
 
         // 설정한 시간을 가져옴
         int hour = getIntent().getIntExtra("hour", -1);
         int minute = getIntent().getIntExtra("minute", -1);
-        tvTime.setText(hour + ":" + minute);
+        //알람 시간 텍스트뷰
+        if (minute < 10) {
+            tvTime.setText(hour + ":0" + minute);
+        } else {
+            tvTime.setText(hour + ":" + minute);
+        }
 
         // 알람 설정
         setAlarm(hour, minute);
@@ -45,7 +53,11 @@ public class SleepingActivity extends AppCompatActivity {
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                alarmManager.cancel(onAlarmListener); // 알람 취소
+                if (isSleep) {
+                    // 수면 데이터 저장
+                } else {
+                    alarmManager.cancel(onAlarmListener); // 알람 취소
+                }
                 finish();
             }
         });
@@ -71,7 +83,8 @@ public class SleepingActivity extends AppCompatActivity {
             @Override
             public void onAlarm() { // 알람 시간이 되었을때
                 Log.d("AlarmTest", "onAlarm");
-                ivSleepSate.setImageResource(R.drawable.ic_crying_256dp);
+                ivSleepSate.setImageResource(R.drawable.ic_alarm_256dp);
+                tvSleepState.setText("일어나세요!");
             }
         };
 
