@@ -39,6 +39,10 @@ public class SleepingActivity extends AppCompatActivity {
         // 설정한 시간을 가져옴
         int hour = getIntent().getIntExtra("hour", -1);
         int minute = getIntent().getIntExtra("minute", -1);
+
+        // 선택한 교정 방식
+        int selectedMenu = getIntent().getIntExtra("selectedMenu", -1);
+
         //알람 시간 텍스트뷰
         if (minute < 10) {
             tvTime.setText(hour + ":0" + minute);

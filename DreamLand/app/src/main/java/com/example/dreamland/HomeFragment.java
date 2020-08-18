@@ -2,6 +2,7 @@ package com.example.dreamland;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -36,6 +37,10 @@ public class HomeFragment extends Fragment {
     Button startButton;
     TimePicker timePicker;
     Context context;
+    Button selButton1;
+    Button selButton2;
+    Button selButton3;
+    AlertDialog selDiaglog;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -63,21 +68,54 @@ public class HomeFragment extends Fragment {
                 showDialog();
             }
         });
-
-
     }
 
-    private void startSleep() {
+    // 수면 시작 함수
+    private void startSleep(int selectedMenu) {
         Intent intent = new Intent(getContext(), SleepingActivity.class);
         intent.putExtra("hour", timePicker.getHour());
         intent.putExtra("minute", timePicker.getMinute());
+        intent.putExtra("selectedMenu", selectedMenu);
         startActivity(intent);
     }
 
+    // 교정방식 선택 화면
     private void showDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
-        View dlgView = getLayoutInflater().from(getContext()).inflate(
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
+        final View dlgView = getLayoutInflater().from(getContext()).inflate(
                 R.layout.diaglog_before_sleep, null);
-        builder.setView(dlgView).create().show();
+        selButton1 = dlgView.findViewById(R.id.selButton1);
+        selButton2 = dlgView.findViewById(R.id.selButton2);
+        selButton3 = dlgView.findViewById(R.id.selButton3);
+
+        selDiaglog = builder.setView(dlgView).create();
+        selDiaglog.show();
+
+        // 수면 중 교정
+        selButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selDiaglog.dismiss();
+                startSleep(1);
+            }
+        });
+
+        // 수면 중 1번 교정
+        selButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selDiaglog.dismiss();
+                startSleep(2);
+            }
+        });
+
+        // 즉시 교정
+        selButton3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selDiaglog.dismiss();
+                startSleep(3);
+            }
+        });
     }
 }
