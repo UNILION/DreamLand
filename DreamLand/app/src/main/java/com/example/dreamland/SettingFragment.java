@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.data.LineRadarDataSet;
 import com.xw.repo.BubbleSeekBar;
 
 public class SettingFragment extends Fragment {
@@ -25,11 +26,11 @@ public class SettingFragment extends Fragment {
     SharedPreferences sf;
     LinearLayout resetButton;
     LinearLayout myDiseaseButton;
-    LinearLayout comfortableDirectionButton;
-    TextView tvDesease;
-    BubbleSeekBar bubbleSeekBar4;
+    LinearLayout bedPositionButton;
+    TextView tvSleepSetting;
     View line1;
     View line2;
+    View line3;
 
 
     public SettingFragment() {
@@ -49,16 +50,17 @@ public class SettingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         resetButton = (LinearLayout) view.findViewById(R.id.resetButtonLayout);
         myDiseaseButton = (LinearLayout) view.findViewById(R.id.myDiseaseLayout);
-        comfortableDirectionButton = (LinearLayout) view.findViewById(R.id.comfortableDirectionLayout);
-        tvDesease = (TextView) view.findViewById(R.id.textView16);
-        bubbleSeekBar4 = (BubbleSeekBar) view.findViewById(R.id.bubbleSeekBar4);
+        bedPositionButton = (LinearLayout) view.findViewById(R.id.bedPositionButtonLayout);
+        tvSleepSetting = (TextView) view.findViewById(R.id.tvSleepSetting);
         line1 = (View) view.findViewById(R.id.view1);
         line2 = (View) view.findViewById(R.id.view2);
+        line3 = (View) view.findViewById(R.id.view3);
 
         sf = getContext().getSharedPreferences("bed", getContext().MODE_PRIVATE);
+        int mode = sf.getInt("mode", 0); // 사용자가 설정한 모드를 불러옴
 
-        // 무호흡모드이면 질병 관련 뷰들을 숨김
-        if (sf.getInt("mode", 0) == 2) {
+        // 코골이, 무호흡모드이면 질병 관련 뷰들을 숨김
+        if (mode == 1 || mode == 2) {
             hideDeseaseView();
         }
 
@@ -111,40 +113,15 @@ public class SettingFragment extends Fragment {
                 builder.setView(dlgView).create().show();
             }
         });
-
-        // 편한 수면 방향 버튼
-        comfortableDirectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                View dlgView = getLayoutInflater().from(getContext()).inflate(
-                        R.layout.select_direction_layout, null);
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
-                builder.setTitle("편한 수면 방향")
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //TODO 수면 방향 저장하고 라디오 버튼과 프래그먼트의 상태를
-                                // 해당 수면 방향으로 변경
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // 아무 동작 없음
-                            }
-                        });
-                builder.setView(dlgView).create().show();
-            }
-        });
-
-
     }
 
+    // 질환 관련 뷰를 숨김
     public void hideDeseaseView() {
         myDiseaseButton.setVisibility(View.GONE);
+        bedPositionButton.setVisibility(View.GONE);
+        tvSleepSetting.setVisibility(View.GONE);
         line1.setVisibility(View.GONE);
-        tvDesease.setVisibility(View.GONE);
-        bubbleSeekBar4.setVisibility(View.GONE);
         line2.setVisibility(View.GONE);
+        line3.setVisibility(View.GONE);
     }
 }

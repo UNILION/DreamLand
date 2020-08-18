@@ -32,7 +32,6 @@ public class HomeFragment extends Fragment {
 
     Button startButton;
     TimePicker timePicker;
-    Resources system;
     Context context;
 
     public HomeFragment() {
