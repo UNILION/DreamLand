@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Dao
@@ -29,7 +30,7 @@ public interface SleepDao {
     void deleteAll();
 
     @Query("SELECT * FROM sleep ORDER BY sleepId DESC LIMIT 7")
-    LiveData<Sleep> getRecentSleeps();
+    LiveData<List<Sleep>> getRecentSleeps();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Sleep sleep);

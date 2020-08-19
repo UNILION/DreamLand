@@ -7,15 +7,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 
+import android.service.autofill.Dataset;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.dreamland.database.AppDatabase;
+import com.example.dreamland.database.Sleep;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -27,11 +32,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 public class StatisticsFragment extends Fragment {
 
+    private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+    private SimpleDateFormat sdf2 = new SimpleDateFormat("MM-dd");
+    private SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMdd");
+
+    private AppDatabase db;
     LineChart lineChart;
+//    LineChart lineChart2;
 
     public StatisticsFragment() {
         // Required empty public constructor
@@ -50,18 +62,119 @@ public class StatisticsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        db = AppDatabase.getDatabase(getContext());
+
+        // 취침시간 차트
         lineChart = view.findViewById(R.id.lineChart);
-        ArrayList<Entry> entries = new ArrayList<>();
+        final XAxis xAxis = lineChart.getXAxis(); // X축
+        final YAxis yAxis = lineChart.getAxisLeft(); // Y축
+        setChartOptions(lineChart, xAxis, yAxis);
 
-        entries.add(new Entry(0, timeToFloat("23:40")));
-        entries.add(new Entry(1, timeToFloat("23:00")));
-        entries.add(new Entry(2, timeToFloat("23:50")));
-        entries.add(new Entry(3, timeToFloat("24:40")));
-        entries.add(new Entry(4, timeToFloat("24:10")));
-        entries.add(new Entry(5, timeToFloat("01:20")));
-        entries.add(new Entry(6, timeToFloat("02:50")));
+        final ArrayList<String> xLabels = new ArrayList<>();
+        final String[] yLabels = {
+                "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00",
+                "22:30", "23:00", "23:30", "00:00", "00:30", "01:00", "01:30", "02:00", "02:30",
+                "03:00", "03:30", "04:00", "04:30", "05:00", "05:30", "06:00", "06:30", "07:00",
+                "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+                "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00",
+                "16:30", "17:00", "17:30"
+        };
+        final ArrayList<Entry> entries = new ArrayList<>();
 
-        XAxis xAxis = lineChart.getXAxis(); // X축
+//        // 기상시간 차트
+//        lineChart2 = view.findViewById(R.id.lineChart2);
+//        final XAxis xAxis2 = lineChart2.getXAxis(); // X축
+//        final YAxis yAxis2 = lineChart2.getAxisLeft(); // Y축
+//        setChartOptions(lineChart2, xAxis2, yAxis2);
+//
+//        final ArrayList<String> xLabels2 = new ArrayList<>();
+//        final String[] yLabels2 = {
+//                "00:00", "00:30", "01:00", "01:30", "02:00", "02:30",
+//                "03:00", "03:30", "04:00", "04:30", "05:00", "05:30", "06:00", "06:30", "07:00",
+//                "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+//                "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00",
+//                "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30",
+//                "21:00", "21:30", "22:00", "22:30", "23:00", "23:30"
+//        };
+//        final ArrayList<Entry> entries2 = new ArrayList<>();
+
+        // 수면 데이터 변경시
+        db.sleepDao().getRecentSleeps().observe(this, new Observer<List<Sleep>>() {
+            @Override
+            public void onChanged(List<Sleep> sleeps) {
+                entries.clear();
+//                entries2.clear();
+                if (!sleeps.isEmpty()) {
+                    for (int i = 0; i < sleeps.size(); i++) {
+                        int index = (sleeps.size() - 1) - i;
+                        try {
+                            Date date = format2.parse(sleeps.get(index).getSleepDate());
+//                            Date date2 = format2.parse(sleeps.get(index).getWhenWake());
+
+                            xLabels.add(sdf2.format(date));
+                            entries.add(new Entry(i, timeToFloat(sleeps.get(index).getWhenSleep())));
+
+//                            xLabels2.add(sdf2.format(date2));
+//                            entries2.add(new Entry(i, timeToFloat(sleeps.get(index).getWhenSleep())));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                xAxis.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return xLabels.get((int) value);
+                    }
+                });
+
+                yAxis.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return yLabels[(int) value];
+                    }
+                });
+
+//                xAxis2.setValueFormatter(new IndexAxisValueFormatter() {
+//                    @Override
+//                    public String getFormattedValue(float value) {
+//                        return xLabels2.get((int) value);
+//                    }
+//                });
+//
+//                yAxis2.setValueFormatter(new IndexAxisValueFormatter() {
+//                    @Override
+//                    public String getFormattedValue(float value) {
+//                        return yLabels2[(int) value];
+//                    }
+//                });
+
+                LineDataSet dataSet = new LineDataSet(entries, "Label");
+                setDataSetOptions(dataSet);
+                LineData lineData = new LineData(dataSet);
+                lineChart.setData(lineData);
+                lineChart.invalidate(); // refresh
+
+//                LineDataSet dataSet2 = new LineDataSet(entries2, "Label2");
+//                setDataSetOptions(dataSet2);
+//                LineData lineData2 = new LineData(dataSet2);
+//                lineChart2.setData(lineData2);
+//                lineChart2.invalidate(); // refresh
+            }
+        });
+
+    }
+
+    // 차트의 기본 옵션 세팅
+    private void setChartOptions(LineChart lineChart, XAxis xAxis, YAxis yAxis) {
+        lineChart.getAxisRight().setEnabled(false); // 오른쪽 라인 사용 안함
+        lineChart.setDoubleTapToZoomEnabled(false);
+        lineChart.setPinchZoom(false);
+        lineChart.getLegend().setEnabled(false);
+        lineChart.getDescription().setEnabled(false);
+        lineChart.setHighlightPerTapEnabled(false);
+        lineChart.setHighlightPerDragEnabled(false);
+
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // X축 아래로
         xAxis.setTextColor(Color.GRAY);
         xAxis.setDrawGridLines(false);
@@ -71,68 +184,23 @@ public class StatisticsFragment extends Fragment {
         xAxis.setSpaceMin(0.5f);
         xAxis.setSpaceMax(0.5f);
 
-        YAxis yAxis = lineChart.getAxisLeft(); // Y축
         yAxis.setTextColor(Color.GRAY);
         yAxis.setGranularity(1f);
         yAxis.setTextSize(12.0f);
         yAxis.setXOffset(15.0f);
+    }
 
-        final ArrayList<String> xLabels = new ArrayList<>();
-        xLabels.add("09-01");
-        xLabels.add("09-02");
-        xLabels.add("09-03");
-        xLabels.add("09-04");
-        xLabels.add("09-05");
-        xLabels.add("09-06");
-        xLabels.add("09-07");
-
-        final String[] yLabels = {
-                "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00",
-                "22:30", "23:00", "23:30", "00:00", "00:30", "01:00", "01:30", "02:00", "02:30",
-                "03:00", "03:30", "04:00", "04:30", "05:00", "05:30", "06:00", "06:30", "07:00",
-                "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-                "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00",
-                "16:30", "17:00", "17:30"
-        };
-
-        xAxis.setValueFormatter(new IndexAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return xLabels.get((int) value);
-            }
-        });
-
-        yAxis.setValueFormatter(new IndexAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return yLabels[(int) value];
-            }
-        });
-
-        LineDataSet dataSet = new LineDataSet(entries, "Label");
+    // data set 옵션 세팅
+    private void setDataSetOptions(LineDataSet dataSet) {
         dataSet.setDrawFilled(true); // 아래쪽 채우기
         dataSet.setLineWidth(4.0f);
         dataSet.setCircleRadius(5.0f);
         dataSet.setCircleHoleRadius(3.0f);
         dataSet.setValueTextSize(0.0f);
-
-        LineData lineData = new LineData(dataSet);
-
-        lineChart.getAxisRight().setEnabled(false); // 오른쪽 라인 사용 안함
-        lineChart.setDoubleTapToZoomEnabled(false);
-        lineChart.setPinchZoom(false);
-        lineChart.getLegend().setEnabled(false);
-        lineChart.getDescription().setEnabled(false);
-        lineChart.setHighlightPerTapEnabled(false);
-        lineChart.setHighlightPerDragEnabled(false);
-        lineChart.setData(lineData);
-        lineChart.invalidate(); // refresh
-
     }
 
     // 입력된 시간을 차트의 y좌표 값으로 변환
     private float timeToFloat(String time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         try {
             Date date = sdf.parse(time);
             Calendar cal = Calendar.getInstance();
