@@ -41,6 +41,7 @@ public class ManagementFragment extends Fragment {
 
     private SimpleDateFormat format1 = new SimpleDateFormat("M월 d일 E요일");
     private SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMdd");
+    private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     private Context context;
     private AppDatabase db;
     SharedPreferences sf;
@@ -227,7 +228,10 @@ public class ManagementFragment extends Fragment {
                     // TextView들의 text 변경
                     tvWhenWake.setText(sleep.getWhenWake());
                     tvConTime.setText(sleep.getConTime());
-                    tvWaitTime.setText(sleep.getSleepWaitTime());
+                    // 시작 시간과 잠든 시간의 차
+                    long diffTime = sdf.parse(sleep.getWhenSleep()).getTime() - sdf.parse(sleep.getWhenStart()).getTime();
+                    diffTime -= (1000 * 60 * 60 * 9); // 기본 9시간을 뺌
+                    tvWaitTime.setText(sdf.format(diffTime));
                     tvWhenSleep.setText(sleep.getWhenSleep());
                     tvSleepTime.setText(sleep.getSleepTime());
                     tvOxy.setText(Integer.toString(sleep.getOxyStr()));
