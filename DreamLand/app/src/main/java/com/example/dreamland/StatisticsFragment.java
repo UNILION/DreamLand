@@ -44,6 +44,7 @@ public class StatisticsFragment extends Fragment {
     private AppDatabase db;
     LineChart lineChart;
     LineChart lineChart2;
+    LineChart lineChart3;
 
     public StatisticsFragment() {
         // Required empty public constructor
@@ -97,12 +98,26 @@ public class StatisticsFragment extends Fragment {
         };
         final ArrayList<Entry> entries2 = new ArrayList<>();
 
+        // 잠들끼까지 걸린 시간 차트
+        lineChart3 = view.findViewById(R.id.lineChart3);
+        final XAxis xAxis3 = lineChart3.getXAxis(); // X축
+        final YAxis yAxis3 = lineChart3.getAxisLeft(); // Y축
+        setChartOptions(lineChart3, xAxis3, yAxis3);
+
+        final String[] yLabels3 = {
+                "0분", "5분", "10분", "15분", "20분", "25분", "30분", "35분", "40분", "50분", "55분",
+                "1시간", "1시간 5분", "1시간 10분", "1시간 15분", "1시간 20분", "1시간 25분", "1시간 30분",
+                "1시간 35분", "1시간 40분", "1시간 45분", "1시간 50분", "2시간"
+        };
+        final ArrayList<Entry> entries3 = new ArrayList<>();
+
         // 수면 데이터 변경시
         db.sleepDao().getRecentSleeps().observe(this, new Observer<List<Sleep>>() {
             @Override
             public void onChanged(List<Sleep> sleeps) {
                 entries.clear();
                 entries2.clear();
+                entries3.clear();
                 if (!sleeps.isEmpty()) {
                     for (int i = 0; i < sleeps.size(); i++) {
                         int index = (sleeps.size() - 1) - i;
@@ -115,6 +130,9 @@ public class StatisticsFragment extends Fragment {
                                     sleep.getWhenSleep(), 18)));
                             entries2.add(new Entry(i, timeToFloat(
                                     sleep.getWhenWake(), 0)));
+                            long diffTime = sdf.parse(sleep.getWhenSleep()).getTime() - sdf.parse(sleep.getWhenStart()).getTime();
+                            entries3.add(new Entry(i, timeToFloatForMinute(
+                                    sdf.format(diffTime))));
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
@@ -148,20 +166,39 @@ public class StatisticsFragment extends Fragment {
                     }
                 });
 
+                xAxis3.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return xLabels.get((int) value);
+                    }
+                });
+
+                yAxis3.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return yLabels3[(int) value];
+                    }
+                });
+
                 LineDataSet dataSet = new LineDataSet(entries, "Label");
                 setDataSetOptions(dataSet);
                 LineData lineData = new LineData(dataSet);
                 lineChart.setData(lineData);
                 lineChart.invalidate(); // refresh
 
-                LineDataSet dataSet2 = new LineDataSet(entries2, "Label2");
+                LineDataSet dataSet2 = new LineDataSet(entries2, "Label");
                 setDataSetOptions(dataSet2);
                 LineData lineData2 = new LineData(dataSet2);
                 lineChart2.setData(lineData2);
                 lineChart2.invalidate(); // refresh
+
+                LineDataSet dataSet3 = new LineDataSet(entries3, "Label");
+                setDataSetOptions(dataSet3);
+                LineData lineData3 = new LineData(dataSet3);
+                lineChart3.setData(lineData3);
+                lineChart3.invalidate(); // refresh
             }
         });
-
     }
 
     // 차트의 기본 옵션 세팅
@@ -222,4 +259,17 @@ public class StatisticsFragment extends Fragment {
         }
         return 0f;
     }
+
+    private float timeToFloatForMinute(String time) {
+        try {
+            Date date = sdf.parse(time);
+            long millis = date.getTime();
+            return (float) millis / (1000 * 60 * 5); // 5분 간격으로 나눈 값
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0f;
+    }
+
+
 }
