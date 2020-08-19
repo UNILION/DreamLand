@@ -43,7 +43,7 @@ public class StatisticsFragment extends Fragment {
 
     private AppDatabase db;
     LineChart lineChart;
-//    LineChart lineChart2;
+    LineChart lineChart2;
 
     public StatisticsFragment() {
         // Required empty public constructor
@@ -81,41 +81,40 @@ public class StatisticsFragment extends Fragment {
         };
         final ArrayList<Entry> entries = new ArrayList<>();
 
-//        // 기상시간 차트
-//        lineChart2 = view.findViewById(R.id.lineChart2);
-//        final XAxis xAxis2 = lineChart2.getXAxis(); // X축
-//        final YAxis yAxis2 = lineChart2.getAxisLeft(); // Y축
-//        setChartOptions(lineChart2, xAxis2, yAxis2);
-//
-//        final ArrayList<String> xLabels2 = new ArrayList<>();
-//        final String[] yLabels2 = {
-//                "00:00", "00:30", "01:00", "01:30", "02:00", "02:30",
-//                "03:00", "03:30", "04:00", "04:30", "05:00", "05:30", "06:00", "06:30", "07:00",
-//                "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-//                "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00",
-//                "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30",
-//                "21:00", "21:30", "22:00", "22:30", "23:00", "23:30"
-//        };
-//        final ArrayList<Entry> entries2 = new ArrayList<>();
+        // 기상시간 차트
+        lineChart2 = view.findViewById(R.id.lineChart2);
+        final XAxis xAxis2 = lineChart2.getXAxis(); // X축
+        final YAxis yAxis2 = lineChart2.getAxisLeft(); // Y축
+        setChartOptions(lineChart2, xAxis2, yAxis2);
+
+        final String[] yLabels2 = {
+                "00:00", "00:30", "01:00", "01:30", "02:00", "02:30",
+                "03:00", "03:30", "04:00", "04:30", "05:00", "05:30", "06:00", "06:30", "07:00",
+                "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+                "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00",
+                "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30",
+                "21:00", "21:30", "22:00", "22:30", "23:00", "23:30"
+        };
+        final ArrayList<Entry> entries2 = new ArrayList<>();
 
         // 수면 데이터 변경시
         db.sleepDao().getRecentSleeps().observe(this, new Observer<List<Sleep>>() {
             @Override
             public void onChanged(List<Sleep> sleeps) {
                 entries.clear();
-//                entries2.clear();
+                entries2.clear();
                 if (!sleeps.isEmpty()) {
                     for (int i = 0; i < sleeps.size(); i++) {
                         int index = (sleeps.size() - 1) - i;
+                        Sleep sleep = sleeps.get(index);
                         try {
-                            Date date = format2.parse(sleeps.get(index).getSleepDate());
-//                            Date date2 = format2.parse(sleeps.get(index).getWhenWake());
+                            Date date = format2.parse(sleep.getSleepDate());
 
                             xLabels.add(sdf2.format(date));
-                            entries.add(new Entry(i, timeToFloat(sleeps.get(index).getWhenSleep())));
-
-//                            xLabels2.add(sdf2.format(date2));
-//                            entries2.add(new Entry(i, timeToFloat(sleeps.get(index).getWhenSleep())));
+                            entries.add(new Entry(i, timeToFloat(
+                                    sleep.getWhenSleep(), 18)));
+                            entries2.add(new Entry(i, timeToFloat(
+                                    sleep.getWhenWake(), 0)));
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
@@ -135,19 +134,19 @@ public class StatisticsFragment extends Fragment {
                     }
                 });
 
-//                xAxis2.setValueFormatter(new IndexAxisValueFormatter() {
-//                    @Override
-//                    public String getFormattedValue(float value) {
-//                        return xLabels2.get((int) value);
-//                    }
-//                });
-//
-//                yAxis2.setValueFormatter(new IndexAxisValueFormatter() {
-//                    @Override
-//                    public String getFormattedValue(float value) {
-//                        return yLabels2[(int) value];
-//                    }
-//                });
+                xAxis2.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return xLabels.get((int) value);
+                    }
+                });
+
+                yAxis2.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return yLabels2[(int) value];
+                    }
+                });
 
                 LineDataSet dataSet = new LineDataSet(entries, "Label");
                 setDataSetOptions(dataSet);
@@ -155,11 +154,11 @@ public class StatisticsFragment extends Fragment {
                 lineChart.setData(lineData);
                 lineChart.invalidate(); // refresh
 
-//                LineDataSet dataSet2 = new LineDataSet(entries2, "Label2");
-//                setDataSetOptions(dataSet2);
-//                LineData lineData2 = new LineData(dataSet2);
-//                lineChart2.setData(lineData2);
-//                lineChart2.invalidate(); // refresh
+                LineDataSet dataSet2 = new LineDataSet(entries2, "Label2");
+                setDataSetOptions(dataSet2);
+                LineData lineData2 = new LineData(dataSet2);
+                lineChart2.setData(lineData2);
+                lineChart2.invalidate(); // refresh
             }
         });
 
@@ -200,7 +199,7 @@ public class StatisticsFragment extends Fragment {
     }
 
     // 입력된 시간을 차트의 y좌표 값으로 변환
-    private float timeToFloat(String time) {
+    private float timeToFloat(String time, int startHour) {
         try {
             Date date = sdf.parse(time);
             Calendar cal = Calendar.getInstance();
@@ -208,11 +207,11 @@ public class StatisticsFragment extends Fragment {
             long millis = cal.getTimeInMillis(); // 입력된 날짜의 millis
 
             // 시간을 당일 18시로 설정
-            cal.set(Calendar.HOUR_OF_DAY, 18);
+            cal.set(Calendar.HOUR_OF_DAY, startHour);
             cal.set(Calendar.MINUTE, 0);
             cal.set(Calendar.MILLISECOND, 0);
 
-            long diff = millis - cal.getTimeInMillis(); // 입력된 날과 18시의 차
+            long diff = millis - cal.getTimeInMillis(); // 입력된 날과 시작시의 차
 
             if (diff < 0) { // 음수이면 하루를 더함
                 diff += (1000 * 60 * 60 * 24);
