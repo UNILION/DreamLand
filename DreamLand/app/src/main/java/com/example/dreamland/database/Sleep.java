@@ -10,7 +10,6 @@ public class Sleep {
     private String sleepDate;  // 날짜
     private String whenStart;  // 측정 시작 시간
     private String whenSleep;  // 수면 시작 시간
-    private String sleepWaitTime;  // 잠들기까지 걸린 시간
     private String whenWake;  // 기상 시간
     private String sleepTime;  // 수면 시간
     private String conStartTime;  // 상태 시작 시간
@@ -26,14 +25,13 @@ public class Sleep {
     private int nonRecommPos; // 비추천 자세(전날 교정 전 자세)
 
     public Sleep(
-            String sleepDate, String whenStart, String whenSleep, String sleepWaitTime,
+            String sleepDate, String whenStart, String whenSleep,
             String whenWake, String sleepTime, String conStartTime, String conStopTime,
             String conTime, int beforeAdjPos, int afterAdjPos, int adjCount,
             int satLevel, int oxyStr, int sysAdjPos,int recommPos, int nonRecommPos) {
         this.sleepDate = sleepDate;
         this.whenStart = whenStart;
         this.whenSleep = whenSleep;
-        this.sleepWaitTime = sleepWaitTime;
         this.whenWake = whenWake;
         this.sleepTime = sleepTime;
         this.conStartTime = conStartTime;
@@ -79,14 +77,6 @@ public class Sleep {
 
     public void setWhenSleep(String whenSleep) {
         this.whenSleep = whenSleep;
-    }
-
-    public String getSleepWaitTime() {
-        return sleepWaitTime;
-    }
-
-    public void setSleepWaitTime(String sleepWaitTime) {
-        this.sleepWaitTime = sleepWaitTime;
     }
 
     public String getWhenWake() {
