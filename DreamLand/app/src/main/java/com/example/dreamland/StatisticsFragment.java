@@ -5,12 +5,9 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
-import android.service.autofill.Dataset;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +17,11 @@ import com.example.dreamland.database.Sleep;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +40,7 @@ public class StatisticsFragment extends Fragment {
     LineChart lineChart;
     LineChart lineChart2;
     LineChart lineChart3;
+    LineChart lineChart4;
 
     public StatisticsFragment() {
         // Required empty public constructor
@@ -111,6 +107,20 @@ public class StatisticsFragment extends Fragment {
         };
         final ArrayList<Entry> entries3 = new ArrayList<>();
 
+        // 수면 시간 차트
+        lineChart4 = view.findViewById(R.id.lineChart4);
+        final XAxis xAxis4 = lineChart4.getXAxis(); // X축
+        final YAxis yAxis4 = lineChart4.getAxisLeft(); // Y축
+        setChartOptions(lineChart4, xAxis4, yAxis4);
+
+        final String[] yLabels4 = {
+                "0분", "30분", "1시간", "1시간 30분", "2시간", "2시간 30분", "3시간", "3시간 30분",
+                "4시간", "4시간 30분", "5시간", "5시간 30분", "6시간", "6시간 30분", "7시간", "7시간 30분",
+                "8시간", "8시간 30분", "9시간", "9시간 30분", "10시간", "10시간 30분", "11시간", "11시간 30분",
+                "12시간", "12시간 30분", "13시간", "13시간 30분", "14시간", "14시간 30분", "15시간"
+        };
+        final ArrayList<Entry> entries4 = new ArrayList<>();
+
         // 수면 데이터 변경시
         db.sleepDao().getRecentSleeps().observe(this, new Observer<List<Sleep>>() {
             @Override
@@ -118,6 +128,7 @@ public class StatisticsFragment extends Fragment {
                 entries.clear();
                 entries2.clear();
                 entries3.clear();
+                entries4.clear();
                 if (!sleeps.isEmpty()) {
                     for (int i = 0; i < sleeps.size(); i++) {
                         int index = (sleeps.size() - 1) - i;
@@ -132,7 +143,9 @@ public class StatisticsFragment extends Fragment {
                                     sleep.getWhenWake(), 0)));
                             long diffTime = sdf.parse(sleep.getWhenSleep()).getTime() - sdf.parse(sleep.getWhenStart()).getTime();
                             entries3.add(new Entry(i, timeToFloatForMinute(
-                                    sdf.format(diffTime))));
+                                    sdf.format(diffTime), 5)));
+                            entries4.add(new Entry(i, timeToFloatForMinute(
+                                    sleep.getSleepTime(), 30)));
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
@@ -180,6 +193,20 @@ public class StatisticsFragment extends Fragment {
                     }
                 });
 
+                xAxis4.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return xLabels.get((int) value);
+                    }
+                });
+
+                yAxis4.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return yLabels4[(int) value];
+                    }
+                });
+
                 LineDataSet dataSet = new LineDataSet(entries, "Label");
                 setDataSetOptions(dataSet);
                 LineData lineData = new LineData(dataSet);
@@ -197,6 +224,12 @@ public class StatisticsFragment extends Fragment {
                 LineData lineData3 = new LineData(dataSet3);
                 lineChart3.setData(lineData3);
                 lineChart3.invalidate(); // refresh
+
+                LineDataSet dataSet4 = new LineDataSet(entries4, "Label");
+                setDataSetOptions(dataSet4);
+                LineData lineData4 = new LineData(dataSet4);
+                lineChart4.setData(lineData4);
+                lineChart4.invalidate(); // refresh
             }
         });
     }
@@ -260,11 +293,16 @@ public class StatisticsFragment extends Fragment {
         return 0f;
     }
 
-    private float timeToFloatForMinute(String time) {
+    // 시간을 y좌표로 변환
+    private float timeToFloatForMinute(String time, int minute) {
         try {
             Date date = sdf.parse(time);
+
             long millis = date.getTime();
-            return (float) millis / (1000 * 60 * 5); // 5분 간격으로 나눈 값
+            if (millis < 0) {
+                millis += (1000 * 60 * 60 * 9);
+            }
+            return (float) millis / (1000 * 60 * minute); // 입력시간 간격으로 나눈 값
         } catch (ParseException e) {
             e.printStackTrace();
         }
