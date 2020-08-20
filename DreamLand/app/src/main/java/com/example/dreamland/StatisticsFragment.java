@@ -41,6 +41,7 @@ public class StatisticsFragment extends Fragment {
     LineChart lineChart2;
     LineChart lineChart3;
     LineChart lineChart4;
+    LineChart lineChart5;
 
     public StatisticsFragment() {
         // Required empty public constructor
@@ -101,7 +102,7 @@ public class StatisticsFragment extends Fragment {
         setChartOptions(lineChart3, xAxis3, yAxis3);
 
         final String[] yLabels3 = {
-                "0분", "5분", "10분", "15분", "20분", "25분", "30분", "35분", "40분", "50분", "55분",
+                "0분", "5분", "10분", "15분", "20분", "25분", "30분", "35분", "40분", "45분", "50분", "55분",
                 "1시간", "1시간 5분", "1시간 10분", "1시간 15분", "1시간 20분", "1시간 25분", "1시간 30분",
                 "1시간 35분", "1시간 40분", "1시간 45분", "1시간 50분", "2시간"
         };
@@ -121,6 +122,15 @@ public class StatisticsFragment extends Fragment {
         };
         final ArrayList<Entry> entries4 = new ArrayList<>();
 
+        // 코골이, 무호흡 시간 차트
+        lineChart5 = view.findViewById(R.id.lineChart5);
+        final XAxis xAxis5 = lineChart5.getXAxis(); // X축
+        final YAxis yAxis5 = lineChart5.getAxisLeft(); // Y축
+        setChartOptions(lineChart5, xAxis5, yAxis5);
+
+        final ArrayList<Entry> entries5 = new ArrayList<>();
+
+
         // 수면 데이터 변경시
         db.sleepDao().getRecentSleeps().observe(this, new Observer<List<Sleep>>() {
             @Override
@@ -129,6 +139,7 @@ public class StatisticsFragment extends Fragment {
                 entries2.clear();
                 entries3.clear();
                 entries4.clear();
+                entries5.clear();
                 if (!sleeps.isEmpty()) {
                     for (int i = 0; i < sleeps.size(); i++) {
                         int index = (sleeps.size() - 1) - i;
@@ -146,6 +157,8 @@ public class StatisticsFragment extends Fragment {
                                     sdf.format(diffTime), 5)));
                             entries4.add(new Entry(i, timeToFloatForMinute(
                                     sleep.getSleepTime(), 30)));
+                            entries5.add(new Entry(i, timeToFloatForMinute(
+                                    sleep.getConTime(), 5)));
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
@@ -207,6 +220,20 @@ public class StatisticsFragment extends Fragment {
                     }
                 });
 
+                xAxis5.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return xLabels.get((int) value);
+                    }
+                });
+
+                yAxis5.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return yLabels3[(int) value];
+                    }
+                });
+
                 LineDataSet dataSet = new LineDataSet(entries, "Label");
                 setDataSetOptions(dataSet);
                 LineData lineData = new LineData(dataSet);
@@ -230,6 +257,14 @@ public class StatisticsFragment extends Fragment {
                 LineData lineData4 = new LineData(dataSet4);
                 lineChart4.setData(lineData4);
                 lineChart4.invalidate(); // refresh
+
+                LineDataSet dataSet5 = new LineDataSet(entries5, "Label");
+                setDataSetOptions(dataSet5);
+                LineData lineData5 = new LineData(dataSet5);
+                lineChart5.setData(lineData5);
+                lineChart5.invalidate(); // refresh
+
+
             }
         });
     }
