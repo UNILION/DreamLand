@@ -190,7 +190,7 @@ public class ManagementFragment extends Fragment {
                 recommImageView = (ImageView) dlgView.findViewById(R.id.ivPredicPos);
                 nonRecommImageView = (ImageView) dlgView.findViewById(R.id.nonRecommImageView);
 
-                int id = selectedSleep.getSleepId() -1;
+                int id = selectedSleep.getSleepId() - 1;
                 new NonRecommImageAsyncTask(db.sleepDao(), nonRecommImageView, id).execute();
 
                 // 수면 자세 확인 다이얼로그 나가기 버튼

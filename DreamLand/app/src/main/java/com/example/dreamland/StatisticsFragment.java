@@ -14,9 +14,13 @@ import android.view.ViewGroup;
 
 import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -37,11 +41,14 @@ public class StatisticsFragment extends Fragment {
     private SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMdd");
 
     private AppDatabase db;
-    LineChart lineChart;
-    LineChart lineChart2;
-    LineChart lineChart3;
-    LineChart lineChart4;
-    LineChart lineChart5;
+    LineChart lineChart; // 취침 시간
+    LineChart lineChart2; // 기상 시간
+    LineChart lineChart3; // 잠들기까지 걸린 시간
+    LineChart lineChart4; // 수면 시간
+    LineChart lineChart5; // 코골이, 무호흡 시간
+    BarChart barChart; // 자세 교정
+    BarChart barChart2; // 수면 만족도
+    BarChart barChart3; // 산소 포화도
 
     public StatisticsFragment() {
         // Required empty public constructor
@@ -66,7 +73,7 @@ public class StatisticsFragment extends Fragment {
         lineChart = view.findViewById(R.id.lineChart);
         final XAxis xAxis = lineChart.getXAxis(); // X축
         final YAxis yAxis = lineChart.getAxisLeft(); // Y축
-        setChartOptions(lineChart, xAxis, yAxis);
+        setLineChartOptions(lineChart, xAxis, yAxis);
 
         final ArrayList<String> xLabels = new ArrayList<>();
         final String[] yLabels = {
@@ -83,7 +90,7 @@ public class StatisticsFragment extends Fragment {
         lineChart2 = view.findViewById(R.id.lineChart2);
         final XAxis xAxis2 = lineChart2.getXAxis(); // X축
         final YAxis yAxis2 = lineChart2.getAxisLeft(); // Y축
-        setChartOptions(lineChart2, xAxis2, yAxis2);
+        setLineChartOptions(lineChart2, xAxis2, yAxis2);
 
         final String[] yLabels2 = {
                 "00:00", "00:30", "01:00", "01:30", "02:00", "02:30",
@@ -99,7 +106,7 @@ public class StatisticsFragment extends Fragment {
         lineChart3 = view.findViewById(R.id.lineChart3);
         final XAxis xAxis3 = lineChart3.getXAxis(); // X축
         final YAxis yAxis3 = lineChart3.getAxisLeft(); // Y축
-        setChartOptions(lineChart3, xAxis3, yAxis3);
+        setLineChartOptions(lineChart3, xAxis3, yAxis3);
 
         final String[] yLabels3 = {
                 "0분", "5분", "10분", "15분", "20분", "25분", "30분", "35분", "40분", "45분", "50분", "55분",
@@ -112,7 +119,7 @@ public class StatisticsFragment extends Fragment {
         lineChart4 = view.findViewById(R.id.lineChart4);
         final XAxis xAxis4 = lineChart4.getXAxis(); // X축
         final YAxis yAxis4 = lineChart4.getAxisLeft(); // Y축
-        setChartOptions(lineChart4, xAxis4, yAxis4);
+        setLineChartOptions(lineChart4, xAxis4, yAxis4);
 
         final String[] yLabels4 = {
                 "0분", "30분", "1시간", "1시간 30분", "2시간", "2시간 30분", "3시간", "3시간 30분",
@@ -126,10 +133,15 @@ public class StatisticsFragment extends Fragment {
         lineChart5 = view.findViewById(R.id.lineChart5);
         final XAxis xAxis5 = lineChart5.getXAxis(); // X축
         final YAxis yAxis5 = lineChart5.getAxisLeft(); // Y축
-        setChartOptions(lineChart5, xAxis5, yAxis5);
-
+        setLineChartOptions(lineChart5, xAxis5, yAxis5);
         final ArrayList<Entry> entries5 = new ArrayList<>();
 
+        // 자세 교정 차트
+        barChart = view.findViewById(R.id.barChart);
+        final XAxis xAxis6 = barChart.getXAxis(); // X축
+        final YAxis yAxis6 = barChart.getAxisLeft(); // Y축
+        setBarChartOptions(barChart, xAxis6, yAxis6);
+        final ArrayList<BarEntry> entries6 = new ArrayList<>();
 
         // 수면 데이터 변경시
         db.sleepDao().getRecentSleeps().observe(this, new Observer<List<Sleep>>() {
@@ -140,6 +152,7 @@ public class StatisticsFragment extends Fragment {
                 entries3.clear();
                 entries4.clear();
                 entries5.clear();
+                entries6.clear();
                 if (!sleeps.isEmpty()) {
                     for (int i = 0; i < sleeps.size(); i++) {
                         int index = (sleeps.size() - 1) - i;
@@ -148,22 +161,31 @@ public class StatisticsFragment extends Fragment {
                             Date date = format2.parse(sleep.getSleepDate());
 
                             xLabels.add(sdf2.format(date));
+
+
                             entries.add(new Entry(i, timeToFloat(
                                     sleep.getWhenSleep(), 18)));
                             entries2.add(new Entry(i, timeToFloat(
                                     sleep.getWhenWake(), 0)));
-                            long diffTime = sdf.parse(sleep.getWhenSleep()).getTime() - sdf.parse(sleep.getWhenStart()).getTime();
+
+                            // 잠들기까지 시간
+                            long diffTime = sdf.parse(sleep.getWhenSleep()).getTime()
+                                    - sdf.parse(sleep.getWhenStart()).getTime();
+
                             entries3.add(new Entry(i, timeToFloatForMinute(
                                     sdf.format(diffTime), 5)));
                             entries4.add(new Entry(i, timeToFloatForMinute(
                                     sleep.getSleepTime(), 30)));
                             entries5.add(new Entry(i, timeToFloatForMinute(
                                     sleep.getConTime(), 5)));
+                            entries6.add(new BarEntry(i, sleep.getAdjCount()));
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
                 }
+
+                // x, y 라벨 값 반환
                 xAxis.setValueFormatter(new IndexAxisValueFormatter() {
                     @Override
                     public String getFormattedValue(float value) {
@@ -234,43 +256,62 @@ public class StatisticsFragment extends Fragment {
                     }
                 });
 
+                xAxis6.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return xLabels.get((int) value);
+                    }
+                });
+
+                yAxis6.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return (int) value + "번";
+                    }
+                });
+
+                // 데이터 셋 설정
                 LineDataSet dataSet = new LineDataSet(entries, "Label");
-                setDataSetOptions(dataSet);
+                setLineDataSetOptions(dataSet);
                 LineData lineData = new LineData(dataSet);
                 lineChart.setData(lineData);
                 lineChart.invalidate(); // refresh
 
                 LineDataSet dataSet2 = new LineDataSet(entries2, "Label");
-                setDataSetOptions(dataSet2);
+                setLineDataSetOptions(dataSet2);
                 LineData lineData2 = new LineData(dataSet2);
                 lineChart2.setData(lineData2);
                 lineChart2.invalidate(); // refresh
 
                 LineDataSet dataSet3 = new LineDataSet(entries3, "Label");
-                setDataSetOptions(dataSet3);
+                setLineDataSetOptions(dataSet3);
                 LineData lineData3 = new LineData(dataSet3);
                 lineChart3.setData(lineData3);
                 lineChart3.invalidate(); // refresh
 
                 LineDataSet dataSet4 = new LineDataSet(entries4, "Label");
-                setDataSetOptions(dataSet4);
+                setLineDataSetOptions(dataSet4);
                 LineData lineData4 = new LineData(dataSet4);
                 lineChart4.setData(lineData4);
                 lineChart4.invalidate(); // refresh
 
                 LineDataSet dataSet5 = new LineDataSet(entries5, "Label");
-                setDataSetOptions(dataSet5);
+                setLineDataSetOptions(dataSet5);
                 LineData lineData5 = new LineData(dataSet5);
                 lineChart5.setData(lineData5);
                 lineChart5.invalidate(); // refresh
 
-
+                BarDataSet barDataSet = new BarDataSet(entries6, "Label");
+                setBarDataSetOptions(barDataSet);
+                BarData barData = new BarData(barDataSet);
+                barChart.setData(barData);
+                barChart.invalidate();
             }
         });
     }
 
-    // 차트의 기본 옵션 세팅
-    private void setChartOptions(LineChart lineChart, XAxis xAxis, YAxis yAxis) {
+    // 라인 차트의 기본 옵션 세팅
+    private void setLineChartOptions(LineChart lineChart, XAxis xAxis, YAxis yAxis) {
         lineChart.getAxisRight().setEnabled(false); // 오른쪽 라인 사용 안함
         lineChart.setDoubleTapToZoomEnabled(false);
         lineChart.setPinchZoom(false);
@@ -294,13 +335,45 @@ public class StatisticsFragment extends Fragment {
         yAxis.setXOffset(15.0f);
     }
 
-    // data set 옵션 세팅
-    private void setDataSetOptions(LineDataSet dataSet) {
+    // 바 차트 기본 옵션 세팅
+    private void setBarChartOptions(BarChart barChart, XAxis xAxis, YAxis yAxis) {
+        barChart.getAxisRight().setEnabled(false); // 오른쪽 라인 사용 안함
+        barChart.setDoubleTapToZoomEnabled(false);
+        barChart.setPinchZoom(false);
+        barChart.getLegend().setEnabled(false);
+        barChart.getDescription().setEnabled(false);
+        barChart.setHighlightPerTapEnabled(false);
+        barChart.setHighlightPerDragEnabled(false);
+
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // X축 아래로
+        xAxis.setTextColor(Color.GRAY);
+        xAxis.setDrawGridLines(false);
+        xAxis.setGranularity(1f);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setTextSize(12.0f);
+        xAxis.setSpaceMin(0.5f);
+        xAxis.setSpaceMax(0.5f);
+
+        yAxis.setTextColor(Color.GRAY);
+        yAxis.setGranularity(1f);
+        yAxis.setTextSize(12.0f);
+        yAxis.setXOffset(15.0f);
+        yAxis.setAxisMinimum(0.0f);
+    }
+
+    // line data set 옵션 세팅
+    private void setLineDataSetOptions(LineDataSet dataSet) {
         dataSet.setDrawFilled(true); // 아래쪽 채우기
         dataSet.setLineWidth(4.0f);
         dataSet.setCircleRadius(5.0f);
         dataSet.setCircleHoleRadius(3.0f);
         dataSet.setValueTextSize(0.0f);
+    }
+
+    // bar data set 옵션 세팅
+    private void setBarDataSetOptions(BarDataSet dataSet) {
+        dataSet.setValueTextSize(0.0f);
+        dataSet.setBarBorderWidth(2f);
     }
 
     // 입력된 시간을 차트의 y좌표 값으로 변환

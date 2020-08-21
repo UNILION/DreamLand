@@ -19,7 +19,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp"
                 android:text="취침 시간"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
@@ -33,7 +35,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginRight="16dp"
                 android:text="기상 시간"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
@@ -47,7 +51,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginRight="16dp"
                 android:text="잠들기까지 걸린 시간"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
@@ -61,7 +67,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginRight="16dp"
                 android:text="수면 시간"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
@@ -75,7 +83,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginRight="16dp"
                 android:text="코골이 시간"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
@@ -89,13 +99,15 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginRight="16dp"
                 android:text="자세 교정"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/lineChart6"
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barChart"
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
                 android:layout_margin="16dp" />
@@ -103,13 +115,15 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginRight="16dp"
                 android:text="수면 만족도"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/lineChart7"
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barChart2"
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
                 android:layout_margin="16dp" />
@@ -117,13 +131,15 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginRight="16dp"
                 android:text="산소 포화도"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/lineChart8"
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barChart3"
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
                 android:layout_margin="16dp" />
