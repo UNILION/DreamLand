@@ -143,6 +143,13 @@ public class StatisticsFragment extends Fragment {
         setBarChartOptions(barChart, xAxis6, yAxis6);
         final ArrayList<BarEntry> entries6 = new ArrayList<>();
 
+        // 수면 만족도 차트
+        barChart2 = view.findViewById(R.id.barChart2);
+        final XAxis xAxis7 = barChart2.getXAxis(); // X축
+        final YAxis yAxis7 = barChart2.getAxisLeft(); // Y축
+        setBarChartOptions(barChart2, xAxis7, yAxis7);
+        final ArrayList<BarEntry> entries7 = new ArrayList<>();
+
         // 수면 데이터 변경시
         db.sleepDao().getRecentSleeps().observe(this, new Observer<List<Sleep>>() {
             @Override
@@ -153,6 +160,7 @@ public class StatisticsFragment extends Fragment {
                 entries4.clear();
                 entries5.clear();
                 entries6.clear();
+                entries7.clear();
                 if (!sleeps.isEmpty()) {
                     for (int i = 0; i < sleeps.size(); i++) {
                         int index = (sleeps.size() - 1) - i;
@@ -179,6 +187,7 @@ public class StatisticsFragment extends Fragment {
                             entries5.add(new Entry(i, timeToFloatForMinute(
                                     sleep.getConTime(), 5)));
                             entries6.add(new BarEntry(i, sleep.getAdjCount()));
+                            entries7.add(new BarEntry(i, sleep.getSatLevel()));
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
@@ -270,6 +279,20 @@ public class StatisticsFragment extends Fragment {
                     }
                 });
 
+                xAxis7.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return xLabels.get((int) value);
+                    }
+                });
+
+                yAxis7.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return (int) value + "점";
+                    }
+                });
+
                 // 데이터 셋 설정
                 LineDataSet dataSet = new LineDataSet(entries, "Label");
                 setLineDataSetOptions(dataSet);
@@ -306,6 +329,12 @@ public class StatisticsFragment extends Fragment {
                 BarData barData = new BarData(barDataSet);
                 barChart.setData(barData);
                 barChart.invalidate();
+
+                BarDataSet barDataSet2 = new BarDataSet(entries7, "Label");
+                setBarDataSetOptions(barDataSet2);
+                BarData barData2 = new BarData(barDataSet2);
+                barChart2.setData(barData2);
+                barChart2.invalidate();
             }
         });
     }
