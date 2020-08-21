@@ -1,36 +1,19 @@
 package com.example.dreamland;
 
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Paint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.NumberPicker;
-import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
-
-import com.example.dreamland.asynctask.NonRecommImageAsyncTask;
-
-import java.lang.reflect.Field;
-import java.util.Calendar;
 
 public class HomeFragment extends Fragment {
 

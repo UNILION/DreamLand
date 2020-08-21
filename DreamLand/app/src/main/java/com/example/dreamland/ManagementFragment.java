@@ -22,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dreamland.asynctask.GetSleepByDateAsyncTask;
-import com.example.dreamland.asynctask.NonRecommImageAsyncTask;
 import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
 import com.willy.ratingbar.ScaleRatingBar;
@@ -58,10 +57,6 @@ public class ManagementFragment extends Fragment {
     private ScrollView scrollView;
     private LinearLayout infoLayout;
     private ScaleRatingBar ratingBar;
-    private Button posButton;
-    private Button posDismissButton;
-    private ImageView recommImageView;
-    private ImageView nonRecommImageView;
 
     private Sleep firstSleep;
     private Sleep lastSleep;
@@ -71,7 +66,6 @@ public class ManagementFragment extends Fragment {
     HorizontalCalendar horizontalCalendar;
     List<Sleep> sleepList;
     int[] posImages;
-    AlertDialog posDiaglog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -122,7 +116,6 @@ public class ManagementFragment extends Fragment {
         ivCondition = (ImageView) view.findViewById(R.id.iv_condition);
         tvCondition = (TextView) view.findViewById(R.id.tv_condition);
         ratingBar = (ScaleRatingBar) view.findViewById(R.id.ratingBar);
-        posButton = (Button) view.findViewById(R.id.posButton);
 
         sf = getContext().getSharedPreferences("bed", Context.MODE_PRIVATE);
 
@@ -176,33 +169,6 @@ public class ManagementFragment extends Fragment {
 
             }
 
-        });
-
-
-        // 수면 자세 확인 버튼
-        posButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
-                View dlgView = getLayoutInflater().from(getContext()).inflate(
-                        R.layout.diaglog_pos, null);
-                posDismissButton = (Button) dlgView.findViewById(R.id.posDismissButton);
-                recommImageView = (ImageView) dlgView.findViewById(R.id.ivPredicPos);
-                nonRecommImageView = (ImageView) dlgView.findViewById(R.id.nonRecommImageView);
-
-                int id = selectedSleep.getSleepId() - 1;
-                new NonRecommImageAsyncTask(db.sleepDao(), nonRecommImageView, id).execute();
-
-                // 수면 자세 확인 다이얼로그 나가기 버튼
-                posDismissButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        posDiaglog.dismiss();
-                    }
-                });
-                posDiaglog = builder.setView(dlgView).create();
-                posDiaglog.show();
-            }
         });
 
         updateUI();
