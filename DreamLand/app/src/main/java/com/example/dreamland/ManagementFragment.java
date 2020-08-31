@@ -2,6 +2,7 @@ package com.example.dreamland;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,13 +24,16 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.dreamland.asynctask.GetAdjsByIdAsyncTask;
 import com.example.dreamland.asynctask.GetSleepByDateAsyncTask;
+import com.example.dreamland.database.Adjustment;
 import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
 import com.willy.ratingbar.ScaleRatingBar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -56,6 +62,7 @@ public class ManagementFragment extends Fragment {
     private ImageView ivCondition;
     private ScrollView scrollView;
     private LinearLayout infoLayout;
+    private LinearLayout posLayout;
     private ScaleRatingBar ratingBar;
 
     private Sleep firstSleep;
@@ -66,6 +73,8 @@ public class ManagementFragment extends Fragment {
     HorizontalCalendar horizontalCalendar;
     List<Sleep> sleepList;
     int[] posImages;
+    Adjustment[] items;
+    PosDetailAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -112,6 +121,7 @@ public class ManagementFragment extends Fragment {
         tvOxy = (TextView) view.findViewById(R.id.tvOxy);
         tvPos = (TextView) view.findViewById(R.id.tvPos);
         infoLayout = (LinearLayout) view.findViewById(R.id.infoLayout);
+        posLayout = (LinearLayout) view.findViewById(R.id.posLayout);
         scrollView = (ScrollView) view.findViewById(R.id.scrollView);
         ivCondition = (ImageView) view.findViewById(R.id.iv_condition);
         tvCondition = (TextView) view.findViewById(R.id.tv_condition);
@@ -166,9 +176,45 @@ public class ManagementFragment extends Fragment {
                 } else {
                     Toast.makeText(getContext(), "수면 정보 없음", Toast.LENGTH_SHORT).show();
                 }
-
             }
+        });
 
+        // 자세교정 클릭시
+        posLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View dlgView = getLayoutInflater().from(getContext()).inflate(
+                        R.layout.pos_detail_layout, null);
+                RecyclerView recyclerview = dlgView.findViewById(R.id.posRecyclerview);
+                recyclerview.setLayoutManager(
+                        new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+//                try {
+                //items = new GetAdjsByIdAsyncTask(db.adjustmentDao(), selectedSleep.getSleepId()).get();
+                items = new Adjustment[]{
+                        new Adjustment(1, "dd"), new Adjustment(1, "dd"),
+                        new Adjustment(1, "dd"),
+                        new Adjustment(1, "dd"),
+                        new Adjustment(1, "dd")
+                };
+                adapter = new PosDetailAdapter(items);
+                recyclerview.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+//                } catch (ExecutionException e) {
+//                    e.printStackTrace();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
+                builder.setTitle("자세 교정 시간")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // 동작 없음
+                            }
+                        });
+                builder.setView(dlgView).create().show();
+            }
         });
 
         updateUI();

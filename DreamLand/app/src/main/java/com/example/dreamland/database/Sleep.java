@@ -28,7 +28,7 @@ public class Sleep {
             String sleepDate, String whenStart, String whenSleep,
             String whenWake, String sleepTime, String conStartTime, String conStopTime,
             String conTime, int beforeAdjPos, int afterAdjPos, int adjCount,
-            int satLevel, int oxyStr, int sysAdjPos,int recommPos, int nonRecommPos) {
+            int satLevel, int oxyStr, int sysAdjPos, int recommPos, int nonRecommPos) {
         this.sleepDate = sleepDate;
         this.whenStart = whenStart;
         this.whenSleep = whenSleep;
