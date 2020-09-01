@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
         // from InitActivity
         if (requestCode == 1000) { // 모드에 따른 UI 수정
             if (resultCode == 1001) {
-                settingFragment.hideDeseaseView();
+                settingFragment.hideDiseaseView();
                 managementFragment.changeConditionView();
             }
         } else if (requestCode == REQUEST_ENABLE_BT) {

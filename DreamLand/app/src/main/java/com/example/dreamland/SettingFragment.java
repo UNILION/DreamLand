@@ -1,7 +1,6 @@
 package com.example.dreamland;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,15 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
-
-import com.github.mikephil.charting.data.LineRadarDataSet;
-import com.xw.repo.BubbleSeekBar;
 
 public class SettingFragment extends Fragment {
 
@@ -28,10 +26,13 @@ public class SettingFragment extends Fragment {
     LinearLayout myDiseaseButton;
     LinearLayout bedPositionButton;
     TextView tvSleepSetting;
+    TextView tvDisease;
     View line1;
     View line2;
     View line3;
-
+    RadioGroup diseaseRadioGroup;
+    int diseaseIndex;
+    final String[] diseaseNames = { "허리디스크", "강직성척추염", "척추관협착증", "척추전방전위증" };
 
     public SettingFragment() {
         // Required empty public constructor
@@ -52,18 +53,22 @@ public class SettingFragment extends Fragment {
         myDiseaseButton = (LinearLayout) view.findViewById(R.id.myDiseaseLayout);
         bedPositionButton = (LinearLayout) view.findViewById(R.id.bedPositionButtonLayout);
         tvSleepSetting = (TextView) view.findViewById(R.id.tvSleepSetting);
+        tvDisease = view.findViewById(R.id.tvDisease);
         line1 = (View) view.findViewById(R.id.view1);
         line2 = (View) view.findViewById(R.id.view2);
         line3 = (View) view.findViewById(R.id.view3);
 
         sf = getContext().getSharedPreferences("bed", getContext().MODE_PRIVATE);
         int mode = sf.getInt("mode", 0); // 사용자가 설정한 모드를 불러옴
+        diseaseIndex = sf.getInt("disease", 0); // 설정한 질환을 불러옴
+        tvDisease.setText(diseaseNames[diseaseIndex]);
 
         // 코골이, 무호흡모드이면 질병 관련 뷰들을 숨김
         if (mode == 1 || mode == 2) {
-            hideDeseaseView();
+            hideDiseaseView();
         }
 
+        // 초기화 버튼
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,13 +100,36 @@ public class SettingFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 View dlgView = getLayoutInflater().from(getContext()).inflate(
-                        R.layout.select_desease_layout, null);
+                        R.layout.select_disease_layout, null);
+                diseaseRadioGroup = dlgView.findViewById(R.id.diseaseRadioGroup);
+                RadioButton[] radioButtons = new RadioButton[4];
+                radioButtons[0] = dlgView.findViewById(R.id.radioButton);
+                radioButtons[1] = dlgView.findViewById(R.id.radioButton2);
+                radioButtons[2] = dlgView.findViewById(R.id.radioButton3);
+                radioButtons[3] = dlgView.findViewById(R.id.radioButton4);
+                radioButtons[diseaseIndex].setChecked(true);
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
                 builder.setTitle("나의 질환")
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                //TODO 질환을 저장하고 라디오 버튼과 프래그먼트의 상태를 해당 질환으로 변경
+                                switch (diseaseRadioGroup.getCheckedRadioButtonId()) {
+                                    case R.id.radioButton:
+                                        diseaseIndex = 0;
+                                        break;
+                                    case R.id.radioButton2:
+                                        diseaseIndex = 1;
+                                        break;
+                                    case R.id.radioButton3:
+                                        diseaseIndex = 2;
+                                        break;
+                                    case R.id.radioButton4:
+                                        diseaseIndex = 3;
+                                        break;
+                                }
+                                sf.edit().putInt("disease", diseaseIndex).commit();
+                                tvDisease.setText(diseaseNames[diseaseIndex]);
                             }
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -116,7 +144,7 @@ public class SettingFragment extends Fragment {
     }
 
     // 질환 관련 뷰를 숨김
-    public void hideDeseaseView() {
+    public void hideDiseaseView() {
         myDiseaseButton.setVisibility(View.GONE);
         bedPositionButton.setVisibility(View.GONE);
         tvSleepSetting.setVisibility(View.GONE);

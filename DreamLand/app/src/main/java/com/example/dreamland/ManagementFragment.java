@@ -14,19 +14,15 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.dreamland.asynctask.GetAdjsByIdAsyncTask;
-import com.example.dreamland.asynctask.GetAllAdjsAsyncTask;
 import com.example.dreamland.asynctask.GetSleepByDateAsyncTask;
 import com.example.dreamland.database.Adjustment;
 import com.example.dreamland.database.AppDatabase;
@@ -35,7 +31,6 @@ import com.willy.ratingbar.ScaleRatingBar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
