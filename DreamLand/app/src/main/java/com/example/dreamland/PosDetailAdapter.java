@@ -1,5 +1,6 @@
 package com.example.dreamland;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dreamland.database.Adjustment;
 
+import java.util.List;
+
 public class PosDetailAdapter extends RecyclerView.Adapter<PosDetailAdapter.ViewHolder> {
 
-    Adjustment[] items;
+    List<Adjustment> items;
 
-    public PosDetailAdapter(Adjustment[] items) {
+    public PosDetailAdapter(List<Adjustment> items) {
         this.items = items;
     }
 
@@ -28,14 +31,14 @@ public class PosDetailAdapter extends RecyclerView.Adapter<PosDetailAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Adjustment item = items[position];
-        holder.tvId.setText(String.valueOf(item.getAdjId()));
+        Adjustment item = items.get(position);
+        holder.tvId.setText(String.valueOf(position + 1));
         holder.tvTime.setText(item.getAdjTime());
     }
 
     @Override
     public int getItemCount() {
-        return items.length;
+        return items.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

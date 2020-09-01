@@ -15,7 +15,7 @@ public interface AdjustmentDao {
     void insert(Adjustment adjustment);
 
     @Query("SELECT * FROM adjustment WHERE sleepNo=:id")
-    Adjustment[] getAdjsById(int id);
+    List<Adjustment> getAdjsById(String id);
 
     @Query("DELETE FROM adjustment")
     void deleteAll();

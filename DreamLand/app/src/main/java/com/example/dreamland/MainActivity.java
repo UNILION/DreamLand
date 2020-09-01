@@ -312,37 +312,37 @@ public class MainActivity extends AppCompatActivity {
                         1, 1, 3)
                 );
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        1, "00:32"
+                        "1", "00:32"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        2, "00:35"
+                        "2", "00:35"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        2, "00:51"
+                        "2", "00:51"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        3, "01:13"
+                        "3", "01:13"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        3, "03:11"
+                        "3", "03:11"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        3, "04:14"
+                        "3", "04:14"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        4, "05:23"
+                        "4", "05:23"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        4, "05:41"
+                        "4", "05:41"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        4, "06:52"
+                        "4", "06:52"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        5, "06:42"
+                        "5", "06:42"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        5, "06:55"
+                        "5", "06:55"
                 ));
                 return true;
 

@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dreamland.asynctask.GetAdjsByIdAsyncTask;
+import com.example.dreamland.asynctask.GetAllAdjsAsyncTask;
 import com.example.dreamland.asynctask.GetSleepByDateAsyncTask;
 import com.example.dreamland.database.Adjustment;
 import com.example.dreamland.database.AppDatabase;
@@ -73,7 +75,7 @@ public class ManagementFragment extends Fragment {
     HorizontalCalendar horizontalCalendar;
     List<Sleep> sleepList;
     int[] posImages;
-    Adjustment[] items;
+    List<Adjustment> items;
     PosDetailAdapter adapter;
 
     @Override
@@ -173,8 +175,12 @@ public class ManagementFragment extends Fragment {
                 selectedSleep = getSleepByDate(date.getTime());
                 if (selectedSleep != null) {
                     setUI(selectedSleep);
-                } else {
-                    Toast.makeText(getContext(), "수면 정보 없음", Toast.LENGTH_SHORT).show();
+                    try {
+                        items = new GetAdjsByIdAsyncTask(db.adjustmentDao(),
+                                String.valueOf(selectedSleep.getSleepId())).execute().get();
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -188,22 +194,8 @@ public class ManagementFragment extends Fragment {
                 RecyclerView recyclerview = dlgView.findViewById(R.id.posRecyclerview);
                 recyclerview.setLayoutManager(
                         new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
-//                try {
-                //items = new GetAdjsByIdAsyncTask(db.adjustmentDao(), selectedSleep.getSleepId()).get();
-                items = new Adjustment[]{
-                        new Adjustment(1, "dd"), new Adjustment(1, "dd"),
-                        new Adjustment(1, "dd"),
-                        new Adjustment(1, "dd"),
-                        new Adjustment(1, "dd")
-                };
                 adapter = new PosDetailAdapter(items);
                 recyclerview.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-//                } catch (ExecutionException e) {
-//                    e.printStackTrace();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
                 builder.setTitle("자세 교정 시간")

@@ -8,10 +8,10 @@ import androidx.room.PrimaryKey;
 public class Adjustment {
     @PrimaryKey(autoGenerate = true)
     private int adjId;  // ID
-    private int sleepNo;  // sleep 테이블의 ID
+    private String sleepNo;  // sleep 테이블의 ID
     private String adjTime;  // 교정 시각
 
-    public Adjustment(int sleepNo, String adjTime) {
+    public Adjustment(String sleepNo, String adjTime) {
         this.sleepNo = sleepNo;
         this.adjTime = adjTime;
     }
@@ -24,11 +24,11 @@ public class Adjustment {
         this.adjId = adjId;
     }
 
-    public int getSleepNo() {
+    public String getSleepNo() {
         return sleepNo;
     }
 
-    public void setSleepNo(int sleepNo) {
+    public void setSleepNo(String sleepNo) {
         this.sleepNo = sleepNo;
     }
 
