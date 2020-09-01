@@ -189,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void resetData() {
         sf.edit().putInt("mode", 0).apply();
+        sf.edit().putInt("disease", 0).apply();
         new DeleteSleepAsyncTask(db.sleepDao()).execute();
         new DeleteAdjAsyncTask(db.adjustmentDao()).execute();
         finish();

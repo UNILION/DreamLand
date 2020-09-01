@@ -60,12 +60,13 @@ public class SettingFragment extends Fragment {
 
         sf = getContext().getSharedPreferences("bed", getContext().MODE_PRIVATE);
         int mode = sf.getInt("mode", 0); // 사용자가 설정한 모드를 불러옴
-        diseaseIndex = sf.getInt("disease", 0); // 설정한 질환을 불러옴
-        tvDisease.setText(diseaseNames[diseaseIndex]);
 
         // 코골이, 무호흡모드이면 질병 관련 뷰들을 숨김
         if (mode == 1 || mode == 2) {
             hideDiseaseView();
+        } else {
+            diseaseIndex = sf.getInt("disease", 0); // 설정한 질환을 불러옴
+            tvDisease.setText(diseaseNames[diseaseIndex]);
         }
 
         // 초기화 버튼
