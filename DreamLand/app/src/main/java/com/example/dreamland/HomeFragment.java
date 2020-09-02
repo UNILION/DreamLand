@@ -66,7 +66,7 @@ public class HomeFragment extends Fragment {
     private void showDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
         final View dlgView = getLayoutInflater().from(getContext()).inflate(
-                R.layout.diaglog_before_sleep, null);
+                R.layout.dialog_before_sleep, null);
         selButton1 = dlgView.findViewById(R.id.selButton1);
         selButton2 = dlgView.findViewById(R.id.selButton2);
         selButton3 = dlgView.findViewById(R.id.selButton3);

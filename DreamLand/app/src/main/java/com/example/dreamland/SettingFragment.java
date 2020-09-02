@@ -33,6 +33,7 @@ public class SettingFragment extends Fragment {
     RadioGroup diseaseRadioGroup;
     int diseaseIndex;
     final String[] diseaseNames = { "허리디스크", "강직성척추염", "척추관협착증", "척추전방전위증" };
+    String position;
 
     public SettingFragment() {
         // Required empty public constructor
@@ -64,8 +65,9 @@ public class SettingFragment extends Fragment {
         // 코골이, 무호흡모드이면 질병 관련 뷰들을 숨김
         if (mode == 1 || mode == 2) {
             hideDiseaseView();
-        } else {
+        } else { // 질환 완화 모드
             diseaseIndex = sf.getInt("disease", 0); // 설정한 질환을 불러옴
+             position = sf.getString("position", "0000000000");
             tvDisease.setText(diseaseNames[diseaseIndex]);
         }
 
@@ -95,6 +97,30 @@ public class SettingFragment extends Fragment {
             }
         });
 
+        // 사용자 조정 버튼
+        bedPositionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View dlgView = getLayoutInflater().from(getContext()).inflate(
+                        R.layout.dialog_bed_position, null);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
+                builder.setTitle("사용자 조정")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // 아무 동작 없음
+                            }
+                        });
+                builder.setView(dlgView).create().show();
+            }
+        });
 
         // 나의 질환 버튼
         myDiseaseButton.setOnClickListener(new View.OnClickListener() {
