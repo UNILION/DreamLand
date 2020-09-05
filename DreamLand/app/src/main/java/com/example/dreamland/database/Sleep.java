@@ -21,14 +21,14 @@ public class Sleep {
     private int satLevel;  // 수면 만족도
     private int oxyStr;  // 산소 포화도
     private int sysAdjPos; // 시스템 교정 자세(전날 교정 후 자세)
-    private int recommPos; // 추천 자세(지난주 추천 빈도수가 높은 자세)
-    private int nonRecommPos; // 비추천 자세(전날 교정 전 자세)
+    private int heartRate; // 심박수
+    private int humidity; // 습도
 
     public Sleep(
             String sleepDate, String whenStart, String whenSleep,
             String whenWake, String sleepTime, String conStartTime, String conStopTime,
             String conTime, int beforeAdjPos, int afterAdjPos, int adjCount,
-            int satLevel, int oxyStr, int sysAdjPos, int recommPos, int nonRecommPos) {
+            int satLevel, int oxyStr, int sysAdjPos, int heartRate, int humidity) {
         this.sleepDate = sleepDate;
         this.whenStart = whenStart;
         this.whenSleep = whenSleep;
@@ -43,8 +43,8 @@ public class Sleep {
         this.satLevel = satLevel;
         this.oxyStr = oxyStr;
         this.sysAdjPos = sysAdjPos;
-        this.recommPos = recommPos;
-        this.nonRecommPos = nonRecommPos;
+        this.heartRate = heartRate;
+        this.humidity = humidity;
     }
 
     public int getSleepId() {
@@ -167,19 +167,11 @@ public class Sleep {
         this.sysAdjPos = sysAdjPos;
     }
 
-    public int getRecommPos() {
-        return recommPos;
-    }
+    public int getHeartRate() { return heartRate; }
 
-    public void setRecommPos(int recommPos) {
-        this.recommPos = recommPos;
-    }
+    public void setHeartRate(int heartRate) { this.heartRate = heartRate; }
 
-    public int getNonRecommPos() {
-        return nonRecommPos;
-    }
+    public int getHumidity() { return humidity; }
 
-    public void setNonRecommPos(int nonRecommPos) {
-        this.nonRecommPos = nonRecommPos;
-    }
+    public void setHumidity(int humidity) { this.humidity = humidity; }
 }

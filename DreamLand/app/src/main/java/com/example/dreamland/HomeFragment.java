@@ -83,7 +83,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // 수면 중 1번 교정
+        // 수면 중 한 번 교정
         selButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

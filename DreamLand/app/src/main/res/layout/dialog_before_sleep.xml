@@ -63,7 +63,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/round_button"
-        android:text="수면 중 1번 교정"
+        android:text="수면 중 한 번 교정"
         android:textColor="@color/colorWhite"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/selButton3"
