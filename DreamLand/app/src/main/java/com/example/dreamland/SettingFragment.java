@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -103,22 +106,20 @@ public class SettingFragment extends Fragment {
             public void onClick(View view) {
                 View dlgView = getLayoutInflater().from(getContext()).inflate(
                         R.layout.dialog_bed_position, null);
+                Button completeButton = dlgView.findViewById(R.id.yesButton);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
-                builder.setTitle("사용자 조정")
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                final AlertDialog dialog = builder.setView(dlgView).create();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
 
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // 아무 동작 없음
-                            }
-                        });
-                builder.setView(dlgView).create().show();
+                // 완료 버튼
+                completeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                    }
+                });
             }
         });
 
