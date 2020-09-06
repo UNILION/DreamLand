@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -43,6 +44,12 @@ public class SettingFragment extends Fragment {
     final String[] diseaseNames = { "허리디스크", "강직성척추염", "척추관협착증", "척추전방전위증" };
     String position;
 
+    // Test
+    Button button1;
+    Button button2;
+    EditText editText1;
+    EditText editText2;
+
     public SettingFragment() {
         // Required empty public constructor
     }
@@ -67,6 +74,25 @@ public class SettingFragment extends Fragment {
         line1 = (View) view.findViewById(R.id.view1);
         line2 = (View) view.findViewById(R.id.view2);
         line3 = (View) view.findViewById(R.id.view3);
+
+        // Test
+        button1 = (Button) view.findViewById(R.id.button);
+        button2 = (Button) view.findViewById(R.id.button2);
+        editText1 = (EditText) view.findViewById(R.id.editTextTextPersonName);
+        editText2 = (EditText) view.findViewById(R.id.editTextTextPersonName2);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getContext()).bluetoothService.writeBLT1(editText1.getText().toString());
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getContext()).bluetoothService.writeBLT2(editText2.getText().toString());
+            }
+        });
 
         sf = getContext().getSharedPreferences("bed", getContext().MODE_PRIVATE);
         int mode = sf.getInt("mode", 0); // 사용자가 설정한 모드를 불러옴
@@ -183,8 +209,6 @@ public class SettingFragment extends Fragment {
                 ((MainActivity) getActivity()).enableBluetooth();
                 StatusView statusView = (StatusView) ((MainActivity) getContext()).findViewById(R.id.status);
                 statusView.setStatus(Status.LOADING);
-                LinearLayout connectButton = (LinearLayout) ((MainActivity) getContext()).findViewById(R.id.bltSettingLayout);
-                connectButton.setEnabled(false);
             }
         });
     }

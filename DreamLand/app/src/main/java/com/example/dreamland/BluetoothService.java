@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
+import android.widget.LinearLayout;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,8 +29,7 @@ public class BluetoothService {
     private Context context;
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter bluetoothAdapter;
-    private ConnectThread connectThread;
-    private ConnectedThread connectedThread;
+    private ConnectedThread[] connectedThread;
     ArrayList<BluetoothSocket> bltSockets;
     int deviceCount;
     Handler mHandler;
@@ -39,6 +39,7 @@ public class BluetoothService {
         this.context = context;
         this.handler = handler;
         bltSockets = new ArrayList<BluetoothSocket>();
+        connectedThread = new ConnectedThread[2];
         deviceCount = 0;
         mHandler = new Handler();
     }
@@ -55,14 +56,20 @@ public class BluetoothService {
 
     // 기기 연결 후 입출력 함수
     void connected(BluetoothSocket socket, BluetoothDevice device) {
-        connectedThread = new BluetoothService.ConnectedThread(socket);
-        connectedThread.start();
+        if (device.getName().equals("BLT1")) {
+            connectedThread[0] = new BluetoothService.ConnectedThread(socket);
+            connectedThread[0].start();
+        } else if (device.getName().equals("BLT2")) {
+            connectedThread[1] = new BluetoothService.ConnectedThread(socket);
+            connectedThread[1].start();
+        } else if (device.getName().equals("BLT3")) {
+            new BluetoothService.ConnectedThread(socket).start();
+        }
     }
 
     // 기기 연결 함수
     void connect(BluetoothDevice device) {
-        connectThread = new ConnectThread(device);
-        connectThread.start();
+        new ConnectThread(device).start();
     }
 
     // 기기 연결 해제 함수
@@ -77,9 +84,20 @@ public class BluetoothService {
         }
     }
 
+    // 연결이 모두 완료되면 호출
     void connectionCompleted() {
         StatusView statusView = (StatusView) ((MainActivity)context).findViewById(R.id.status);
         statusView.setStatus(Status.COMPLETE);
+        LinearLayout connectButton = (LinearLayout) ((MainActivity)context).findViewById(R.id.bltSettingLayout);
+        connectButton.setEnabled(false);
+    }
+
+    void writeBLT1(String msg) {
+        connectedThread[0].write(msg.getBytes());
+    }
+
+    void writeBLT2(String msg) {
+        connectedThread[1].write(msg.getBytes());
     }
 
     // 기기 연결 후 사용
@@ -118,7 +136,7 @@ public class BluetoothService {
             deviceCount++;
 
             if (deviceCount == 3) { // 3개의 기기 연결 완료
-                Log.d("BLT", "3개 연결 완료");
+                Log.d("BLT", "연결 완료");
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {

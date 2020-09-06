@@ -361,8 +361,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(@NonNull Message msg) {
             byte[] readBuf = (byte[]) msg.obj;
-            String readMessage = new String(readBuf, 0, msg.arg1);
-            Log.d("BLT", readMessage);
+            if (msg.arg1 > 0) {
+                String readMessage = new String(readBuf, 0, msg.arg1);
+                Log.d("BLT", readMessage);
+            }
         }
     }
 }
