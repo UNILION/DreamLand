@@ -1,8 +1,11 @@
 package com.example.dreamland;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,19 +19,28 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import iammert.com.library.Status;
+import iammert.com.library.StatusView;
+
 public class BluetoothService {
     private static final String TAG = "BLT";
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+    private Context context;
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter bluetoothAdapter;
     private ConnectThread connectThread;
     private ConnectedThread connectedThread;
     ArrayList<BluetoothSocket> bltSockets;
+    int deviceCount;
+    Handler mHandler;
 
-    public BluetoothService(Handler handler) {
+    public BluetoothService(Context context, Handler handler) {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        this.context = context;
         this.handler = handler;
         bltSockets = new ArrayList<BluetoothSocket>();
+        deviceCount = 0;
+        mHandler = new Handler();
     }
 
     // Defines several constants used when transmitting messages between the
@@ -58,10 +70,16 @@ public class BluetoothService {
         for (BluetoothSocket socket : bltSockets) {
             try {
                 socket.close();
+                deviceCount--;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    void connectionCompleted() {
+        StatusView statusView = (StatusView) ((MainActivity)context).findViewById(R.id.status);
+        statusView.setStatus(Status.COMPLETE);
     }
 
     // 기기 연결 후 사용
@@ -96,6 +114,18 @@ public class BluetoothService {
         public void run() {
             mmBuffer = new byte[1024];
             int numBytes; // bytes returned from read()
+
+            deviceCount++;
+
+            if (deviceCount == 3) { // 3개의 기기 연결 완료
+                Log.d("BLT", "3개 연결 완료");
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        connectionCompleted();
+                    }
+                });
+            }
 
             // Keep listening to the InputStream until an exception occurs.
             while (true) {

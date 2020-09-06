@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,12 +23,16 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import iammert.com.library.Status;
+import iammert.com.library.StatusView;
+
 public class SettingFragment extends Fragment {
 
     SharedPreferences sf;
     LinearLayout resetButton;
     LinearLayout myDiseaseButton;
     LinearLayout bedPositionButton;
+    LinearLayout bltSettingLayout;
     TextView tvSleepSetting;
     TextView tvDisease;
     View line1;
@@ -56,6 +61,7 @@ public class SettingFragment extends Fragment {
         resetButton = (LinearLayout) view.findViewById(R.id.resetButtonLayout);
         myDiseaseButton = (LinearLayout) view.findViewById(R.id.myDiseaseLayout);
         bedPositionButton = (LinearLayout) view.findViewById(R.id.bedPositionButtonLayout);
+        bltSettingLayout = (LinearLayout) view.findViewById(R.id.bltSettingLayout);
         tvSleepSetting = (TextView) view.findViewById(R.id.tvSleepSetting);
         tvDisease = view.findViewById(R.id.tvDisease);
         line1 = (View) view.findViewById(R.id.view1);
@@ -167,6 +173,18 @@ public class SettingFragment extends Fragment {
                             }
                         });
                 builder.setView(dlgView).create().show();
+            }
+        });
+
+        // 블루투스 연결 버튼
+        bltSettingLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getActivity()).enableBluetooth();
+                StatusView statusView = (StatusView) ((MainActivity) getContext()).findViewById(R.id.status);
+                statusView.setStatus(Status.LOADING);
+                LinearLayout connectButton = (LinearLayout) ((MainActivity) getContext()).findViewById(R.id.bltSettingLayout);
+                connectButton.setEnabled(false);
             }
         });
     }

@@ -198,7 +198,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
-                    android:text="블루투스 설정"
+                    android:text="블루투스 연결"
                     android:textColor="@android:color/white"
                     android:textSize="14sp" />
 
