@@ -127,14 +127,14 @@ public class MainActivity extends AppCompatActivity {
                         }
                         return true;
 
-                    // 수면관리 버튼
+                    // 수면일지 버튼
                     case R.id.tab_management:
                         if (curFragment != managementFragment) {
                             getSupportFragmentManager().beginTransaction()
                                     .show(managementFragment)
                                     .hide(curFragment).commit();
                             curFragment = managementFragment;
-                            actionBar.setTitle("수면관리");
+                            actionBar.setTitle("수면일지");
                         }
                         return true;
 
