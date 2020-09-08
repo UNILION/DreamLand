@@ -39,6 +39,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import iammert.com.library.Status;
+import iammert.com.library.StatusView;
+
 public class MainActivity extends AppCompatActivity {
 
     private HomeFragment homeFragment;
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private SettingFragment settingFragment;
     private StatisticsFragment statisticsFragment;
     private Fragment curFragment;
+    private StatusView statusView;
 
     private AppDatabase db;
     private ActionBar actionBar;
@@ -56,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     BluetoothAdapter bluetoothAdapter;
     BluetoothService bluetoothService;
     ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
-    Handler handler;
+    Handler bluetoothMessageHandler;
 
 
     final int REQUEST_ENABLE_BT = 111;
@@ -67,18 +71,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bluetoothSocketArrayList = new ArrayList<>();
-        handler = new Handler() {
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                byte[] readBuf = (byte[]) msg.obj;
-                String readMessage = new String(readBuf, 0, msg.arg1);
-                Log.d("BLT", readMessage);
-            }
-        };
-        bluetoothService = new BluetoothService(handler);
 
-        enableBluetooth();
+        statusView = (StatusView) findViewById(R.id.status);
+
+        bluetoothSocketArrayList = new ArrayList<>();
+        bluetoothMessageHandler = new BluetoothMessageHandler();
+
+        bluetoothService = new BluetoothService(this, bluetoothMessageHandler);
 
         sf = getSharedPreferences("bed", MODE_PRIVATE);
 
@@ -231,8 +230,8 @@ public class MainActivity extends AppCompatActivity {
     // 기기 연결 함수
     public void connectDevices() {
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        Log.d("BLT", "페어링된 기기");
         if (pairedDevices.size() > 0) {
-            // There are paired devices. Get the name and address of each paired device.
             for (BluetoothDevice device : pairedDevices) {
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
@@ -354,6 +353,18 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             default:
                 return false;
+        }
+    }
+
+    // 블루투스 메시지 핸들러
+    class BluetoothMessageHandler extends Handler {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            byte[] readBuf = (byte[]) msg.obj;
+            if (msg.arg1 > 0) {
+                String readMessage = new String(readBuf, 0, msg.arg1);
+                Log.d("BLT", readMessage);
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,10 +18,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import iammert.com.library.Status;
+import iammert.com.library.StatusView;
 
 public class SettingFragment extends Fragment {
 
@@ -28,6 +33,7 @@ public class SettingFragment extends Fragment {
     LinearLayout resetButton;
     LinearLayout myDiseaseButton;
     LinearLayout bedPositionButton;
+    LinearLayout bltSettingLayout;
     TextView tvSleepSetting;
     TextView tvDisease;
     View line1;
@@ -37,6 +43,12 @@ public class SettingFragment extends Fragment {
     int diseaseIndex;
     final String[] diseaseNames = { "허리디스크", "강직성척추염", "척추관협착증", "척추전방전위증" };
     String position;
+
+    // Test
+    Button button1;
+    Button button2;
+    EditText editText1;
+    EditText editText2;
 
     public SettingFragment() {
         // Required empty public constructor
@@ -56,11 +68,31 @@ public class SettingFragment extends Fragment {
         resetButton = (LinearLayout) view.findViewById(R.id.resetButtonLayout);
         myDiseaseButton = (LinearLayout) view.findViewById(R.id.myDiseaseLayout);
         bedPositionButton = (LinearLayout) view.findViewById(R.id.bedPositionButtonLayout);
+        bltSettingLayout = (LinearLayout) view.findViewById(R.id.bltSettingLayout);
         tvSleepSetting = (TextView) view.findViewById(R.id.tvSleepSetting);
         tvDisease = view.findViewById(R.id.tvDisease);
         line1 = (View) view.findViewById(R.id.view1);
         line2 = (View) view.findViewById(R.id.view2);
         line3 = (View) view.findViewById(R.id.view3);
+
+        // Test
+        button1 = (Button) view.findViewById(R.id.button);
+        button2 = (Button) view.findViewById(R.id.button2);
+        editText1 = (EditText) view.findViewById(R.id.editTextTextPersonName);
+        editText2 = (EditText) view.findViewById(R.id.editTextTextPersonName2);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getContext()).bluetoothService.writeBLT1(editText1.getText().toString());
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getContext()).bluetoothService.writeBLT2(editText2.getText().toString());
+            }
+        });
 
         sf = getContext().getSharedPreferences("bed", getContext().MODE_PRIVATE);
         int mode = sf.getInt("mode", 0); // 사용자가 설정한 모드를 불러옴
@@ -167,6 +199,16 @@ public class SettingFragment extends Fragment {
                         dialog.dismiss();
                     }
                 });
+            }
+        });
+
+        // 블루투스 연결 버튼
+        bltSettingLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getActivity()).enableBluetooth();
+                StatusView statusView = (StatusView) ((MainActivity) getContext()).findViewById(R.id.status);
+                statusView.setStatus(Status.LOADING);
             }
         });
     }

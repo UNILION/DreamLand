@@ -1,13 +1,17 @@
 package com.example.dreamland;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
+import android.widget.LinearLayout;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,19 +20,28 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import iammert.com.library.Status;
+import iammert.com.library.StatusView;
+
 public class BluetoothService {
     private static final String TAG = "BLT";
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+    private Context context;
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter bluetoothAdapter;
-    private ConnectThread connectThread;
-    private ConnectedThread connectedThread;
+    private ConnectedThread[] connectedThread;
     ArrayList<BluetoothSocket> bltSockets;
+    int deviceCount;
+    Handler mHandler;
 
-    public BluetoothService(Handler handler) {
+    public BluetoothService(Context context, Handler handler) {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        this.context = context;
         this.handler = handler;
         bltSockets = new ArrayList<BluetoothSocket>();
+        connectedThread = new ConnectedThread[2];
+        deviceCount = 0;
+        mHandler = new Handler();
     }
 
     // Defines several constants used when transmitting messages between the
@@ -43,14 +56,20 @@ public class BluetoothService {
 
     // 기기 연결 후 입출력 함수
     void connected(BluetoothSocket socket, BluetoothDevice device) {
-        connectedThread = new BluetoothService.ConnectedThread(socket);
-        connectedThread.start();
+        if (device.getName().equals("BLT1")) {
+            connectedThread[0] = new BluetoothService.ConnectedThread(socket);
+            connectedThread[0].start();
+        } else if (device.getName().equals("BLT2")) {
+            connectedThread[1] = new BluetoothService.ConnectedThread(socket);
+            connectedThread[1].start();
+        } else if (device.getName().equals("BLT3")) {
+            new BluetoothService.ConnectedThread(socket).start();
+        }
     }
 
     // 기기 연결 함수
     void connect(BluetoothDevice device) {
-        connectThread = new ConnectThread(device);
-        connectThread.start();
+        new ConnectThread(device).start();
     }
 
     // 기기 연결 해제 함수
@@ -58,10 +77,27 @@ public class BluetoothService {
         for (BluetoothSocket socket : bltSockets) {
             try {
                 socket.close();
+                deviceCount--;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    // 연결이 모두 완료되면 호출
+    void connectionCompleted() {
+        StatusView statusView = (StatusView) ((MainActivity)context).findViewById(R.id.status);
+        statusView.setStatus(Status.COMPLETE);
+        LinearLayout connectButton = (LinearLayout) ((MainActivity)context).findViewById(R.id.bltSettingLayout);
+        connectButton.setEnabled(false);
+    }
+
+    void writeBLT1(String msg) {
+        connectedThread[0].write(msg.getBytes());
+    }
+
+    void writeBLT2(String msg) {
+        connectedThread[1].write(msg.getBytes());
     }
 
     // 기기 연결 후 사용
@@ -96,6 +132,18 @@ public class BluetoothService {
         public void run() {
             mmBuffer = new byte[1024];
             int numBytes; // bytes returned from read()
+
+            deviceCount++;
+
+            if (deviceCount == 3) { // 3개의 기기 연결 완료
+                Log.d("BLT", "연결 완료");
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        connectionCompleted();
+                    }
+                });
+            }
 
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
