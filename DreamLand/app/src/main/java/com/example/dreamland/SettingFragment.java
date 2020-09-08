@@ -78,25 +78,25 @@ public class SettingFragment extends Fragment {
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
-                builder.setTitle("초기화")
-                        .setMessage("수면 정보가 모두 삭제됩니다")
-                        .setPositiveButton("초기화", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // Main Activity 재시작
-                                startActivity(new Intent(getContext(), MainActivity.class)
-                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                                ((MainActivity) getActivity()).resetData();
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // 아무 동작 없음
-                            }
-                        });
-                builder.create().show();
+                View dlgView = getLayoutInflater().from(getContext()).inflate(
+                        R.layout.dialog_reset, null);
+                Button resetConfirmButton = dlgView.findViewById(R.id.resetConfirmButton);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                final AlertDialog dialog = builder.setView(dlgView).create();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
+
+                // 초기화 버튼
+                resetConfirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // Main Activity 재시작
+                        startActivity(new Intent(getContext(), MainActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                        ((MainActivity) getActivity()).resetData();
+                    }
+                });
             }
         });
 
@@ -128,7 +128,9 @@ public class SettingFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 View dlgView = getLayoutInflater().from(getContext()).inflate(
-                        R.layout.select_disease_layout, null);
+                        R.layout.dialog_disease, null);
+                Button diseaseSelectButton = dlgView.findViewById(R.id.diseaseSelectButton);
+
                 diseaseRadioGroup = dlgView.findViewById(R.id.diseaseRadioGroup);
                 RadioButton[] radioButtons = new RadioButton[4];
                 radioButtons[0] = dlgView.findViewById(R.id.radioButton);
@@ -137,36 +139,34 @@ public class SettingFragment extends Fragment {
                 radioButtons[3] = dlgView.findViewById(R.id.radioButton4);
                 radioButtons[diseaseIndex].setChecked(true);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
-                builder.setTitle("나의 질환")
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                switch (diseaseRadioGroup.getCheckedRadioButtonId()) {
-                                    case R.id.radioButton:
-                                        diseaseIndex = 0;
-                                        break;
-                                    case R.id.radioButton2:
-                                        diseaseIndex = 1;
-                                        break;
-                                    case R.id.radioButton3:
-                                        diseaseIndex = 2;
-                                        break;
-                                    case R.id.radioButton4:
-                                        diseaseIndex = 3;
-                                        break;
-                                }
-                                sf.edit().putInt("disease", diseaseIndex).commit();
-                                tvDisease.setText(diseaseNames[diseaseIndex]);
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // 아무 동작 없음
-                            }
-                        });
-                builder.setView(dlgView).create().show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                final AlertDialog dialog = builder.setView(dlgView).create();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
+
+                // 질환 선택 버튼
+                diseaseSelectButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        switch (diseaseRadioGroup.getCheckedRadioButtonId()) {
+                            case R.id.radioButton:
+                                diseaseIndex = 0;
+                                break;
+                            case R.id.radioButton2:
+                                diseaseIndex = 1;
+                                break;
+                            case R.id.radioButton3:
+                                diseaseIndex = 2;
+                                break;
+                            case R.id.radioButton4:
+                                diseaseIndex = 3;
+                                break;
+                        }
+                        sf.edit().putInt("disease", diseaseIndex).commit();
+                        tvDisease.setText(diseaseNames[diseaseIndex]);
+                        dialog.dismiss();
+                    }
+                });
             }
         });
     }
