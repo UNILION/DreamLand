@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,10 +18,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import iammert.com.library.Status;
+import iammert.com.library.StatusView;
 
 public class SettingFragment extends Fragment {
 
@@ -28,6 +33,7 @@ public class SettingFragment extends Fragment {
     LinearLayout resetButton;
     LinearLayout myDiseaseButton;
     LinearLayout bedPositionButton;
+    LinearLayout bltSettingLayout;
     TextView tvSleepSetting;
     TextView tvDisease;
     View line1;
@@ -37,6 +43,12 @@ public class SettingFragment extends Fragment {
     int diseaseIndex;
     final String[] diseaseNames = { "허리디스크", "강직성척추염", "척추관협착증", "척추전방전위증" };
     String position;
+
+    // Test
+    Button button1;
+    Button button2;
+    EditText editText1;
+    EditText editText2;
 
     public SettingFragment() {
         // Required empty public constructor
@@ -56,11 +68,31 @@ public class SettingFragment extends Fragment {
         resetButton = (LinearLayout) view.findViewById(R.id.resetButtonLayout);
         myDiseaseButton = (LinearLayout) view.findViewById(R.id.myDiseaseLayout);
         bedPositionButton = (LinearLayout) view.findViewById(R.id.bedPositionButtonLayout);
+        bltSettingLayout = (LinearLayout) view.findViewById(R.id.bltSettingLayout);
         tvSleepSetting = (TextView) view.findViewById(R.id.tvSleepSetting);
         tvDisease = view.findViewById(R.id.tvDisease);
         line1 = (View) view.findViewById(R.id.view1);
         line2 = (View) view.findViewById(R.id.view2);
         line3 = (View) view.findViewById(R.id.view3);
+
+        // Test
+        button1 = (Button) view.findViewById(R.id.button);
+        button2 = (Button) view.findViewById(R.id.button2);
+        editText1 = (EditText) view.findViewById(R.id.editTextTextPersonName);
+        editText2 = (EditText) view.findViewById(R.id.editTextTextPersonName2);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getContext()).bluetoothService.writeBLT1(editText1.getText().toString());
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getContext()).bluetoothService.writeBLT2(editText2.getText().toString());
+            }
+        });
 
         sf = getContext().getSharedPreferences("bed", getContext().MODE_PRIVATE);
         int mode = sf.getInt("mode", 0); // 사용자가 설정한 모드를 불러옴
@@ -78,25 +110,25 @@ public class SettingFragment extends Fragment {
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
-                builder.setTitle("초기화")
-                        .setMessage("수면 정보가 모두 삭제됩니다")
-                        .setPositiveButton("초기화", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // Main Activity 재시작
-                                startActivity(new Intent(getContext(), MainActivity.class)
-                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                                ((MainActivity) getActivity()).resetData();
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // 아무 동작 없음
-                            }
-                        });
-                builder.create().show();
+                View dlgView = getLayoutInflater().from(getContext()).inflate(
+                        R.layout.dialog_reset, null);
+                Button resetConfirmButton = dlgView.findViewById(R.id.resetConfirmButton);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                final AlertDialog dialog = builder.setView(dlgView).create();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
+
+                // 초기화 버튼
+                resetConfirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // Main Activity 재시작
+                        startActivity(new Intent(getContext(), MainActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                        ((MainActivity) getActivity()).resetData();
+                    }
+                });
             }
         });
 
@@ -128,7 +160,9 @@ public class SettingFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 View dlgView = getLayoutInflater().from(getContext()).inflate(
-                        R.layout.select_disease_layout, null);
+                        R.layout.dialog_disease, null);
+                Button diseaseSelectButton = dlgView.findViewById(R.id.diseaseSelectButton);
+
                 diseaseRadioGroup = dlgView.findViewById(R.id.diseaseRadioGroup);
                 RadioButton[] radioButtons = new RadioButton[4];
                 radioButtons[0] = dlgView.findViewById(R.id.radioButton);
@@ -137,36 +171,44 @@ public class SettingFragment extends Fragment {
                 radioButtons[3] = dlgView.findViewById(R.id.radioButton4);
                 radioButtons[diseaseIndex].setChecked(true);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
-                builder.setTitle("나의 질환")
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                switch (diseaseRadioGroup.getCheckedRadioButtonId()) {
-                                    case R.id.radioButton:
-                                        diseaseIndex = 0;
-                                        break;
-                                    case R.id.radioButton2:
-                                        diseaseIndex = 1;
-                                        break;
-                                    case R.id.radioButton3:
-                                        diseaseIndex = 2;
-                                        break;
-                                    case R.id.radioButton4:
-                                        diseaseIndex = 3;
-                                        break;
-                                }
-                                sf.edit().putInt("disease", diseaseIndex).commit();
-                                tvDisease.setText(diseaseNames[diseaseIndex]);
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // 아무 동작 없음
-                            }
-                        });
-                builder.setView(dlgView).create().show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                final AlertDialog dialog = builder.setView(dlgView).create();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
+
+                // 질환 선택 버튼
+                diseaseSelectButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        switch (diseaseRadioGroup.getCheckedRadioButtonId()) {
+                            case R.id.radioButton:
+                                diseaseIndex = 0;
+                                break;
+                            case R.id.radioButton2:
+                                diseaseIndex = 1;
+                                break;
+                            case R.id.radioButton3:
+                                diseaseIndex = 2;
+                                break;
+                            case R.id.radioButton4:
+                                diseaseIndex = 3;
+                                break;
+                        }
+                        sf.edit().putInt("disease", diseaseIndex).commit();
+                        tvDisease.setText(diseaseNames[diseaseIndex]);
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        // 블루투스 연결 버튼
+        bltSettingLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getActivity()).enableBluetooth();
+                StatusView statusView = (StatusView) ((MainActivity) getContext()).findViewById(R.id.status);
+                statusView.setStatus(Status.LOADING);
             }
         });
     }

@@ -9,9 +9,8 @@
         />
     <item
         android:id="@+id/tab_management"
-        android:title="수면관리"
         android:icon="@drawable/ic_moon_24dp"
-        />
+        android:title="수면일지" />
     <item
         android:id="@+id/tab_statistics"
         android:title="통계"

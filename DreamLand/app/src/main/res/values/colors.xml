@@ -10,5 +10,6 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorStar">#FFC107</color>
     <color name="colorRed">#FF0000</color>
+    <color name="colorChoral">#FF5252</color>
     <color name="colorOrange">#FF8F00</color>
 </resources>
