@@ -11,6 +11,8 @@ import androidx.lifecycle.Observer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
@@ -25,6 +27,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.google.android.material.snackbar.Snackbar;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,6 +53,7 @@ public class StatisticsFragment extends Fragment {
     BarChart barChart; // 자세 교정
     BarChart barChart2; // 수면 만족도
     BarChart barChart3; // 산소 포화도
+    MaterialSpinner spinner; // 통계 선택 드랍다운 스피너
 
     public StatisticsFragment() {
         // Required empty public constructor
@@ -68,6 +73,118 @@ public class StatisticsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         db = AppDatabase.getDatabase(getContext());
+
+        spinner = view.findViewById(R.id.spinner);
+        spinner.setItems("원하는 통계를 선택하세요.","취침 시간","기상 시간","잠들기까지 걸린시간","수면 시간","코골이 시간","자세 교정","수면 만족도","산소 포화도");
+
+        spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() { // 스피너를 눌렀을 때
+
+            @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+
+
+                if (position == 1)
+                {
+                    lineChart.setVisibility(View.VISIBLE);
+
+                    lineChart2.setVisibility(View.GONE);
+                    lineChart3.setVisibility(View.GONE);
+                    lineChart4.setVisibility(View.GONE);
+                    lineChart5.setVisibility(View.GONE);
+                    barChart.setVisibility(View.GONE);
+                    barChart2.setVisibility(View.GONE);
+                    barChart3.setVisibility(View.GONE);
+                }
+                else  if (position == 2)
+                {
+                    lineChart2.setVisibility(View.VISIBLE);
+
+                    lineChart.setVisibility(View.GONE);
+                    lineChart3.setVisibility(View.GONE);
+                    lineChart4.setVisibility(View.GONE);
+                    lineChart5.setVisibility(View.GONE);
+                    barChart.setVisibility(View.GONE);
+                    barChart2.setVisibility(View.GONE);
+                    barChart3.setVisibility(View.GONE);
+                }
+
+                else  if (position == 3)
+                {
+                    lineChart3.setVisibility(View.VISIBLE);
+
+                    lineChart.setVisibility(View.GONE);
+                    lineChart2.setVisibility(View.GONE);
+                    lineChart4.setVisibility(View.GONE);
+                    lineChart5.setVisibility(View.GONE);
+                    barChart.setVisibility(View.GONE);
+                    barChart2.setVisibility(View.GONE);
+                    barChart3.setVisibility(View.GONE);
+                }
+                else  if (position == 4)
+                {
+                    lineChart4.setVisibility(View.VISIBLE);
+
+                    lineChart.setVisibility(View.GONE);
+                    lineChart2.setVisibility(View.GONE);
+                    lineChart3.setVisibility(View.GONE);
+                    lineChart5.setVisibility(View.GONE);
+                    barChart.setVisibility(View.GONE);
+                    barChart2.setVisibility(View.GONE);
+                    barChart3.setVisibility(View.GONE);
+                }
+                else  if (position == 5)
+                {
+                    lineChart5.setVisibility(View.VISIBLE);
+
+                    lineChart.setVisibility(View.GONE);
+                    lineChart2.setVisibility(View.GONE);
+                    lineChart3.setVisibility(View.GONE);
+                    lineChart4.setVisibility(View.GONE);
+                    barChart.setVisibility(View.GONE);
+                    barChart2.setVisibility(View.GONE);
+                    barChart3.setVisibility(View.GONE);
+                }
+                else  if (position == 6)
+                {
+                    barChart.setVisibility(View.VISIBLE);
+
+                    lineChart.setVisibility(View.GONE);
+                    lineChart2.setVisibility(View.GONE);
+                    lineChart3.setVisibility(View.GONE);
+                    lineChart4.setVisibility(View.GONE);
+                    lineChart5.setVisibility(View.GONE);
+                    barChart2.setVisibility(View.GONE);
+                    barChart3.setVisibility(View.GONE);
+                }
+                else  if (position == 7)
+                {
+                    barChart2.setVisibility(View.VISIBLE);
+
+                    lineChart.setVisibility(View.GONE);
+                    lineChart2.setVisibility(View.GONE);
+                    lineChart3.setVisibility(View.GONE);
+                    lineChart4.setVisibility(View.GONE);
+                    lineChart5.setVisibility(View.GONE);
+                    barChart.setVisibility(View.GONE);
+                    barChart3.setVisibility(View.GONE);
+                }
+                else  if (position == 8)
+                {
+                    barChart3.setVisibility(View.VISIBLE);
+
+                    lineChart.setVisibility(View.GONE);
+                    lineChart2.setVisibility(View.GONE);
+                    lineChart3.setVisibility(View.GONE);
+                    lineChart4.setVisibility(View.GONE);
+                    lineChart5.setVisibility(View.GONE);
+                    barChart.setVisibility(View.GONE);
+                    barChart2.setVisibility(View.GONE);
+                }
+
+
+                Snackbar.make(view, item + " 클릭", Snackbar.LENGTH_LONG).show();
+            }
+        });
+
 
         // 취침시간 차트
         lineChart = view.findViewById(R.id.lineChart);
@@ -366,6 +483,8 @@ public class StatisticsFragment extends Fragment {
                 barChart3.invalidate();
             }
         });
+
+
     }
 
     // 라인 차트의 기본 옵션 세팅
@@ -474,6 +593,7 @@ public class StatisticsFragment extends Fragment {
         }
         return 0f;
     }
+
 
 
 }

@@ -3,148 +3,94 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorBackground"
     android:orientation="vertical"
     tools:context=".StatisticsFragment">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="30dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+    <com.jaredrummler.materialspinner.MaterialSpinner
+        android:id="@+id/spinner"
+        android:textStyle="bold"
+        android:textSize="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
-            <TextView
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="16dp"
-                android:text="취침 시간"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:layout_height="match_parent"
+                android:layout_marginTop="50dp">
+
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart"
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
-                android:layout_margin="16dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginRight="16dp"
-                android:text="기상 시간"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:layout_margin="16dp"
+                android:visibility="gone"/>
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart2"
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
-                android:layout_margin="16dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginRight="16dp"
-                android:text="잠들기까지 걸린 시간"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:layout_margin="16dp"
+                android:visibility="gone"/>
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart3"
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
-                android:layout_margin="16dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginRight="16dp"
-                android:text="수면 시간"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:layout_margin="16dp"
+                android:visibility="gone"/>
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart4"
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
-                android:layout_margin="16dp" />
+                android:layout_margin="16dp"
+                android:visibility="gone"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginRight="16dp"
-                android:text="코골이 시간"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart5"
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
-                android:layout_margin="16dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginRight="16dp"
-                android:text="자세 교정"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:layout_margin="16dp"
+                android:visibility="gone"/>
 
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/barChart"
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
-                android:layout_margin="16dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginRight="16dp"
-                android:text="수면 만족도"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:layout_margin="16dp"
+                android:visibility="gone"/>
 
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/barChart2"
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
-                android:layout_margin="16dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginRight="16dp"
-                android:text="산소 포화도"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:layout_margin="16dp"
+                android:visibility="gone"/>
 
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/barChart3"
                 android:layout_width="match_parent"
                 android:layout_height="320dp"
-                android:layout_margin="16dp" />
+                android:layout_margin="16dp"
+                android:visibility="gone"/>
+
+
+            </FrameLayout>
 
         </LinearLayout>
-    </ScrollView>
+
+
+
+
 
 </LinearLayout>
