@@ -81,6 +81,20 @@ public class StatisticsFragment extends Fragment {
 
             @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
 
+                if(position == 0) {
+                    lineChart.setVisibility(View.GONE);
+                    lineChart2.setVisibility(View.GONE);
+                    lineChart3.setVisibility(View.GONE);
+                    lineChart4.setVisibility(View.GONE);
+                    lineChart5.setVisibility(View.GONE);
+                    barChart.setVisibility(View.GONE);
+                    barChart2.setVisibility(View.GONE);
+                    barChart3.setVisibility(View.GONE);
+                }
+                else
+                {
+                    Snackbar.make(view, item + " 선택됨.", Snackbar.LENGTH_LONG).show();
+                }
 
                 if (position == 1)
                 {
@@ -180,8 +194,6 @@ public class StatisticsFragment extends Fragment {
                     barChart2.setVisibility(View.GONE);
                 }
 
-
-                Snackbar.make(view, item + " 클릭", Snackbar.LENGTH_LONG).show();
             }
         });
 

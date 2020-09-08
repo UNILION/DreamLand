@@ -18,6 +18,9 @@
         android:id="@+id/spinner"
         android:textStyle="bold"
         android:textSize="25dp"
+        app:ms_text_color="#ffff"
+        app:ms_background_color="@color/colorBackground"
+        app:ms_background_selector="@color/colorGray"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
