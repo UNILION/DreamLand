@@ -13,7 +13,7 @@ public class Sleep {
     private String whenWake;  // 기상 시간
     private String sleepTime;  // 수면 시간
     private String conTime;  // 상태 지속 시간 *
-    private int adjCount; // 교정 횟수 *
+    private int adjCount; // 교정 횟수
     private int satLevel;  // 수면 만족도 *
     private int oxyStr;  // 산소 포화도
     private int heartRate; // 심박수

@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Integer> oxygenSaturations;
     ArrayList<Integer> humidities;
     Sleep sleep;
+    int adjCount;
 
     private int mode;  // 모드
 
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         oxygenSaturations = new ArrayList<>();
         humidities = new ArrayList<>();
         sleep = new Sleep();
+        adjCount = 0;
 
         statusView = (StatusView) findViewById(R.id.status);
 
@@ -382,6 +384,7 @@ public class MainActivity extends AppCompatActivity {
                     sleep.setHeartRate(getAverage(heartRates)); // 심박수 평균
                     sleep.setOxyStr(getAverage(oxygenSaturations)); // 산소포화도 평균
                     sleep.setHumidity(getAverage(humidities)); // 습도 평균
+                    sleep.setAdjCount(adjCount);
                     Log.d("BLT",
                             "일자: " + sleep.getSleepDate()
                                     + "  시작 시간: " + sleep.getWhenStart()
@@ -390,7 +393,8 @@ public class MainActivity extends AppCompatActivity {
                                     + "  수면 시간: " + sleep.getSleepTime()
                                     + "  심박수: " + sleep.getHeartRate()
                                     + "  산소포화도: " + sleep.getOxyStr()
-                                    + "  습도: " + sleep.getHumidity());
+                                    + "  습도: " + sleep.getHumidity()
+                                    + "  교정 횟수: " + sleep.getAdjCount());
                     isSleep = false;
                     clearData();
                 } else { // 잠에 들지 않고 중지했을 경우
@@ -419,6 +423,7 @@ public class MainActivity extends AppCompatActivity {
         heartRates.clear();
         humidities.clear();
         oxygenSaturations.clear();
+        adjCount = 0;
     }
 
     // 블루투스 메시지 핸들러
@@ -450,10 +455,14 @@ public class MainActivity extends AppCompatActivity {
                             String afterPos = postures[1];
                             Adjustment adjustment =
                                     new Adjustment(sleep.getSleepDate(), adjTime, beforePos, afterPos);
+                            adjCount++;
                             // TODO : 생성한 교정 정보를 db에 추가
                             Log.d("BLT", "자세 교정: " + beforePos + " -> " + afterPos
                                     + " / " + adjTime);
                             break;
+                        case "condition": // 코골이나 무호흡 상태 정보
+                            int decibel = Integer.parseInt(msgArray[1]);
+
                         default:
                             Log.d("BLT", "잘못된 메시지");
                     }
