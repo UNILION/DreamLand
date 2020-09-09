@@ -148,7 +148,7 @@ public class BluetoothService {
                 try {
                     numBytes = mmInStream.available();
                     if (numBytes != 0) {
-                        SystemClock.sleep(100);
+                        SystemClock.sleep(300);
                         // Read from the InputStream.
                         numBytes = mmInStream.read(mmBuffer);
                         // Send the obtained bytes to the UI activity.

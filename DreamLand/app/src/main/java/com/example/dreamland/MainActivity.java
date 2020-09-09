@@ -442,6 +442,18 @@ public class MainActivity extends AppCompatActivity {
                         case "humidity": // 산소포화도 메시지
                             humidities.add(Integer.parseInt(msgArray[1]));
                             break;
+                        case "adjustment": // 자세 교정
+                            Calendar calendar = Calendar.getInstance();
+                            String adjTime = sdf1.format(calendar.getTime());
+                            String[] postures = msgArray[1].split(",");
+                            String beforePos = postures[0];
+                            String afterPos = postures[1];
+                            Adjustment adjustment =
+                                    new Adjustment(sleep.getSleepDate(), adjTime, beforePos, afterPos);
+                            // TODO : 생성한 교정 정보를 db에 추가
+                            Log.d("BLT", "자세 교정: " + beforePos + " -> " + afterPos
+                                    + " / " + adjTime);
+                            break;
                         default:
                             Log.d("BLT", "잘못된 메시지");
                     }
