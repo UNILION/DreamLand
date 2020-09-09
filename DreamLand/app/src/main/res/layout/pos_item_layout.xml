@@ -19,7 +19,7 @@
             android:layout_weight="1"
             android:text="id"
             android:textColor="@color/colorWhite"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tvTime"
@@ -28,7 +28,7 @@
             android:layout_weight="5"
             android:text="time"
             android:textColor="@color/colorWhite"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 

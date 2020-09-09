@@ -48,7 +48,6 @@ public class Sleep {
     }
 
     public Sleep() {
-
     }
 
     public int getSleepId() {

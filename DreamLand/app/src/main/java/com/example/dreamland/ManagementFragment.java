@@ -3,8 +3,10 @@ package com.example.dreamland;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,12 +19,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.example.dreamland.asynctask.GetAdjsByIdAsyncTask;
+import com.example.dreamland.asynctask.GetAdjsBySleepDateAsyncTask;
 import com.example.dreamland.asynctask.GetSleepByDateAsyncTask;
 import com.example.dreamland.database.Adjustment;
 import com.example.dreamland.database.AppDatabase;
@@ -173,8 +177,8 @@ public class ManagementFragment extends Fragment {
                 if (selectedSleep != null) {
                     setUI(selectedSleep);
                     try {
-                        items = new GetAdjsByIdAsyncTask(db.adjustmentDao(),
-                                String.valueOf(selectedSleep.getSleepId())).execute().get();
+                        items = new GetAdjsBySleepDateAsyncTask(db.adjustmentDao(),
+                                selectedSleep.getSleepDate()).execute().get();
                     } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -186,23 +190,31 @@ public class ManagementFragment extends Fragment {
         posLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View dlgView = getLayoutInflater().from(getContext()).inflate(
-                        R.layout.pos_detail_layout, null);
-                RecyclerView recyclerview = dlgView.findViewById(R.id.posRecyclerview);
-                recyclerview.setLayoutManager(
-                        new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
-                adapter = new PosDetailAdapter(items);
-                recyclerview.setAdapter(adapter);
+                if (!tvPos.getText().equals("0")) {
+                    View dlgView = getLayoutInflater().from(getContext()).inflate(
+                            R.layout.dialog_pos_detail, null);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
-                builder.setTitle("자세 교정 시간")
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // 동작 없음
-                            }
-                        });
-                builder.setView(dlgView).create().show();
+                    RecyclerView recyclerview = dlgView.findViewById(R.id.posRecyclerview);
+                    recyclerview.setLayoutManager(
+                            new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+                    adapter = new PosDetailAdapter(items);
+                    recyclerview.setAdapter(adapter);
+
+                    Button okButton = dlgView.findViewById(R.id.okButton);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    final AlertDialog dialog = builder.setView(dlgView).create();
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialog.show();
+
+                    // 확인 버튼
+                    okButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+                }
             }
         });
 

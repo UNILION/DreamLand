@@ -307,37 +307,37 @@ public class MainActivity extends AppCompatActivity {
                         1, 75, 39)
                 );
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        "1", "00:32"
+                        s1, "00:32"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        "2", "00:35"
+                        s2, "00:35"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        "2", "00:51"
+                        s2, "00:51"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        "3", "01:13"
+                        s3, "01:13"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        "3", "03:11"
+                        s3, "03:11"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        "3", "04:14"
+                        s3, "04:14"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        "4", "05:23"
+                        s4, "05:23"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        "4", "05:41"
+                        s4, "05:41"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        "4", "06:52"
+                        s4, "06:52"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        "5", "06:42"
+                        s5, "06:42"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        "5", "06:55"
+                        s5, "06:55"
                 ));
                 return true;
 
