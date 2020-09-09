@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
                         1, 75, 39)
                 );
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s1, "00:32", "1", "2"
+                        s1, "00:32", "0", "2"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
                         s2, "00:35", "2", "1"
@@ -316,10 +316,10 @@ public class MainActivity extends AppCompatActivity {
                         s2, "00:51", "1", "2"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s3, "01:13", "2", "3"
+                        s3, "01:13", "2", "0"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s3, "03:11", "3", "1"
+                        s3, "03:11", "0", "1"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
                         s3, "04:14", "2", "1"
@@ -328,16 +328,16 @@ public class MainActivity extends AppCompatActivity {
                         s4, "05:23", "1", "2"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s4, "05:41", "2", "3"
+                        s4, "05:41", "2", "0"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s4, "06:52", "3", "2"
+                        s4, "06:52", "0", "2"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s5, "06:42", "2", "3"
+                        s5, "06:42", "2", "0"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s5, "06:55", "1", "3"
+                        s5, "06:55", "1", "0"
                 ));
                 return true;
 
