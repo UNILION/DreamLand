@@ -12,32 +12,26 @@ public class Sleep {
     private String whenSleep;  // 수면 시작 시간
     private String whenWake;  // 기상 시간
     private String sleepTime;  // 수면 시간
-    private String conStartTime;  // 상태 시작 시간
-    private String conStopTime;  //  상태 정지 시간
-    private String conTime;  // 상태 지속 시간
-    private int adjCount; // 교정 횟수
-    private int satLevel;  // 수면 만족도
+    private String conTime;  // 상태 지속 시간 *
+    private int adjCount; // 교정 횟수 *
+    private int satLevel;  // 수면 만족도 *
     private int oxyStr;  // 산소 포화도
-    private int sysAdjPos; // 시스템 교정 자세(전날 교정 후 자세)
     private int heartRate; // 심박수
     private int humidity; // 습도
 
     public Sleep(
             String sleepDate, String whenStart, String whenSleep, String whenWake,
-            String sleepTime, String conStartTime, String conStopTime, String conTime,
-            int adjCount, int satLevel, int oxyStr, int sysAdjPos, int heartRate, int humidity) {
+            String sleepTime, String conTime, int adjCount, int satLevel, int oxyStr,
+            int heartRate, int humidity) {
         this.sleepDate = sleepDate;
         this.whenStart = whenStart;
         this.whenSleep = whenSleep;
         this.whenWake = whenWake;
         this.sleepTime = sleepTime;
-        this.conStartTime = conStartTime;
-        this.conStopTime = conStopTime;
         this.conTime = conTime;
         this.adjCount = adjCount;
         this.satLevel = satLevel;
         this.oxyStr = oxyStr;
-        this.sysAdjPos = sysAdjPos;
         this.heartRate = heartRate;
         this.humidity = humidity;
     }
@@ -93,22 +87,6 @@ public class Sleep {
         this.sleepTime = sleepTime;
     }
 
-    public String getConStartTime() {
-        return conStartTime;
-    }
-
-    public void setConStartTime(String conStartTime) {
-        this.conStartTime = conStartTime;
-    }
-
-    public String getConStopTime() {
-        return conStopTime;
-    }
-
-    public void setConStopTime(String conStopTime) {
-        this.conStopTime = conStopTime;
-    }
-
     public String getConTime() {
         return conTime;
     }
@@ -139,14 +117,6 @@ public class Sleep {
 
     public void setOxyStr(int oxyStr) {
         this.oxyStr = oxyStr;
-    }
-
-    public int getSysAdjPos() {
-        return sysAdjPos;
-    }
-
-    public void setSysAdjPos(int sysAdjPos) {
-        this.sysAdjPos = sysAdjPos;
     }
 
     public int getHeartRate() { return heartRate; }
