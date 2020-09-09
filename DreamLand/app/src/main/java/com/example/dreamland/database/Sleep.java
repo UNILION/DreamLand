@@ -15,8 +15,6 @@ public class Sleep {
     private String conStartTime;  // 상태 시작 시간
     private String conStopTime;  //  상태 정지 시간
     private String conTime;  // 상태 지속 시간
-    private int beforeAdjPos;  // 교정 전 자세
-    private int afterAdjPos;  // 교정 후 자세
     private int adjCount; // 교정 횟수
     private int satLevel;  // 수면 만족도
     private int oxyStr;  // 산소 포화도
@@ -25,10 +23,9 @@ public class Sleep {
     private int humidity; // 습도
 
     public Sleep(
-            String sleepDate, String whenStart, String whenSleep,
-            String whenWake, String sleepTime, String conStartTime, String conStopTime,
-            String conTime, int beforeAdjPos, int afterAdjPos, int adjCount,
-            int satLevel, int oxyStr, int sysAdjPos, int heartRate, int humidity) {
+            String sleepDate, String whenStart, String whenSleep, String whenWake,
+            String sleepTime, String conStartTime, String conStopTime, String conTime,
+            int adjCount, int satLevel, int oxyStr, int sysAdjPos, int heartRate, int humidity) {
         this.sleepDate = sleepDate;
         this.whenStart = whenStart;
         this.whenSleep = whenSleep;
@@ -37,8 +34,6 @@ public class Sleep {
         this.conStartTime = conStartTime;
         this.conStopTime = conStopTime;
         this.conTime = conTime;
-        this.beforeAdjPos = beforeAdjPos;
-        this.afterAdjPos = afterAdjPos;
         this.adjCount = adjCount;
         this.satLevel = satLevel;
         this.oxyStr = oxyStr;
@@ -120,22 +115,6 @@ public class Sleep {
 
     public void setConTime(String conTime) {
         this.conTime = conTime;
-    }
-
-    public int getBeforeAdjPos() {
-        return beforeAdjPos;
-    }
-
-    public void setBeforeAdjPos(int beforeAdjPos) {
-        this.beforeAdjPos = beforeAdjPos;
-    }
-
-    public int getAfterAdjPos() {
-        return afterAdjPos;
-    }
-
-    public void setAfterAdjPos(int afterAdjPos) {
-        this.afterAdjPos = afterAdjPos;
     }
 
     public int getAdjCount() {
