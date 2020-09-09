@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,18 +32,17 @@ import com.google.android.material.snackbar.Snackbar;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static com.example.dreamland.MySimpleDateFormat.sdf1;
+import static com.example.dreamland.MySimpleDateFormat.sdf3;
+import static com.example.dreamland.MySimpleDateFormat.sdf4;
+
 
 public class StatisticsFragment extends Fragment {
-
-    private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-    private SimpleDateFormat sdf2 = new SimpleDateFormat("MM-dd");
-    private SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMdd");
 
     private AppDatabase db;
     LineChart lineChart; // 취침 시간
@@ -342,9 +340,9 @@ public class StatisticsFragment extends Fragment {
                         int index = (sleeps.size() - 1) - i;
                         Sleep sleep = sleeps.get(index);
                         try {
-                            Date date = format2.parse(sleep.getSleepDate());
+                            Date date = sdf3.parse(sleep.getSleepDate());
 
-                            xLabels.add(sdf2.format(date));
+                            xLabels.add(sdf4.format(date));
 
 
                             entries.add(new Entry(i, timeToFloat(
@@ -353,11 +351,11 @@ public class StatisticsFragment extends Fragment {
                                     sleep.getWhenWake(), 0)));
 
                             // 잠들기까지 시간
-                            long diffTime = sdf.parse(sleep.getWhenSleep()).getTime()
-                                    - sdf.parse(sleep.getWhenStart()).getTime();
+                            long diffTime = sdf1.parse(sleep.getWhenSleep()).getTime()
+                                    - sdf1.parse(sleep.getWhenStart()).getTime();
 
                             entries3.add(new Entry(i, timeToFloatForMinute(
-                                    sdf.format(diffTime), 5)));
+                                    sdf1.format(diffTime), 5)));
                             entries4.add(new Entry(i, timeToFloatForMinute(
                                     sleep.getSleepTime(), 30)));
                             entries5.add(new Entry(i, timeToFloatForMinute(
@@ -607,7 +605,7 @@ public class StatisticsFragment extends Fragment {
     // 입력된 시간을 차트의 y좌표 값으로 변환
     private float timeToFloat(String time, int startHour) {
         try {
-            Date date = sdf.parse(time);
+            Date date = sdf1.parse(time);
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
             long millis = cal.getTimeInMillis(); // 입력된 날짜의 millis
@@ -632,7 +630,7 @@ public class StatisticsFragment extends Fragment {
     // 시간을 y좌표로 변환
     private float timeToFloatForMinute(String time, int minute) {
         try {
-            Date date = sdf.parse(time);
+            Date date = sdf1.parse(time);
 
             long millis = date.getTime();
             if (millis < 0) {
@@ -644,7 +642,4 @@ public class StatisticsFragment extends Fragment {
         }
         return 0f;
     }
-
-
-
 }

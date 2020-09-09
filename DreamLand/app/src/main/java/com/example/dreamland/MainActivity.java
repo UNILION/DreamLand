@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -19,7 +18,6 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.dreamland.asynctask.DeleteAdjAsyncTask;
@@ -31,16 +29,15 @@ import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
-import iammert.com.library.Status;
 import iammert.com.library.StatusView;
+
+import static com.example.dreamland.MySimpleDateFormat.sdf1;
+import static com.example.dreamland.MySimpleDateFormat.sdf3;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigation;
     private SharedPreferences sf;
     private List<Sleep> sleepList;
-    private SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMdd");
     BluetoothAdapter bluetoothAdapter;
     BluetoothService bluetoothService;
     ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
@@ -252,19 +248,19 @@ public class MainActivity extends AppCompatActivity {
                 Calendar c = Calendar.getInstance();
 
                 c.set(2020, 4, 1);
-                String s1 = format2.format(c.getTime());
+                String s1 = sdf3.format(c.getTime());
                 c.set(2020, 4, 2);
-                String s2 = format2.format(c.getTime());
+                String s2 = sdf3.format(c.getTime());
                 c.set(2020, 4, 3);
-                String s3 = format2.format(c.getTime());
+                String s3 = sdf3.format(c.getTime());
                 c.set(2020, 4, 4);
-                String s4 = format2.format(c.getTime());
+                String s4 = sdf3.format(c.getTime());
                 c.set(2020, 4, 5);
-                String s5 = format2.format(c.getTime());
+                String s5 = sdf3.format(c.getTime());
                 c.set(2020, 4, 6);
-                String s6 = format2.format(c.getTime());
+                String s6 = sdf3.format(c.getTime());
                 c.set(2020, 4, 7);
-                String s7 = format2.format(c.getTime());
+                String s7 = sdf3.format(c.getTime());
 
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s1, "01:00", "01:10",
@@ -423,8 +419,10 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     switch (readMessage) {
                         case "sleepstart":
-                            Log.d("BLT", "사용자가 잠에 들었습니다");
+                            String whenSleep = sdf1.format(Calendar.getInstance().getTime());
+                            sleep.setWhenSleep(whenSleep);
                             isSleep = true;
+                            Log.d("BLT", "사용자가 잠에 들었습니다 / " + whenSleep);
                             break;
                         default:
                             Log.d("BLT", "잘못된 메시지");

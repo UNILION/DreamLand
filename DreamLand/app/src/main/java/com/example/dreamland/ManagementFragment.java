@@ -30,7 +30,6 @@ import com.example.dreamland.database.Sleep;
 import com.willy.ratingbar.ScaleRatingBar;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -38,12 +37,11 @@ import java.util.concurrent.ExecutionException;
 
 import devs.mulham.horizontalcalendar.HorizontalCalendar;
 import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
+import static com.example.dreamland.MySimpleDateFormat.sdf1;
+import static com.example.dreamland.MySimpleDateFormat.sdf3;
 
 public class ManagementFragment extends Fragment {
 
-    private SimpleDateFormat format1 = new SimpleDateFormat("M월 d일 E요일");
-    private SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMdd");
-    private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     private Context context;
     private AppDatabase db;
     SharedPreferences sf;
@@ -141,7 +139,7 @@ public class ManagementFragment extends Fragment {
                 lastSleep = sleep;
                 if (lastSleep != null) {
                     try {
-                        endDate.setTime(format2.parse(lastSleep.getSleepDate()));
+                        endDate.setTime(sdf3.parse(lastSleep.getSleepDate()));
                         horizontalCalendar.setRange(startDate, endDate);
                         updateUI();
                     } catch (ParseException e) {
@@ -158,7 +156,7 @@ public class ManagementFragment extends Fragment {
                 firstSleep = sleep;
                 if (firstSleep != null) {
                     try {
-                        startDate.setTime(format2.parse(firstSleep.getSleepDate()));
+                        startDate.setTime(sdf3.parse(firstSleep.getSleepDate()));
                         horizontalCalendar.setRange(startDate, endDate);
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -214,7 +212,7 @@ public class ManagementFragment extends Fragment {
     // 지정 날짜의 Sleep 가져오기
     private Sleep getSleepByDate(Date date) {
         try {
-            String strDate = format2.format(date);
+            String strDate = sdf3.format(date);
             return new GetSleepByDateAsyncTask(db.sleepDao(), strDate).execute().get();
         } catch (ExecutionException | InterruptedException e) {
             return null;
@@ -226,15 +224,16 @@ public class ManagementFragment extends Fragment {
         if (sleep != null) {
             try {
                 // 날짜 변환
-                Date date = format2.parse(sleep.getSleepDate());
+                Date date = sdf3.parse(sleep.getSleepDate());
                 if (date != null) {
                     // TextView들의 text 변경
                     tvWhenWake.setText(sleep.getWhenWake());
                     tvConTime.setText(sleep.getConTime());
                     // 시작 시간과 잠든 시간의 차
-                    long diffTime = sdf.parse(sleep.getWhenSleep()).getTime() - sdf.parse(sleep.getWhenStart()).getTime();
+                    long diffTime = sdf1.parse(sleep.getWhenSleep()).getTime()
+                            - sdf1.parse(sleep.getWhenStart()).getTime();
                     diffTime -= (1000 * 60 * 60 * 9); // 기본 9시간을 뺌
-                    tvWaitTime.setText(sdf.format(diffTime));
+                    tvWaitTime.setText(sdf1.format(diffTime));
                     tvWhenSleep.setText(sleep.getWhenSleep());
                     tvSleepTime.setText(sleep.getSleepTime());
                     tvOxy.setText(Integer.toString(sleep.getOxyStr()));

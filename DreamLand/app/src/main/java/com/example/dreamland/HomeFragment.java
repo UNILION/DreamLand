@@ -9,12 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import java.util.Calendar;
+
+import static com.example.dreamland.MySimpleDateFormat.sdf1;
 
 public class HomeFragment extends Fragment {
 
@@ -64,6 +69,9 @@ public class HomeFragment extends Fragment {
         intent.putExtra("hour", timePicker.getHour());
         intent.putExtra("minute", timePicker.getMinute());
         intent.putExtra("selectedMenu", selectedMenu);
+        String whenStart = sdf1.format(Calendar.getInstance().getTime());
+        ((MainActivity) context).sleep.setWhenStart(whenStart);
+        Log.d("BLT", "측정 시작 / " + whenStart);
         ((MainActivity) getActivity()).startActivityForResult(intent, 2000);
     }
 
