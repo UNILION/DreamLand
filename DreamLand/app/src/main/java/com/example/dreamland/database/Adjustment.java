@@ -10,10 +10,14 @@ public class Adjustment {
     private int adjId;  // ID
     private String sleepDate;  // sleep 테이블의 날짜
     private String adjTime;  // 교정 시각
+    private String beforePos;
+    private String afterPos;
 
-    public Adjustment(String sleepDate, String adjTime) {
+    public Adjustment(String sleepDate, String adjTime, String beforePos, String afterPos) {
         this.sleepDate = sleepDate;
         this.adjTime = adjTime;
+        this.beforePos = beforePos;
+        this.afterPos = afterPos;
     }
 
     public int getAdjId() {
@@ -35,4 +39,12 @@ public class Adjustment {
     public void setAdjTime(String adjTime) {
         this.adjTime = adjTime;
     }
+
+    public String getBeforePos() { return beforePos; }
+
+    public void setBeforePos(String beforePos) { this.beforePos = beforePos; }
+
+    public String getAfterPos() { return afterPos; }
+
+    public void setAfterPos(String afterPos) { this.afterPos = afterPos; }
 }
