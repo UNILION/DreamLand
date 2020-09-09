@@ -307,37 +307,37 @@ public class MainActivity extends AppCompatActivity {
                         1, 75, 39)
                 );
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s1, "00:32"
+                        s1, "00:32", "1", "2"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s2, "00:35"
+                        s2, "00:35", "2", "1"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s2, "00:51"
+                        s2, "00:51", "1", "2"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s3, "01:13"
+                        s3, "01:13", "2", "3"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s3, "03:11"
+                        s3, "03:11", "3", "1"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s3, "04:14"
+                        s3, "04:14", "2", "1"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s4, "05:23"
+                        s4, "05:23", "1", "2"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s4, "05:41"
+                        s4, "05:41", "2", "3"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s4, "06:52"
+                        s4, "06:52", "3", "2"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s5, "06:42"
+                        s5, "06:42", "2", "3"
                 ));
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s5, "06:55"
+                        s5, "06:55", "1", "3"
                 ));
                 return true;
 
