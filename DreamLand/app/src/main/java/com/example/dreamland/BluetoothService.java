@@ -137,6 +137,7 @@ public class BluetoothService {
 
             if (deviceCount == 3) { // 3개의 기기 연결 완료
                 Log.d("BLT", "연결 완료");
+                ((MainActivity) context).isConnected = true;
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {

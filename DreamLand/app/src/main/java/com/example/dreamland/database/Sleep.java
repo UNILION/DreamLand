@@ -47,6 +47,10 @@ public class Sleep {
         this.humidity = humidity;
     }
 
+    public Sleep() {
+
+    }
+
     public int getSleepId() {
         return sleepId;
     }

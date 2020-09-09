@@ -44,6 +44,10 @@ import iammert.com.library.StatusView;
 
 public class MainActivity extends AppCompatActivity {
 
+    final int REQUEST_ENABLE_BT = 111;
+    final int RC_INIT_ACTIVITY = 1000;
+    final int RC_SLEEPING_ACTIVITY = 2000;
+
     private HomeFragment homeFragment;
     private ManagementFragment managementFragment;
     private SettingFragment settingFragment;
@@ -62,8 +66,12 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
     Handler bluetoothMessageHandler;
 
-
-    final int REQUEST_ENABLE_BT = 111;
+    boolean isConnected = false;
+    boolean isSleep = false;
+    ArrayList<Integer> heartRates;
+    ArrayList<Integer> oxygenSaturations;
+    ArrayList<Integer> humidities;
+    Sleep sleep;
 
     private int mode;  // 모드
 
@@ -71,6 +79,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        heartRates = new ArrayList<>();
+        oxygenSaturations = new ArrayList<>();
+        sleep = new Sleep();
 
         statusView = (StatusView) findViewById(R.id.status);
 
@@ -192,25 +204,6 @@ public class MainActivity extends AppCompatActivity {
         new DeleteSleepAsyncTask(db.sleepDao()).execute();
         new DeleteAdjAsyncTask(db.adjustmentDao()).execute();
         finish();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // from InitActivity
-        if (requestCode == 1000) { // 모드에 따른 UI 수정
-            if (resultCode == 1001) {
-                settingFragment.hideDiseaseView();
-                managementFragment.changeConditionView();
-            }
-        } else if (requestCode == REQUEST_ENABLE_BT) {
-            if (resultCode == RESULT_OK) { // 블루투스 활성화 성공
-                Log.d("BLT", "블루투스 활성화 성공");
-                connectDevices();
-            } else if (resultCode == RESULT_CANCELED) { // 블루투스 활성화 실패
-                Log.d("BLT", "블루투스 활성화 실패");
-            }
-        }
     }
 
     public void enableBluetooth() { // 블루투스 활성화 함수
@@ -360,6 +353,52 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case RC_INIT_ACTIVITY:
+                if (resultCode == 1001) {
+                    settingFragment.hideDiseaseView();
+                    managementFragment.changeConditionView();
+                }
+                break;
+
+            case REQUEST_ENABLE_BT:
+                if (resultCode == RESULT_OK) { // 블루투스 활성화 성공
+                    Log.d("BLT", "블루투스 활성화 성공");
+                    connectDevices();
+                } else if (resultCode == RESULT_CANCELED) { // 블루투스 활성화 실패
+                    Log.d("BLT", "블루투스 활성화 실패");
+                }
+                break;
+
+            case RC_SLEEPING_ACTIVITY:
+                Log.d("BLT", "RC_SLEEPING_ACTIVITY");
+                if (isSleep) { // 잠에 들었다가 중지했을 경우
+                    sleep.setHeartRate(getAverage(heartRates)); // 심박수 평균
+                    sleep.setOxyStr(getAverage(oxygenSaturations)); // 산소포화도 평균
+                    isSleep = false;
+                } else { // 잠에 들지 않고 중지했을 경우
+
+                }
+                break;
+
+        }
+    }
+
+    // 입력값들의 평균을 구하는 함수
+    int getAverage(ArrayList<Integer> arr) {
+        if (arr.size() == 0) {
+            return -1;
+        }
+        int sum = 0;
+        for (Integer num : arr) {
+            sum += num;
+        }
+        return sum / arr.size();
+    }
+
     // 블루투스 메시지 핸들러
     class BluetoothMessageHandler extends Handler {
         @Override
@@ -367,7 +406,30 @@ public class MainActivity extends AppCompatActivity {
             byte[] readBuf = (byte[]) msg.obj;
             if (msg.arg1 > 0) {
                 String readMessage = new String(readBuf, 0, msg.arg1);
-                Log.d("BLT", readMessage);
+                Log.d("BLT", "message -> " + readMessage);
+
+                if (readMessage.contains(":")) {
+                    String[] msgArray = readMessage.split(":");
+                    switch (msgArray[0]) {
+                        case "heartrate": // 심박수 메시지
+                            heartRates.add(Integer.parseInt(msgArray[1]));
+                            break;
+                        case "oxygensaturation": // 산소포화도 메시지
+                            oxygenSaturations.add(Integer.parseInt(msgArray[1]));
+                            break;
+                        default:
+                            Log.d("BLT", "잘못된 메시지");
+                    }
+                } else {
+                    switch (readMessage) {
+                        case "sleepstart":
+                            Log.d("BLT", "사용자가 잠에 들었습니다");
+                            isSleep = true;
+                            break;
+                        default:
+                            Log.d("BLT", "잘못된 메시지");
+                    }
+                }
             }
         }
     }

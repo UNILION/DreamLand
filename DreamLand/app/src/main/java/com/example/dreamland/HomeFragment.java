@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 public class HomeFragment extends Fragment {
 
@@ -48,7 +49,11 @@ public class HomeFragment extends Fragment {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialog();
+                if (((MainActivity) context).isConnected) {
+                    showDialog();
+                } else {
+                    Toast.makeText(context, "블루투스 연결을 해주세요", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -59,7 +64,7 @@ public class HomeFragment extends Fragment {
         intent.putExtra("hour", timePicker.getHour());
         intent.putExtra("minute", timePicker.getMinute());
         intent.putExtra("selectedMenu", selectedMenu);
-        startActivity(intent);
+        ((MainActivity) getActivity()).startActivityForResult(intent, 2000);
     }
 
     // 교정방식 선택 화면
