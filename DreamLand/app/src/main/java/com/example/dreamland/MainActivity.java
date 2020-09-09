@@ -236,7 +236,11 @@ public class MainActivity extends AppCompatActivity {
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
                 Log.d("BLT", deviceName + " " + deviceHardwareAddress);
-                bluetoothService.connect(device);
+                // 기기 이름이 BLT1, BLT2, BLT3인 경우 연결
+                if (deviceName.equals("BLT1") || deviceName.equals("BLT2")
+                        || deviceName.equals("BLT3")) {
+                    bluetoothService.connect(device);
+                }
             }
         }
     }
