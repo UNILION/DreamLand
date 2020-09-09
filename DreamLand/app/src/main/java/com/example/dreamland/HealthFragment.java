@@ -42,7 +42,7 @@ import static com.example.dreamland.MySimpleDateFormat.sdf3;
 import static com.example.dreamland.MySimpleDateFormat.sdf4;
 
 
-public class StatisticsFragment extends Fragment {
+public class HealthFragment extends Fragment {
 
     private AppDatabase db;
     LineChart lineChart; // 취침 시간
@@ -61,7 +61,7 @@ public class StatisticsFragment extends Fragment {
     TextView strTrafficDaily;
     ImageView imgTrafficImg;
 
-    public StatisticsFragment() {
+    public HealthFragment() {
         // Required empty public constructor
     }
 
@@ -70,7 +70,7 @@ public class StatisticsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_statistics, container, false);
+        return inflater.inflate(R.layout.fragment_health, container, false);
 
     }
 

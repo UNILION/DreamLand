@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private HomeFragment homeFragment;
     private ManagementFragment managementFragment;
     private SettingFragment settingFragment;
-    private StatisticsFragment statisticsFragment;
+    private HealthFragment healthFragment;
     private Fragment curFragment;
     private StatusView statusView;
 
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         homeFragment = new HomeFragment();
         managementFragment = new ManagementFragment();
         settingFragment = new SettingFragment();
-        statisticsFragment = new StatisticsFragment();
+        healthFragment = new HealthFragment();
         actionBar = getSupportActionBar();
 
         // 화면에 프래그먼트 추가
@@ -116,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
                 .hide(managementFragment)
                 .add(R.id.container, settingFragment)
                 .hide(settingFragment)
-                .add(R.id.container, statisticsFragment)
-                .hide(statisticsFragment).commit();
+                .add(R.id.container, healthFragment)
+                .hide(healthFragment).commit();
 
         curFragment = homeFragment;
         actionBar.setTitle("홈");
@@ -149,14 +149,14 @@ public class MainActivity extends AppCompatActivity {
                         }
                         return true;
 
-                    // 통계 버튼
-                    case R.id.tab_statistics:
-                        if (curFragment != statisticsFragment) {
+                    // 건강상태 버튼
+                    case R.id.tab_health:
+                        if (curFragment != healthFragment) {
                             getSupportFragmentManager().beginTransaction()
-                                    .show(statisticsFragment)
+                                    .show(healthFragment)
                                     .hide(curFragment).commit();
-                            curFragment = statisticsFragment;
-                            actionBar.setTitle("통계");
+                            curFragment = healthFragment;
+                            actionBar.setTitle("건강상태");
                         }
                         return true;
 

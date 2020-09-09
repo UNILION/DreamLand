@@ -12,10 +12,9 @@
         android:icon="@drawable/ic_moon_24dp"
         android:title="수면일지" />
     <item
-        android:id="@+id/tab_statistics"
-        android:title="통계"
-        android:icon="@drawable/ic_statistics_24dp"
-        />
+        android:id="@+id/tab_health"
+        android:icon="@drawable/ic_health_24dp"
+        android:title="건강상태" />
     <item
         android:id="@+id/tab_setting"
         android:title="설정"
