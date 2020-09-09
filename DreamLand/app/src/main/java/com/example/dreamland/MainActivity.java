@@ -29,6 +29,7 @@ import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -373,12 +374,27 @@ public class MainActivity extends AppCompatActivity {
             case RC_SLEEPING_ACTIVITY: // 수면 중지
                 Log.d("BLT", "RC_SLEEPING_ACTIVITY");
                 if (isSleep) { // 잠에 들었다가 중지했을 경우
+                    Calendar calendar = Calendar.getInstance();
+                    String whenWake = sdf1.format(calendar.getTime());
+                    String sleepTime = "";
+                    try {
+                        long diff = calendar.getTimeInMillis() - sdf1.parse(sleep.getWhenSleep()).getTime()
+                                - 1000 * 60 * 60 *9 ;
+                        sleepTime = sdf1.format(diff);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    sleep.setSleepTime(sleepTime);
+                    sleep.setWhenWake(whenWake);
                     sleep.setHeartRate(getAverage(heartRates)); // 심박수 평균
                     sleep.setOxyStr(getAverage(oxygenSaturations)); // 산소포화도 평균
                     sleep.setHumidity(getAverage(humidities)); // 습도 평균
                     Log.d("BLT",
                             "일자: " + sleep.getSleepDate()
+                                    + "  시작 시간: " + sleep.getWhenStart()
                                     + "  잠에 든 시각: " + sleep.getWhenSleep()
+                                    + "  기상 시각: " + sleep.getWhenWake()
+                                    + "  수면 시간: " + sleep.getSleepTime()
                                     + "  심박수: " + sleep.getHeartRate()
                                     + "  산소포화도: " + sleep.getOxyStr()
                                     + "  습도: " + sleep.getHumidity());
@@ -404,6 +420,7 @@ public class MainActivity extends AppCompatActivity {
         return sum / arr.size();
     }
 
+    // 잠에서 깬 후 데이터 삭제
     void clearData() {
         sleep = new Sleep();
         heartRates.clear();
