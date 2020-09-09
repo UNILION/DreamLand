@@ -18,8 +18,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import static com.example.dreamland.MySimpleDateFormat.sdf1;
+import static com.example.dreamland.MySimpleDateFormat.sdf3;
 
 public class HomeFragment extends Fragment {
 
@@ -69,9 +71,15 @@ public class HomeFragment extends Fragment {
         intent.putExtra("hour", timePicker.getHour());
         intent.putExtra("minute", timePicker.getMinute());
         intent.putExtra("selectedMenu", selectedMenu);
-        String whenStart = sdf1.format(Calendar.getInstance().getTime());
+        Calendar calendar = Calendar.getInstance();
+        String whenStart = sdf1.format(calendar.getTime());
         ((MainActivity) context).sleep.setWhenStart(whenStart);
-        Log.d("BLT", "측정 시작 / " + whenStart);
+        if (calendar.get(Calendar.HOUR_OF_DAY) < 6) { // 자정이 지나면 전날로 표기
+            calendar.roll(Calendar.HOUR_OF_DAY, 7);
+        }
+        String sleepDate = sdf3.format(calendar.getTime());
+        ((MainActivity) context).sleep.setSleepDate(sleepDate);
+        Log.d("BLT", "측정 시작 / " + sleepDate + " " + whenStart);
         ((MainActivity) getActivity()).startActivityForResult(intent, 2000);
     }
 

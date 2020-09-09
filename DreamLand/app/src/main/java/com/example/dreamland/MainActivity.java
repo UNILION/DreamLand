@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         heartRates = new ArrayList<>();
         oxygenSaturations = new ArrayList<>();
+        humidities = new ArrayList<>();
         sleep = new Sleep();
 
         statusView = (StatusView) findViewById(R.id.status);
@@ -369,12 +370,20 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
 
-            case RC_SLEEPING_ACTIVITY:
+            case RC_SLEEPING_ACTIVITY: // 수면 중지
                 Log.d("BLT", "RC_SLEEPING_ACTIVITY");
                 if (isSleep) { // 잠에 들었다가 중지했을 경우
                     sleep.setHeartRate(getAverage(heartRates)); // 심박수 평균
                     sleep.setOxyStr(getAverage(oxygenSaturations)); // 산소포화도 평균
+                    sleep.setHumidity(getAverage(humidities)); // 습도 평균
+                    Log.d("BLT",
+                            "일자: " + sleep.getSleepDate()
+                                    + "  잠에 든 시각: " + sleep.getWhenSleep()
+                                    + "  심박수: " + sleep.getHeartRate()
+                                    + "  산소포화도: " + sleep.getOxyStr()
+                                    + "  습도: " + sleep.getHumidity());
                     isSleep = false;
+                    clearData();
                 } else { // 잠에 들지 않고 중지했을 경우
 
                 }
@@ -395,6 +404,13 @@ public class MainActivity extends AppCompatActivity {
         return sum / arr.size();
     }
 
+    void clearData() {
+        sleep = new Sleep();
+        heartRates.clear();
+        humidities.clear();
+        oxygenSaturations.clear();
+    }
+
     // 블루투스 메시지 핸들러
     class BluetoothMessageHandler extends Handler {
         @Override
@@ -413,6 +429,9 @@ public class MainActivity extends AppCompatActivity {
                         case "oxygensaturation": // 산소포화도 메시지
                             oxygenSaturations.add(Integer.parseInt(msgArray[1]));
                             break;
+                        case "humidity": // 산소포화도 메시지
+                            humidities.add(Integer.parseInt(msgArray[1]));
+                            break;
                         default:
                             Log.d("BLT", "잘못된 메시지");
                     }
@@ -420,7 +439,7 @@ public class MainActivity extends AppCompatActivity {
                     switch (readMessage) {
                         case "sleepstart":
                             String whenSleep = sdf1.format(Calendar.getInstance().getTime());
-                            sleep.setWhenSleep(whenSleep);
+                            sleep.setWhenSleep(whenSleep); // 잠에 든 시각
                             isSleep = true;
                             Log.d("BLT", "사용자가 잠에 들었습니다 / " + whenSleep);
                             break;
