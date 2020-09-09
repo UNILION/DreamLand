@@ -11,7 +11,9 @@ import androidx.lifecycle.Observer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dreamland.database.AppDatabase;
@@ -54,6 +56,12 @@ public class StatisticsFragment extends Fragment {
     BarChart barChart2; // 수면 만족도
     BarChart barChart3; // 산소 포화도
     MaterialSpinner spinner; // 통계 선택 드랍다운 스피너
+    Button detailButton; // 자세히 보기 버튼
+
+    TextView strTrafficTitle;
+    TextView strTrafficScore;
+    TextView strTrafficDaily;
+    ImageView imgTrafficImg;
 
     public StatisticsFragment() {
         // Required empty public constructor
@@ -74,6 +82,29 @@ public class StatisticsFragment extends Fragment {
 
         db = AppDatabase.getDatabase(getContext());
 
+
+        strTrafficTitle = view.findViewById(R.id.strTrafficTitle);
+        strTrafficScore = view.findViewById(R.id.strTrafficScore);
+        strTrafficDaily = view.findViewById(R.id.strTrafficDaily);
+        imgTrafficImg = view.findViewById(R.id.imgTrafficImg);
+
+        detailButton =  view.findViewById(R.id.detailButton);
+        detailButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                detailButton.setVisibility(View.GONE);
+                strTrafficTitle.setVisibility(View.GONE);
+                strTrafficScore.setVisibility(View.GONE);
+                strTrafficDaily.setVisibility(View.GONE);
+                imgTrafficImg.setVisibility(View.GONE);
+
+                Snackbar.make(view, "통계 자세히 보기", Snackbar.LENGTH_LONG).show();
+
+            }
+        });
+
+
         spinner = view.findViewById(R.id.spinner);
         spinner.setItems("원하는 통계를 선택하세요.","취침 시간","기상 시간","잠들기까지 걸린시간","수면 시간","코골이 시간","자세 교정","수면 만족도","산소 포화도");
 
@@ -82,6 +113,14 @@ public class StatisticsFragment extends Fragment {
             @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
 
                 if(position == 0) {
+
+                    detailButton.setVisibility(View.VISIBLE);
+                    strTrafficTitle.setVisibility(View.VISIBLE);
+                    strTrafficScore.setVisibility(View.VISIBLE);
+                    strTrafficDaily.setVisibility(View.VISIBLE);
+                    imgTrafficImg.setVisibility(View.VISIBLE);
+
+
                     lineChart.setVisibility(View.GONE);
                     lineChart2.setVisibility(View.GONE);
                     lineChart3.setVisibility(View.GONE);
