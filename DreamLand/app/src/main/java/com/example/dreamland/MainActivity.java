@@ -63,11 +63,15 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
     Handler bluetoothMessageHandler;
 
-    boolean isConnected = false;
-    boolean isSleep = false;
+    boolean isConnected = false; // 블루투스 연결 여부
+    boolean isSleep = false; // 잠에 들었는지 여부
+    boolean isAdjust = false; // 교정 중인지 여부
     ArrayList<Integer> heartRates;
+    int currentHeartRate;
     ArrayList<Integer> oxygenSaturations;
+    int currentOxy;
     ArrayList<Integer> humidities;
+    int currentHumidity;
     Sleep sleep;
     int adjCount;
 
@@ -269,37 +273,37 @@ public class MainActivity extends AppCompatActivity {
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s1, "01:00", "01:10",
                         "07:10", "08:00", "00:50",
-                        1, 3, 40, 70, 40)
+                        1, 3, 40, 70, 40, 29)
                 );
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s2, "02:12", "02:24",
                         "07:24", "05:00", "00:35",
-                        2, 5, 30, 77, 60)
+                        2, 5, 30, 77, 60, 31)
                 );
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s3, "01:40", "01:50",
                         "08:10", "06:20", "00:10",
-                        3, 5, 20, 80, 50)
+                        3, 5, 20, 80, 50, 26)
                 );
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s4, "23:55", "00:20",
                         "05:20", "05:00", "00:10",
-                        3, 1, 10, 72, 46)
+                        3, 1, 10, 72, 46, 27)
                 );
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s5, "01:10", "01:30",
                         "08:15", "06:45", "00:15",
-                        2, 2, 60, 83, 59)
+                        2, 2, 60, 83, 59, 28)
                 );
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s6, "00:51", "01:00",
                         "06:40", "05:40", "00:00",
-                        0, 4, 60, 81, 43)
+                        0, 4, 60, 81, 43, 29)
                 );
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         s7, "03:20", "03:25",
                         "08:55", "05:30", "00:00",
-                        0, 0, 80, 75, 39)
+                        0, 0, 80, 75, 39, 30)
                 );
                 new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
                         s1, "00:32", "0", "2"
@@ -368,40 +372,42 @@ public class MainActivity extends AppCompatActivity {
 
             case RC_SLEEPING_ACTIVITY: // 수면 중지
                 Log.d("BLT", "RC_SLEEPING_ACTIVITY");
-                if (isSleep) { // 잠에 들었다가 중지했을 경우
-                    Calendar calendar = Calendar.getInstance();
-                    String whenWake = sdf1.format(calendar.getTime());
-                    String sleepTime = "";
-                    try {
-                        long diff = calendar.getTimeInMillis() - sdf1.parse(sleep.getWhenSleep()).getTime()
-                                - 1000 * 60 * 60 *9 ;
-                        sleepTime = sdf1.format(diff);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    sleep.setSleepTime(sleepTime);
-                    sleep.setWhenWake(whenWake);
-                    sleep.setHeartRate(getAverage(heartRates)); // 심박수 평균
-                    sleep.setOxyStr(getAverage(oxygenSaturations)); // 산소포화도 평균
-                    sleep.setHumidity(getAverage(humidities)); // 습도 평균
-                    sleep.setAdjCount(adjCount);
-                    Log.d("BLT",
-                            "일자: " + sleep.getSleepDate()
-                                    + "  시작 시간: " + sleep.getWhenStart()
-                                    + "  잠에 든 시각: " + sleep.getWhenSleep()
-                                    + "  기상 시각: " + sleep.getWhenWake()
-                                    + "  수면 시간: " + sleep.getSleepTime()
-                                    + "  심박수: " + sleep.getHeartRate()
-                                    + "  산소포화도: " + sleep.getOxyStr()
-                                    + "  습도: " + sleep.getHumidity()
-                                    + "  교정 횟수: " + sleep.getAdjCount());
-                    isSleep = false;
-                    clearData();
-                } else { // 잠에 들지 않고 중지했을 경우
-
-                }
+                stopSleep();
                 break;
 
+        }
+    }
+
+    void stopSleep() { // 측정 중지
+        if (isSleep) { // 잠에 들었다가 중지했을 경우
+            Calendar calendar = Calendar.getInstance();
+            String whenWake = sdf1.format(calendar.getTime());
+            String sleepTime = "";
+            try {
+                long diff = calendar.getTimeInMillis() - sdf1.parse(sleep.getWhenSleep()).getTime()
+                        - 1000 * 60 * 60 *9 ;
+                sleepTime = sdf1.format(diff);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            sleep.setSleepTime(sleepTime);
+            sleep.setWhenWake(whenWake);
+            sleep.setHeartRate(getAverage(heartRates)); // 심박수 평균
+            sleep.setOxyStr(getAverage(oxygenSaturations)); // 산소포화도 평균
+            sleep.setHumidity(getAverage(humidities)); // 습도 평균
+            sleep.setAdjCount(adjCount);
+            Log.d("BLT",
+                    "일자: " + sleep.getSleepDate()
+                            + "  시작 시간: " + sleep.getWhenStart()
+                            + "  잠에 든 시각: " + sleep.getWhenSleep()
+                            + "  기상 시각: " + sleep.getWhenWake()
+                            + "  수면 시간: " + sleep.getSleepTime()
+                            + "  심박수: " + sleep.getHeartRate()
+                            + "  산소포화도: " + sleep.getOxyStr()
+                            + "  습도: " + sleep.getHumidity()
+                            + "  교정 횟수: " + sleep.getAdjCount());
+            isSleep = false;
+            clearData();
         }
     }
 
@@ -438,16 +444,35 @@ public class MainActivity extends AppCompatActivity {
                 if (readMessage.contains(":")) {
                     String[] msgArray = readMessage.split(":");
                     switch (msgArray[0]) {
-                        case "heartrate": // 심박수 메시지
-                            heartRates.add(Integer.parseInt(msgArray[1]));
+                        case "heartrate": // 심박수
+                            currentHeartRate = Integer.parseInt(msgArray[1]);
+                            heartRates.add(currentHeartRate);
                             break;
-                        case "oxygensaturation": // 산소포화도 메시지
-                            oxygenSaturations.add(Integer.parseInt(msgArray[1]));
+                        case "spo": // 산소포화도
+                            currentOxy = Integer.parseInt(msgArray[1]);
+                            oxygenSaturations.add(currentOxy);
                             break;
-                        case "humidity": // 산소포화도 메시지
-                            humidities.add(Integer.parseInt(msgArray[1]));
+                        case "HUM": // 습도
+                            currentHumidity = Integer.parseInt(msgArray[1]);
+                            humidities.add(currentHumidity);
                             break;
-                        case "adjustment": // 자세 교정
+                        case "TEM": // 온도
+
+                            break;
+                        case "SOU": // 소리 센서
+                            int decibel = Integer.parseInt(msgArray[1]);
+                            if (decibel > 60) { // 코골이 중
+                                // TODO: 현재의 자세를 교정 전 자세로 침대에 교정 메시지 보내기
+
+                            }
+                            break;
+                        case "CO2_L": // 이산화탄소 센서 왼쪽
+                            break;
+                        case "CO2_R": // 이산화탄소 센서 오른쪽
+                            break;
+                        case "CO2_M": // 이산화탄소 센서 중앙
+                            break;
+                        case "adjustment": // 자세 교정 (사용 안함)
                             Calendar calendar = Calendar.getInstance();
                             String adjTime = sdf1.format(calendar.getTime());
                             String[] postures = msgArray[1].split(",");
@@ -460,19 +485,23 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("BLT", "자세 교정: " + beforePos + " -> " + afterPos
                                     + " / " + adjTime);
                             break;
-                        case "condition": // 코골이나 무호흡 상태 정보
-                            int decibel = Integer.parseInt(msgArray[1]);
-
+                        case "moved": // 뒤척임
+                            break;
+                        case "position": // 무게 센서
+                            break;
                         default:
                             Log.d("BLT", "잘못된 메시지");
                     }
                 } else {
                     switch (readMessage) {
-                        case "sleepstart":
+                        case "start": // 잠에 듦
                             String whenSleep = sdf1.format(Calendar.getInstance().getTime());
                             sleep.setWhenSleep(whenSleep); // 잠에 든 시각
                             isSleep = true;
                             Log.d("BLT", "사용자가 잠에 들었습니다 / " + whenSleep);
+                            break;
+                        case "end": // 밴드에서 수면 종료
+                            stopSleep();
                             break;
                         default:
                             Log.d("BLT", "잘못된 메시지");

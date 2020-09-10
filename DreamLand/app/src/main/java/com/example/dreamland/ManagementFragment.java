@@ -60,6 +60,7 @@ public class ManagementFragment extends Fragment {
     private TextView tvCondition;
     private TextView tvHeartRate;
     private TextView tvHumidity;
+    private TextView tvTemperature;
     private ImageView ivCondition;
     private ScrollView scrollView;
     private LinearLayout infoLayout;
@@ -123,6 +124,7 @@ public class ManagementFragment extends Fragment {
         tvPos = (TextView) view.findViewById(R.id.tvPos);
         tvHeartRate = (TextView) view.findViewById(R.id.tvHeartRate);
         tvHumidity = (TextView) view.findViewById(R.id.tvHumidity);
+        tvTemperature = (TextView) view.findViewById(R.id.tvTemperature);
         infoLayout = (LinearLayout) view.findViewById(R.id.infoLayout);
         posLayout = (LinearLayout) view.findViewById(R.id.posLayout);
         scrollView = (ScrollView) view.findViewById(R.id.scrollView);
@@ -253,6 +255,7 @@ public class ManagementFragment extends Fragment {
                     ratingBar.setRating(sleep.getSatLevel());
                     tvHeartRate.setText(Integer.toString(sleep.getHeartRate()));
                     tvHumidity.setText(Integer.toString(sleep.getHumidity()));
+                    tvTemperature.setText(Integer.toString(sleep.getTemperature()));
                 }
             } catch (ParseException e) {
                 e.printStackTrace();

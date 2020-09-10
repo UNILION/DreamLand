@@ -144,7 +144,7 @@ public class SettingFragment extends Fragment {
             public void onClick(View view) {
                 final View dlgView = getLayoutInflater().from(getContext()).inflate(
                         R.layout.dialog_bed_position, null);
-                position = sf.getString("position", "0,0,0,0,0,0,0,0,0,0");
+                position = sf.getString("act", "0,0,0,0,0,0,0,0,0,0");
                 String[] positionArray = position.split(",");
 
                 for (int i = 0; i < 10; i++) {
@@ -156,14 +156,13 @@ public class SettingFragment extends Fragment {
                     }
                 }
 
-                Button completeButton = dlgView.findViewById(R.id.yesButton);
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 final AlertDialog dialog = builder.setView(dlgView).create();
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
 
                 // 완료 버튼
+                Button completeButton = dlgView.findViewById(R.id.yesButton);
                 completeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -176,11 +175,7 @@ public class SettingFragment extends Fragment {
                             }
                         }
                         positionStr.deleteCharAt(positionStr.length() - 1);
-                        String savedPosition = positionStr.toString();
-                        sf.edit().putString("position", savedPosition).apply();
-                        String msg = "position:" + savedPosition;
-                        Log.d("BLT", msg);
-                        // TODO : 침대에 포지션 정보 전송
+                        sf.edit().putString("act", positionStr.toString()).apply();
                         dialog.dismiss();
                     }
                 });

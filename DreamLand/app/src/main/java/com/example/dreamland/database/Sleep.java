@@ -18,11 +18,12 @@ public class Sleep {
     private int oxyStr;  // 산소 포화도
     private int heartRate; // 심박수
     private int humidity; // 습도
+    private int temperature; // 온도
 
     public Sleep(
             String sleepDate, String whenStart, String whenSleep, String whenWake,
             String sleepTime, String conTime, int adjCount, int satLevel, int oxyStr,
-            int heartRate, int humidity) {
+            int heartRate, int humidity, int temperature) {
         this.sleepDate = sleepDate;
         this.whenStart = whenStart;
         this.whenSleep = whenSleep;
@@ -34,6 +35,7 @@ public class Sleep {
         this.oxyStr = oxyStr;
         this.heartRate = heartRate;
         this.humidity = humidity;
+        this.temperature = temperature;
     }
 
     public Sleep() {
@@ -126,4 +128,8 @@ public class Sleep {
     public int getHumidity() { return humidity; }
 
     public void setHumidity(int humidity) { this.humidity = humidity; }
+
+    public int getTemperature() { return temperature; }
+
+    public void setTemperature(int temperature) { this.temperature = temperature; }
 }
