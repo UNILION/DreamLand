@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +30,7 @@ public class SettingFragment extends Fragment {
     SharedPreferences sf;
     LinearLayout resetButton;
     LinearLayout myDiseaseButton;
-    LinearLayout bedPositionButton;
+    LinearLayout bedActButton;
     LinearLayout bltSettingLayout;
     TextView tvSleepSetting;
     TextView tvDisease;
@@ -39,14 +38,14 @@ public class SettingFragment extends Fragment {
     View line2;
     View line3;
     RadioGroup diseaseRadioGroup;
-    ToggleButton[] positionButtons;
+    ToggleButton[] actButtons;
 
     int diseaseIndex;
     final String[] diseaseNames = {"허리디스크", "강직성척추염", "척추관협착증", "척추전방전위증"};
-    int[] buttonIds = {R.id.positionButton0, R.id.positionButton1,
-            R.id.positionButton2, R.id.positionButton3, R.id.positionButton4, R.id.positionButton5,
-            R.id.positionButton6, R.id.positionButton7, R.id.positionButton8, R.id.positionButton9};
-    String position;
+    int[] buttonIds = {R.id.actButton0, R.id.actButton1,
+            R.id.actButton2, R.id.actButton3, R.id.actButton4, R.id.actButton5,
+            R.id.actButton6, R.id.actButton7, R.id.actButton8};
+    String act;
 
     // Test
     Button button1;
@@ -71,7 +70,7 @@ public class SettingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         resetButton = (LinearLayout) view.findViewById(R.id.resetButtonLayout);
         myDiseaseButton = (LinearLayout) view.findViewById(R.id.myDiseaseLayout);
-        bedPositionButton = (LinearLayout) view.findViewById(R.id.bedPositionButtonLayout);
+        bedActButton = (LinearLayout) view.findViewById(R.id.bedActButtonLayout);
         bltSettingLayout = (LinearLayout) view.findViewById(R.id.bltSettingLayout);
         tvSleepSetting = (TextView) view.findViewById(R.id.tvSleepSetting);
         tvDisease = view.findViewById(R.id.tvDisease);
@@ -85,7 +84,7 @@ public class SettingFragment extends Fragment {
         editText1 = (EditText) view.findViewById(R.id.editTextTextPersonName);
         editText2 = (EditText) view.findViewById(R.id.editTextTextPersonName2);
 
-        positionButtons = new ToggleButton[10];
+        actButtons = new ToggleButton[10];
 
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,20 +138,20 @@ public class SettingFragment extends Fragment {
         });
 
         // 사용자 조정 버튼
-        bedPositionButton.setOnClickListener(new View.OnClickListener() {
+        bedActButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final View dlgView = getLayoutInflater().from(getContext()).inflate(
-                        R.layout.dialog_bed_position, null);
-                position = sf.getString("act", "0,0,0,0,0,0,0,0,0,0");
-                String[] positionArray = position.split(",");
+                        R.layout.dialog_bed_act, null);
+                act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
+                String[] actArray = act.split(",");
 
-                for (int i = 0; i < 10; i++) {
-                    positionButtons[i] = (ToggleButton) dlgView.findViewById(buttonIds[i]);
-                    if (positionArray[i].equals("1")) {
-                        positionButtons[i].setChecked(true);
+                for (int i = 0; i < 9; i++) {
+                    actButtons[i] = (ToggleButton) dlgView.findViewById(buttonIds[i]);
+                    if (actArray[i].equals("1")) {
+                        actButtons[i].setChecked(true);
                     } else {
-                        positionButtons[i].setChecked(false);
+                        actButtons[i].setChecked(false);
                     }
                 }
 
@@ -166,16 +165,16 @@ public class SettingFragment extends Fragment {
                 completeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        StringBuilder positionStr = new StringBuilder();
-                        for (int i = 0; i < 10; i++) {
-                            if (positionButtons[i].isChecked()) {
-                                positionStr.append("1,");
+                        StringBuilder actStr = new StringBuilder();
+                        for (int i = 0; i < 9; i++) {
+                            if (actButtons[i].isChecked()) {
+                                actStr.append("1,");
                             } else {
-                                positionStr.append("0,");
+                                actStr.append("0,");
                             }
                         }
-                        positionStr.deleteCharAt(positionStr.length() - 1);
-                        sf.edit().putString("act", positionStr.toString()).apply();
+                        actStr.deleteCharAt(actStr.length() - 1);
+                        sf.edit().putString("act", actStr.toString()).apply();
                         dialog.dismiss();
                     }
                 });
@@ -243,7 +242,7 @@ public class SettingFragment extends Fragment {
     // 질환 관련 뷰를 숨김
     public void hideDiseaseView() {
         myDiseaseButton.setVisibility(View.GONE);
-        //bedPositionButton.setVisibility(View.GONE);
+        //bedActButton.setVisibility(View.GONE);
         tvSleepSetting.setVisibility(View.GONE);
         line1.setVisibility(View.GONE);
         line2.setVisibility(View.GONE);

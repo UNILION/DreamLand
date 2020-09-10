@@ -36,8 +36,45 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
             <ToggleButton
-                android:id="@+id/positionButton0"
+                android:id="@+id/actButton0"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:layout_weight="3"
+                android:background="@drawable/round_button_toggle"
+                android:textOff="DOWN"
+                android:textOn="UP" />
+
+            <ToggleButton
+                android:id="@+id/actButton1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:layout_weight="3"
+                android:background="@drawable/round_button_toggle"
+                android:textOff="DOWN"
+                android:textOn="UP" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="horizontal">
+
+            <ToggleButton
+                android:id="@+id/actButton2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"
@@ -47,7 +84,7 @@
                 android:textOn="UP" />
 
             <ToggleButton
-                android:id="@+id/positionButton1"
+                android:id="@+id/actButton3"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"
@@ -64,7 +101,7 @@
             android:orientation="horizontal">
 
             <ToggleButton
-                android:id="@+id/positionButton2"
+                android:id="@+id/actButton4"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"
@@ -74,7 +111,7 @@
                 android:textOn="UP" />
 
             <ToggleButton
-                android:id="@+id/positionButton3"
+                android:id="@+id/actButton5"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"
@@ -91,7 +128,7 @@
             android:orientation="horizontal">
 
             <ToggleButton
-                android:id="@+id/positionButton4"
+                android:id="@+id/actButton8"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"
@@ -100,42 +137,6 @@
                 android:textOff="DOWN"
                 android:textOn="UP" />
 
-            <ToggleButton
-                android:id="@+id/positionButton5"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:background="@drawable/round_button_toggle"
-                android:textOff="DOWN"
-                android:textOn="UP" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
-            android:orientation="horizontal">
-
-            <ToggleButton
-                android:id="@+id/positionButton8"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:background="@drawable/round_button_toggle"
-                android:textOff="DOWN"
-                android:textOn="UP" />
-
-            <ToggleButton
-                android:id="@+id/positionButton9"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:background="@drawable/round_button_toggle"
-                android:textOff="DOWN"
-                android:textOn="UP" />
         </LinearLayout>
 
         <LinearLayout
@@ -145,7 +146,7 @@
             android:orientation="horizontal">
 
             <ToggleButton
-                android:id="@+id/positionButton6"
+                android:id="@+id/actButton6"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"
@@ -155,7 +156,7 @@
                 android:textOn="UP" />
 
             <ToggleButton
-                android:id="@+id/positionButton7"
+                android:id="@+id/actButton7"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"

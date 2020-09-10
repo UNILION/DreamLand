@@ -362,6 +362,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case RC_INIT_ACTIVITY:
+                mode = sf.getInt("mode", 0);
                 if (resultCode == 1001) {
                     settingFragment.hideDiseaseView();
                     managementFragment.changeConditionView();
@@ -484,7 +485,10 @@ public class MainActivity extends AppCompatActivity {
                                         if (decibel > 60) {
                                             String act = sf.getString("act", "");
                                             // TODO: position으로 어떤 자세인지 판별해서 beforePos에 대입
+
                                             bluetoothService.writeBLT1("act:" + act); // 교정 정보 전송
+                                            Log.d("BLT", "act:" + act + " 전송");
+
                                             Calendar calendar = Calendar.getInstance();
                                             String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
                                             isAdjust = true; // 교정중

@@ -72,7 +72,7 @@
                 android:background="@color/colorGray" />
 
             <LinearLayout
-                android:id="@+id/bedPositionButtonLayout"
+                android:id="@+id/bedActButtonLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?attr/selectableItemBackground"
