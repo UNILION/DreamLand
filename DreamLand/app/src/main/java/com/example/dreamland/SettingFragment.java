@@ -221,7 +221,7 @@ public class SettingFragment extends Fragment {
                                 diseaseIndex = 3;
                                 break;
                         }
-                        sf.edit().putInt("disease", diseaseIndex).commit();
+                        sf.edit().putInt("disease", diseaseIndex).apply();
                         tvDisease.setText(diseaseNames[diseaseIndex]);
                         dialog.dismiss();
                     }
@@ -243,7 +243,7 @@ public class SettingFragment extends Fragment {
     // 질환 관련 뷰를 숨김
     public void hideDiseaseView() {
         myDiseaseButton.setVisibility(View.GONE);
-        bedPositionButton.setVisibility(View.GONE);
+        //bedPositionButton.setVisibility(View.GONE);
         tvSleepSetting.setVisibility(View.GONE);
         line1.setVisibility(View.GONE);
         line2.setVisibility(View.GONE);

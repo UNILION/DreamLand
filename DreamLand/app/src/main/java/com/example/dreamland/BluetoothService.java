@@ -26,7 +26,7 @@ public class BluetoothService {
     private Context context;
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter bluetoothAdapter;
-    private ConnectedThread[] connectedThread;
+    ConnectedThread[] connectedThread;
     ArrayList<BluetoothSocket> bltSockets;
     int deviceCount;
     Handler mHandler;
@@ -35,7 +35,7 @@ public class BluetoothService {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         this.context = context;
         this.handler = handler;
-        bltSockets = new ArrayList<BluetoothSocket>();
+        bltSockets = new ArrayList<>();
         connectedThread = new ConnectedThread[2];
         deviceCount = 0;
         mHandler = new Handler();

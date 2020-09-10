@@ -68,14 +68,19 @@ public class MainActivity extends AppCompatActivity {
     boolean isAdjust = false; // 교정 중인지 여부
     ArrayList<Integer> heartRates;
     int currentHeartRate;
-    ArrayList<Integer> oxygenSaturations;
+    ArrayList<Integer> oxygenSaturations; // 산소포화도 리스트
     int currentOxy;
-    ArrayList<Integer> humidities;
+    ArrayList<Integer> humidities; // 습도 리스트
     int currentHumidity;
+    ArrayList<Integer> temps; // 온도 리스트
+    int currentTemp;
+    ArrayList<Integer> probleems; // 코골이, 무호흡 리스트
     Sleep sleep;
     int adjCount;
-
-    private int mode;  // 모드
+    int mode;  // 모드
+    String position = null;
+    String beforePos = null;
+    String afterPos = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
         heartRates = new ArrayList<>();
         oxygenSaturations = new ArrayList<>();
         humidities = new ArrayList<>();
+        temps = new ArrayList<>();
+        probleems = new ArrayList<>();
         sleep = new Sleep();
         adjCount = 0;
 
@@ -385,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
             String sleepTime = "";
             try {
                 long diff = calendar.getTimeInMillis() - sdf1.parse(sleep.getWhenSleep()).getTime()
-                        - 1000 * 60 * 60 *9 ;
+                        - 1000 * 60 * 60 * 9;
                 sleepTime = sdf1.format(diff);
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -395,6 +402,7 @@ public class MainActivity extends AppCompatActivity {
             sleep.setHeartRate(getAverage(heartRates)); // 심박수 평균
             sleep.setOxyStr(getAverage(oxygenSaturations)); // 산소포화도 평균
             sleep.setHumidity(getAverage(humidities)); // 습도 평균
+            sleep.setTemperature(getAverage(temps)); // 온도 평균
             sleep.setAdjCount(adjCount);
             Log.d("BLT",
                     "일자: " + sleep.getSleepDate()
@@ -429,7 +437,13 @@ public class MainActivity extends AppCompatActivity {
         heartRates.clear();
         humidities.clear();
         oxygenSaturations.clear();
+        probleems.clear();
         adjCount = 0;
+        currentHeartRate = 0;
+        currentHumidity = 0;
+        currentOxy = 0;
+        currentTemp = 0;
+        position = null;
     }
 
     // 블루투스 메시지 핸들러
@@ -443,54 +457,85 @@ public class MainActivity extends AppCompatActivity {
 
                 if (readMessage.contains(":")) {
                     String[] msgArray = readMessage.split(":");
-                    switch (msgArray[0]) {
-                        case "heartrate": // 심박수
-                            currentHeartRate = Integer.parseInt(msgArray[1]);
-                            heartRates.add(currentHeartRate);
-                            break;
-                        case "spo": // 산소포화도
-                            currentOxy = Integer.parseInt(msgArray[1]);
-                            oxygenSaturations.add(currentOxy);
-                            break;
-                        case "HUM": // 습도
-                            currentHumidity = Integer.parseInt(msgArray[1]);
-                            humidities.add(currentHumidity);
-                            break;
-                        case "TEM": // 온도
+                    if (isSleep) {
+                        switch (msgArray[0]) {
+                            case "heartrate": // 심박수
+                                currentHeartRate = Integer.parseInt(msgArray[1]);
+                                heartRates.add(currentHeartRate);
+                                break;
+                            case "spo": // 산소포화도
+                                currentOxy = Integer.parseInt(msgArray[1]);
+                                oxygenSaturations.add(currentOxy);
+                                break;
+                            case "HUM": // 습도
+                                currentHumidity = Integer.parseInt(msgArray[1]);
+                                humidities.add(currentHumidity);
+                                break;
+                            case "TEM": // 온도
+                                currentTemp = Integer.parseInt(msgArray[1]);
+                                temps.add(currentTemp);
+                                break;
+                            case "SOU": // 소리 센서
+                                int decibel = Integer.parseInt(msgArray[1]);
+                                probleems.add(decibel); // 데시벨 저장
+                                Log.d("BLT", "decibel: " + decibel);
+                                if (position != null) { // 교정을 하기 위해 자세 정보가 필요함
+                                    if (mode == 1) { // 코골이 방지 모드
+                                        if (decibel > 60) {
+                                            String act = sf.getString("act", "");
+                                            // TODO: position으로 어떤 자세인지 판별해서 beforePos에 대입
+                                            bluetoothService.writeBLT1("act:" + act); // 교정 정보 전송
+                                            Calendar calendar = Calendar.getInstance();
+                                            String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
+                                            isAdjust = true; // 교정중
 
-                            break;
-                        case "SOU": // 소리 센서
-                            int decibel = Integer.parseInt(msgArray[1]);
-                            if (decibel > 60) { // 코골이 중
-                                // TODO: 현재의 자세를 교정 전 자세로 침대에 교정 메시지 보내기
+                                            new Thread() { // 2분 후 down 메시지 전송
+                                                @Override
+                                                public synchronized void start() {
+                                                    try {
+                                                        sleep(1000 * 5); // 2분 대기 현재는 5초로 설정
+                                                        bluetoothService.writeBLT1("down"); // 교정 해제
+                                                        isAdjust = false; // 교정중 아님
+                                                        Log.d("BLT", "down 전송");
+                                                        adjCount++; // 교정 횟수 증가
+                                                        // TODO: position으로 어떤 자세인지 판별해서 afterPos에 대입 후 교정 정보 저장
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }.start();
+                                        }
+                                    } else if (mode == 2) { // 무호흡 모드
 
-                            }
-                            break;
-                        case "CO2_L": // 이산화탄소 센서 왼쪽
-                            break;
-                        case "CO2_R": // 이산화탄소 센서 오른쪽
-                            break;
-                        case "CO2_M": // 이산화탄소 센서 중앙
-                            break;
-                        case "adjustment": // 자세 교정 (사용 안함)
-                            Calendar calendar = Calendar.getInstance();
-                            String adjTime = sdf1.format(calendar.getTime());
-                            String[] postures = msgArray[1].split(",");
-                            String beforePos = postures[0];
-                            String afterPos = postures[1];
-                            Adjustment adjustment =
-                                    new Adjustment(sleep.getSleepDate(), adjTime, beforePos, afterPos);
-                            adjCount++;
-                            // TODO : 생성한 교정 정보를 db에 추가
-                            Log.d("BLT", "자세 교정: " + beforePos + " -> " + afterPos
-                                    + " / " + adjTime);
-                            break;
-                        case "moved": // 뒤척임
-                            break;
-                        case "position": // 무게 센서
-                            break;
-                        default:
-                            Log.d("BLT", "잘못된 메시지");
+                                    } else { // 질환 모드
+
+                                    }
+                                }
+                                break;
+                            case "position": // 무게 센서
+                                position = msgArray[1];
+                                Log.d("BLT", "position: " + position);
+                                break;
+                            case "CO2_L": // 이산화탄소 센서 왼쪽
+                                break;
+                            case "CO2_R": // 이산화탄소 센서 오른쪽
+                                break;
+                            case "CO2_M": // 이산화탄소 센서 중앙
+                                break;
+                            case "moved": // 뒤척임
+                                break;
+                            default:
+                                Log.d("BLT", "동작 없음");
+                        }
+                    } else { // 잠들기 전 입력
+                        switch (msgArray[0]) {
+                            case "position": // 무게 센서
+                                position = msgArray[1];
+                                Log.d("BLT", "position: " + position);
+                                break;
+                            default:
+                                Log.d("BLT", "동작 없음");
+                        }
                     }
                 } else {
                     switch (readMessage) {
@@ -504,7 +549,7 @@ public class MainActivity extends AppCompatActivity {
                             stopSleep();
                             break;
                         default:
-                            Log.d("BLT", "잘못된 메시지");
+                            Log.d("BLT", "동작 없음");
                     }
                 }
             }
