@@ -261,90 +261,86 @@ public class MainActivity extends AppCompatActivity {
             // 테스트 데이터 삽입
             case R.id.insertSleep:
                 Calendar c = Calendar.getInstance();
+                String sleepDate;
+                c.set(2020, 2, 1);
+                for (int i = 0; i < 190; i++) {
+                    sleepDate = sdf3.format(c.getTime());
+                    c.add(Calendar.DAY_OF_MONTH, 1);
+                    new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
+                            sleepDate, "01:00", "01:10", "07:10",
+                            "08:00", "00:50", 1, 3, 40,
+                            70, 40, 29, 50)
+                    );
+                }
 
-                c.set(2020, 4, 1);
-                String s1 = sdf3.format(c.getTime());
-                c.set(2020, 4, 2);
-                String s2 = sdf3.format(c.getTime());
-                c.set(2020, 4, 3);
-                String s3 = sdf3.format(c.getTime());
-                c.set(2020, 4, 4);
-                String s4 = sdf3.format(c.getTime());
-                c.set(2020, 4, 5);
-                String s5 = sdf3.format(c.getTime());
-                c.set(2020, 4, 6);
-                String s6 = sdf3.format(c.getTime());
-                c.set(2020, 4, 7);
-                String s7 = sdf3.format(c.getTime());
-
-                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-                        s1, "01:00", "01:10",
-                        "07:10", "08:00", "00:50",
-                        1, 3, 40, 70, 40, 29)
-                );
-                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-                        s2, "02:12", "02:24",
-                        "07:24", "05:00", "00:35",
-                        2, 5, 30, 77, 60, 31)
-                );
-                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-                        s3, "01:40", "01:50",
-                        "08:10", "06:20", "00:10",
-                        3, 5, 20, 80, 50, 26)
-                );
-                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-                        s4, "23:55", "00:20",
-                        "05:20", "05:00", "00:10",
-                        3, 1, 10, 72, 46, 27)
-                );
-                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-                        s5, "01:10", "01:30",
-                        "08:15", "06:45", "00:15",
-                        2, 2, 60, 83, 59, 28)
-                );
-                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-                        s6, "00:51", "01:00",
-                        "06:40", "05:40", "00:00",
-                        0, 4, 60, 81, 43, 29)
-                );
-                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-                        s7, "03:20", "03:25",
-                        "08:55", "05:30", "00:00",
-                        0, 0, 80, 75, 39, 30)
-                );
-                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s1, "00:32", "0", "2"
-                ));
-                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s2, "00:35", "2", "1"
-                ));
-                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s2, "00:51", "1", "2"
-                ));
-                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s3, "01:13", "2", "0"
-                ));
-                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s3, "03:11", "0", "1"
-                ));
-                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s3, "04:14", "2", "1"
-                ));
-                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s4, "05:23", "1", "2"
-                ));
-                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s4, "05:41", "2", "0"
-                ));
-                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s4, "06:52", "0", "2"
-                ));
-                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s5, "06:42", "2", "0"
-                ));
-                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
-                        s5, "06:55", "1", "0"
-                ));
+//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
+//                        s[i], "01:00", "01:10",
+//                        "07:10", "08:00", "00:50",
+//                        1, 3, 40, 70, 40, 29)
+//                );
+//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
+//                        s2, "02:12", "02:24",
+//                        "07:24", "05:00", "00:35",
+//                        2, 5, 30, 77, 60, 31)
+//                );
+//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
+//                        s3, "01:40", "01:50",
+//                        "08:10", "06:20", "00:10",
+//                        3, 5, 20, 80, 50, 26)
+//                );
+//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
+//                        s4, "23:55", "00:20",
+//                        "05:20", "05:00", "00:10",
+//                        3, 1, 10, 72, 46, 27)
+//                );
+//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
+//                        s5, "01:10", "01:30",
+//                        "08:15", "06:45", "00:15",
+//                        2, 2, 60, 83, 59, 28)
+//                );
+//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
+//                        s6, "00:51", "01:00",
+//                        "06:40", "05:40", "00:00",
+//                        0, 4, 60, 81, 43, 29)
+//                );
+//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
+//                        s7, "03:20", "03:25",
+//                        "08:55", "05:30", "00:00",
+//                        0, 0, 80, 75, 39, 30)
+//                );
+//                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
+//                        s1, "00:32", "0", "2"
+//                ));
+//                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
+//                        s2, "00:35", "2", "1"
+//                ));
+//                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
+//                        s2, "00:51", "1", "2"
+//                ));
+//                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
+//                        s3, "01:13", "2", "0"
+//                ));
+//                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
+//                        s3, "03:11", "0", "1"
+//                ));
+//                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
+//                        s3, "04:14", "2", "1"
+//                ));
+//                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
+//                        s4, "05:23", "1", "2"
+//                ));
+//                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
+//                        s4, "05:41", "2", "0"
+//                ));
+//                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
+//                        s4, "06:52", "0", "2"
+//                ));
+//                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
+//                        s5, "06:42", "2", "0"
+//                ));
+//                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
+//                        s5, "06:55", "1", "0"
+//                ));
                 return true;
 
             // 수면 데이터 모두 삭제
@@ -400,11 +396,16 @@ public class MainActivity extends AppCompatActivity {
             }
             sleep.setSleepTime(sleepTime);
             sleep.setWhenWake(whenWake);
-            sleep.setHeartRate(getAverage(heartRates)); // 심박수 평균
-            sleep.setOxyStr(getAverage(oxygenSaturations)); // 산소포화도 평균
-            sleep.setHumidity(getAverage(humidities)); // 습도 평균
-            sleep.setTemperature(getAverage(temps)); // 온도 평균
-            sleep.setAdjCount(adjCount);
+            int heartRate = getAverage(heartRates);  // 심박수 평균
+            sleep.setHeartRate(heartRate);
+            int spo = getAverage(oxygenSaturations);  // 산소포화도 평균
+            sleep.setOxyStr(spo);
+            sleep.setHumidity(getAverage(humidities));  // 습도 평균
+            sleep.setTemperature(getAverage(temps));  // 온도 평균
+            sleep.setAdjCount(adjCount);  // 교정 횟수
+            sleep.setScore(getScore(heartRate, spo)); // 건강 점수
+
+
             Log.d("BLT",
                     "일자: " + sleep.getSleepDate()
                             + "  시작 시간: " + sleep.getWhenStart()
@@ -414,10 +415,34 @@ public class MainActivity extends AppCompatActivity {
                             + "  심박수: " + sleep.getHeartRate()
                             + "  산소포화도: " + sleep.getOxyStr()
                             + "  습도: " + sleep.getHumidity()
-                            + "  교정 횟수: " + sleep.getAdjCount());
+                            + "  교정 횟수: " + sleep.getAdjCount()
+                            + "  건강 점수: " + sleep.getScore());
             isSleep = false;
             clearData();
         }
+    }
+
+    // 건강 점수
+    int getScore(int heartRate, int spo) { // TODO: 수정 필요
+        int spoScore;
+        int heartRateScore;
+        if (spo >= 95) {  // 산소포화도 95이상, 정상
+            spoScore = 0;
+        } else if (spo >= 91) { // 산소포화도 91이상 95미만, 정상 이하
+            spoScore = 10 * (95 - spo);
+        } else {  // 진단 필요
+            spoScore = 60;
+        }
+
+        if (heartRate >= 60 && heartRate <= 100) { // 심박수 정상 수치
+            heartRateScore = 0;
+        } else if (heartRate > 100) {  // 정상 수치보다 높음
+            heartRateScore = heartRate - 100;
+        } else {  // 정상 수치보다 낮음
+            heartRateScore = 60 - heartRate;  // 정상 수치의 최소인 60에서 1이 떨어지면 1점 증가
+        }
+
+        return 100 - heartRateScore - spoScore;
     }
 
     // 입력값들의 평균을 구하는 함수
@@ -445,6 +470,8 @@ public class MainActivity extends AppCompatActivity {
         currentOxy = 0;
         currentTemp = 0;
         position = null;
+        beforePos = null;
+        afterPos = null;
     }
 
     // 블루투스 메시지 핸들러
@@ -483,7 +510,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (position != null) { // 교정을 하기 위해 자세 정보가 필요함
                                     if (mode == 1) { // 코골이 방지 모드
                                         if (decibel > 60) {
-                                            String act = sf.getString("act", "");
+                                            String act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
                                             // TODO: position으로 어떤 자세인지 판별해서 beforePos에 대입
 
                                             bluetoothService.writeBLT1("act:" + act); // 교정 정보 전송
@@ -518,7 +545,7 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             case "position": // 무게 센서
                                 position = msgArray[1];
-                                Log.d("BLT", "position: " + position);
+                                Log.d("BLT", "현재의 position: " + position);
                                 break;
                             case "CO2_L": // 이산화탄소 센서 왼쪽
                                 break;
