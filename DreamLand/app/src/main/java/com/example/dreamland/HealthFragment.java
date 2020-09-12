@@ -255,7 +255,6 @@ public class HealthFragment extends Fragment {
                         color= R.color.colorRed;
                         imgRes = R.drawable.ic_signal_red;
                     } else if (score <= 60){
-                        
                         color = R.color.colorOrange;
                         imgRes = R.drawable.ic_signal_yellow;
                     } else {
@@ -334,7 +333,7 @@ public class HealthFragment extends Fragment {
                 scoreChartYAxis.setValueFormatter(new IndexAxisValueFormatter() {
                     @Override
                     public String getFormattedValue(float value) {
-                        return ((int) value / 5) * 5 + "점";
+                        return (int) value + "점";
                     }
                 });
 
