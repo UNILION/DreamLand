@@ -247,23 +247,32 @@ public class HealthFragment extends Fragment {
         db.sleepDao().getLastSleep().observe(this, new Observer<Sleep>() {
             @Override
             public void onChanged(Sleep sleep) {
-                int score = sleep.getScore();
-                int color;
-                if (score <= 40) {
-                    color= R.color.colorRed;
-                } else if (score <= 60){
-                    color = R.color.colorOrange;
-                } else {
-                    color = R.color.trafficColorGreen;
+                if (sleep != null) {
+                    int score = sleep.getScore();
+                    int color;
+                    int imgRes;
+                    if (score <= 40) {
+                        color= R.color.colorRed;
+                        imgRes = R.drawable.ic_signal_red;
+                    } else if (score <= 60){
+                        
+                        color = R.color.colorOrange;
+                        imgRes = R.drawable.ic_signal_yellow;
+                    } else {
+                        color = R.color.trafficColorGreen;
+                        imgRes = R.drawable.ic_signal_green;
+                    }
+                    strTrafficScore.setTextColor(getResources().getColor(color)); // 텍스트 색 변경
+                    strTrafficScore.setText(score+ "점"); // 점수 변경
+                    imgTrafficImg.setImageResource(imgRes); // 이미지 변경
                 }
-                strTrafficScore.setTextColor(getResources().getColor(color));
-                strTrafficScore.setText(score+ "점");
             }
         });
 
         // 건강 점수 차트
         healthScoreChart = view.findViewById(R.id.health_score_chart);
         final XAxis scoreChartXAxis = healthScoreChart.getXAxis(); // X축
+
         final YAxis scoreChartYAxis = healthScoreChart.getAxisLeft(); // Y축
         setLineChartOptions(healthScoreChart, scoreChartXAxis, scoreChartYAxis);
 
@@ -290,7 +299,7 @@ public class HealthFragment extends Fragment {
                             dateMap.get(date).add(sleep);
                         }
                     }
-                    if (!dateMap.isEmpty()) {
+                    if (!dateMap.isEmpty()) { // 수면 데이터가 존재
                         ArrayList<String> keys = new ArrayList<>(dateMap.keySet());
                         Collections.sort(keys); // 키를 시간순으로 정렬
                         int i = 0;
@@ -304,7 +313,6 @@ public class HealthFragment extends Fragment {
                             }
                             int avgOfScore = sumOfScore / sleepArrayList.size(); // 한달 수면 점수의 평균
                             scoreEntries.add(new Entry(i, avgOfScore)); // 엔트리에 추가
-                            Log.d("dddd", "i: " + i + "  avg: " + avgOfScore);
                             i++;
                             scores.add(avgOfScore);
                         }
@@ -313,9 +321,7 @@ public class HealthFragment extends Fragment {
                             sum += score;
                         }
                         avgOfTotalScore = sum / scores.size(); // 전체 수면점수의 평균
-                        Log.d("dddd", "Avg Total: " + avgOfTotalScore);
                     }
-                    healthScoreChart.invalidate();
                 }
 
                 scoreChartXAxis.setValueFormatter(new IndexAxisValueFormatter() {
