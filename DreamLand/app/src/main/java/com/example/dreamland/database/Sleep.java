@@ -1,5 +1,6 @@
 package com.example.dreamland.database;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -41,6 +42,16 @@ public class Sleep {
     }
 
     public Sleep() {
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "sleepDate: " + sleepDate + " whenStart: " + whenStart + " whenSleep: " + whenSleep
+                + " whenWake: " + whenWake + " sleepTime: " + sleepTime + " conTime: " + conTime
+                + " adjCount: " + adjCount + " satLevel: " + satLevel + " oxyStr: " + oxyStr
+                + " heartRate: " + heartRate + "humidity: " + humidity + " temperature: " + temperature
+                + " score: " + score;
     }
 
     public int getSleepId() {

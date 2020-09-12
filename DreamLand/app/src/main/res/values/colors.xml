@@ -12,4 +12,5 @@
     <color name="colorRed">#FF0000</color>
     <color name="colorChoral">#FF5252</color>
     <color name="colorOrange">#FF8F00</color>
+    <color name="trafficColorGreen">#0ECA18</color>
 </resources>

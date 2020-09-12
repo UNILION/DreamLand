@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +35,12 @@ import com.jaredrummler.materialspinner.MaterialSpinner;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static com.example.dreamland.MySimpleDateFormat.sdf1;
 import static com.example.dreamland.MySimpleDateFormat.sdf3;
@@ -45,11 +50,15 @@ import static com.example.dreamland.MySimpleDateFormat.sdf4;
 public class HealthFragment extends Fragment {
 
     private AppDatabase db;
+    private HashMap<String, ArrayList<Sleep>> dateMap;
+    private ArrayList<Integer> scores;
+    int avgOfTotalScore;
     LineChart lineChart; // 취침 시간
     LineChart lineChart2; // 기상 시간
     LineChart lineChart3; // 잠들기까지 걸린 시간
     LineChart lineChart4; // 수면 시간
     LineChart lineChart5; // 코골이, 무호흡 시간
+    LineChart healthScoreChart;
     BarChart barChart; // 자세 교정
     BarChart barChart2; // 수면 만족도
     BarChart barChart3; // 산소 포화도
@@ -75,18 +84,19 @@ public class HealthFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         db = AppDatabase.getDatabase(getContext());
-
+        dateMap = new HashMap<>();
+        scores = new ArrayList<>();
 
         strTrafficTitle = view.findViewById(R.id.strTrafficTitle);
         strTrafficScore = view.findViewById(R.id.strTrafficScore);
         strTrafficDaily = view.findViewById(R.id.strTrafficDaily);
         imgTrafficImg = view.findViewById(R.id.imgTrafficImg);
 
-        detailButton =  view.findViewById(R.id.detailButton);
+        detailButton = view.findViewById(R.id.detailButton);
         detailButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -234,6 +244,102 @@ public class HealthFragment extends Fragment {
             }
         });
 
+        db.sleepDao().getLastSleep().observe(this, new Observer<Sleep>() {
+            @Override
+            public void onChanged(Sleep sleep) {
+                int score = sleep.getScore();
+                int color;
+                if (score <= 40) {
+                    color= R.color.colorRed;
+                } else if (score <= 60){
+                    color = R.color.colorOrange;
+                } else {
+                    color = R.color.trafficColorGreen;
+                }
+                strTrafficScore.setTextColor(getResources().getColor(color));
+                strTrafficScore.setText(score+ "점");
+            }
+        });
+
+        // 건강 점수 차트
+        healthScoreChart = view.findViewById(R.id.health_score_chart);
+        final XAxis scoreChartXAxis = healthScoreChart.getXAxis(); // X축
+        final YAxis scoreChartYAxis = healthScoreChart.getAxisLeft(); // Y축
+        setLineChartOptions(healthScoreChart, scoreChartXAxis, scoreChartYAxis);
+
+        final ArrayList<String> scoreChartXLabels = new ArrayList<>();
+
+        final ArrayList<Entry> scoreEntries = new ArrayList<>();
+
+        db.sleepDao().getAll().observe(this, new Observer<List<Sleep>>() {
+            @Override
+            public void onChanged(List<Sleep> sleeps) {
+                scoreEntries.clear();
+                scoreChartXLabels.clear();
+                dateMap.clear();
+                if (!sleeps.isEmpty()) {
+                    String thisMonth = sdf3.format(Calendar.getInstance().getTime()).substring(0, 6);
+
+                    // 달별로 hash map에 삽입
+                    for (Sleep sleep : sleeps) {
+                        String date = sleep.getSleepDate().substring(0, 6); // sleep에 저장된 날짜의 달
+                        if (!date.equals(thisMonth)) { // 현재 달 제외
+                            if (!dateMap.containsKey(date)) {
+                                dateMap.put(date, new ArrayList<Sleep>());
+                            }
+                            dateMap.get(date).add(sleep);
+                        }
+                    }
+                    if (!dateMap.isEmpty()) {
+                        ArrayList<String> keys = new ArrayList<>(dateMap.keySet());
+                        Collections.sort(keys); // 키를 시간순으로 정렬
+                        int i = 0;
+                        for (String key : keys) {
+                            int sumOfScore = 0;
+                            // x라벨에 해당 달을 추가
+                            scoreChartXLabels.add(key.substring(2, 4) + "/" + key.substring(4, 6));
+                            ArrayList<Sleep> sleepArrayList = dateMap.get(key); // 해당 달의 Sleep 리스트
+                            for (Sleep sleep : sleepArrayList) {
+                                sumOfScore += sleep.getScore();
+                            }
+                            int avgOfScore = sumOfScore / sleepArrayList.size(); // 한달 수면 점수의 평균
+                            scoreEntries.add(new Entry(i, avgOfScore)); // 엔트리에 추가
+                            Log.d("dddd", "i: " + i + "  avg: " + avgOfScore);
+                            i++;
+                            scores.add(avgOfScore);
+                        }
+                        int sum = 0;
+                        for (int score : scores) {
+                            sum += score;
+                        }
+                        avgOfTotalScore = sum / scores.size(); // 전체 수면점수의 평균
+                        Log.d("dddd", "Avg Total: " + avgOfTotalScore);
+                    }
+                    healthScoreChart.invalidate();
+                }
+
+                scoreChartXAxis.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return scoreChartXLabels.get((int) value);
+                    }
+                });
+
+                scoreChartYAxis.setValueFormatter(new IndexAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return ((int) value / 5) * 5 + "점";
+                    }
+                });
+
+                // 건강 점수 차트의 데이터셋 설정
+                LineDataSet scoreDataSet = new LineDataSet(scoreEntries, "Label");
+                setLineDataSetOptions(scoreDataSet);
+                LineData scoreLineData = new LineData(scoreDataSet);
+                healthScoreChart.setData(scoreLineData);
+                healthScoreChart.invalidate(); // refresh
+            }
+        });
 
         // 취침시간 차트
         lineChart = view.findViewById(R.id.lineChart);
