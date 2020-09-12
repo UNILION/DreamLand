@@ -1,5 +1,6 @@
 package com.example.dreamland;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -64,6 +65,7 @@ public class HealthFragment extends Fragment {
     BarChart barChart3; // 산소 포화도
     MaterialSpinner spinner; // 통계 선택 드랍다운 스피너
     Button detailButton; // 자세히 보기 버튼
+    Button mapsButton;  // 맵 보기 버튼
 
     TextView strTrafficTitle;
     TextView strTrafficScore;
@@ -95,8 +97,17 @@ public class HealthFragment extends Fragment {
         strTrafficScore = view.findViewById(R.id.strTrafficScore);
         strTrafficDaily = view.findViewById(R.id.strTrafficDaily);
         imgTrafficImg = view.findViewById(R.id.imgTrafficImg);
-
         detailButton = view.findViewById(R.id.detailButton);
+        mapsButton = view.findViewById(R.id.maps_button);
+
+        mapsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mapsIntent = new Intent(getContext(), MapsActivity.class);
+                startActivity(mapsIntent);
+            }
+        });
+
         detailButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
