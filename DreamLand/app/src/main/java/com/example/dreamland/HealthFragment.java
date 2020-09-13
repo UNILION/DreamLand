@@ -265,7 +265,7 @@ public class HealthFragment extends Fragment {
                     if (score <= 40) {
                         color= R.color.colorRed;
                         imgRes = R.drawable.ic_signal_red;
-                    } else if (score <= 60){
+                    } else if (score <= 70){
                         color = R.color.colorOrange;
                         imgRes = R.drawable.ic_signal_yellow;
                     } else {

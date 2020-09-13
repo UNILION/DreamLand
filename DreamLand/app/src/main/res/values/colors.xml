@@ -13,4 +13,7 @@
     <color name="colorChoral">#FF5252</color>
     <color name="colorOrange">#FF8F00</color>
     <color name="trafficColorGreen">#0ECA18</color>
+    <color name="colorSignalRed">#f1404b</color>
+    <color name="colorSignalYellow">#f9d423</color>
+    <color name="colorSignalGreen">#3ac569</color>
 </resources>
