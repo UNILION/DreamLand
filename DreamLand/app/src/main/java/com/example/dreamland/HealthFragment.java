@@ -290,10 +290,17 @@ public class HealthFragment extends Fragment {
 
         final ArrayList<Entry> scoreEntries = new ArrayList<>();
 
+        scoreEntries.add(new Entry(0, 40));
+        scoreEntries.add(new Entry(1, 96));
+        scoreEntries.add(new Entry(2, 99));
+        scoreEntries.add(new Entry(3, 68));
+        scoreEntries.add(new Entry(4, 97));
+        scoreEntries.add(new Entry(5, 80));
+
         db.sleepDao().getAll().observe(this, new Observer<List<Sleep>>() {
             @Override
             public void onChanged(List<Sleep> sleeps) {
-                scoreEntries.clear();
+                // scoreEntries.clear();
                 scoreChartXLabels.clear();
                 dateMap.clear();
                 if (!sleeps.isEmpty()) {
@@ -322,7 +329,7 @@ public class HealthFragment extends Fragment {
                                 sumOfScore += sleep.getScore();
                             }
                             int avgOfScore = sumOfScore / sleepArrayList.size(); // 한달 수면 점수의 평균
-                            scoreEntries.add(new Entry(i, avgOfScore)); // 엔트리에 추가
+                            // scoreEntries.add(new Entry(i, avgOfScore)); // 엔트리에 추가
                             i++;
                             scores.add(avgOfScore);
                         }
