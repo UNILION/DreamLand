@@ -719,9 +719,9 @@ public class HealthFragment extends Fragment {
     // line data set 옵션 세팅
     private void setLineDataSetOptions(LineDataSet dataSet) {
         dataSet.setDrawFilled(true); // 아래쪽 채우기
-        dataSet.setLineWidth(4.0f);
-        dataSet.setCircleRadius(5.0f);
-        dataSet.setCircleHoleRadius(3.0f);
+        dataSet.setLineWidth(5.0f);
+        dataSet.setCircleRadius(7.0f);
+        dataSet.setCircleHoleRadius(5.0f);
         dataSet.setValueTextSize(0.0f);
     }
 
