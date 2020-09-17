@@ -14,7 +14,7 @@
         android:id="@+id/timePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/round_button_toggle"
+        android:background="@drawable/round_background_light_gray"
         android:hapticFeedbackEnabled="true"
         android:timePickerMode="spinner"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"

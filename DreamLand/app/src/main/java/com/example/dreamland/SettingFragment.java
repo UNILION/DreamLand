@@ -32,11 +32,10 @@ public class SettingFragment extends Fragment {
     LinearLayout myDiseaseButton;
     LinearLayout bedActButton;
     LinearLayout bltSettingLayout;
+    LinearLayout sleepSettingLayout;
     TextView tvSleepSetting;
     TextView tvDisease;
     View line1;
-    View line2;
-    View line3;
     RadioGroup diseaseRadioGroup;
     ToggleButton[] actButtons;
 
@@ -72,11 +71,10 @@ public class SettingFragment extends Fragment {
         myDiseaseButton = (LinearLayout) view.findViewById(R.id.myDiseaseLayout);
         bedActButton = (LinearLayout) view.findViewById(R.id.bedActButtonLayout);
         bltSettingLayout = (LinearLayout) view.findViewById(R.id.bltSettingLayout);
+        sleepSettingLayout = (LinearLayout) view.findViewById(R.id.sleep_setting_layout);
         tvSleepSetting = (TextView) view.findViewById(R.id.tvSleepSetting);
         tvDisease = view.findViewById(R.id.tvDisease);
         line1 = (View) view.findViewById(R.id.view1);
-        line2 = (View) view.findViewById(R.id.view2);
-        line3 = (View) view.findViewById(R.id.view3);
 
         // Test
         button1 = (Button) view.findViewById(R.id.button);
@@ -242,10 +240,8 @@ public class SettingFragment extends Fragment {
     // 질환 관련 뷰를 숨김
     public void hideDiseaseView() {
         myDiseaseButton.setVisibility(View.GONE);
-        //bedActButton.setVisibility(View.GONE);
         tvSleepSetting.setVisibility(View.GONE);
         line1.setVisibility(View.GONE);
-        line2.setVisibility(View.GONE);
-        line3.setVisibility(View.GONE);
+        sleepSettingLayout.setVisibility(View.GONE);
     }
 }

@@ -43,7 +43,7 @@ public class InitActivity extends AppCompatActivity {
             public void onClick(View v) {
                 editor.putInt("mode", 2);
                 editor.commit();
-                setResult(1001);
+                setResult(1002);
                 finish();
             }
         });
@@ -54,6 +54,7 @@ public class InitActivity extends AppCompatActivity {
             public void onClick(View v) {
                 editor.putInt("mode", 3);
                 editor.commit();
+                setResult(1003);
                 finish();
             }
         });

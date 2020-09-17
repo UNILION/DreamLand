@@ -91,11 +91,16 @@ public class HealthFragment extends Fragment {
 
     }
 
+    public void changeView() {
+        spinner.setItems("원하는 통계를 선택하세요.","취침 시간","기상 시간","잠들기까지 걸린시간","수면 시간", "무호흡 시간","자세 교정","수면 만족도","산소 포화도");
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         db = AppDatabase.getDatabase(getContext());
+
         dateMap = new HashMap<>();
         scores = new ArrayList<>();
         avgOfMonthlyDatas = new ArrayList<>();
@@ -132,7 +137,7 @@ public class HealthFragment extends Fragment {
 
 
         spinner = view.findViewById(R.id.spinner);
-        spinner.setItems("원하는 통계를 선택하세요.","취침 시간","기상 시간","잠들기까지 걸린시간","수면 시간","코골이 시간","자세 교정","수면 만족도","산소 포화도");
+        spinner.setItems("원하는 통계를 선택하세요.","취침 시간","기상 시간","잠들기까지 걸린시간","수면 시간", "코골이 시간","자세 교정","수면 만족도","산소 포화도");
 
         spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() { // 스피너를 눌렀을 때
 

@@ -211,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    // 초기화 함수
     public void resetData() {
         sf.edit().putInt("mode", 0).apply();
         sf.edit().putInt("disease", 0).apply();
@@ -417,10 +418,14 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case RC_INIT_ACTIVITY:
-                mode = sf.getInt("mode", 0);
-                if (resultCode == 1001) {
+                if (resultCode == 1001) {  // 코골이 모드 선택
+                    settingFragment.hideDiseaseView();
+                } else if (resultCode == 1002) {  // 무호흡 모드 선택
                     settingFragment.hideDiseaseView();
                     managementFragment.changeConditionView();
+                    healthFragment.changeView();
+                } else if (resultCode == 1003) {  // 질환 모드 선택
+                    // TODO: 질환 모드에 맞는 UI 출력
                 }
                 break;
 
@@ -435,7 +440,7 @@ public class MainActivity extends AppCompatActivity {
 
             case RC_SLEEPING_ACTIVITY: // 수면 중지
                 Log.d("BLT", "RC_SLEEPING_ACTIVITY");
-                stopSleep();
+                stopSleep();  // 측정 중지
                 break;
 
         }
