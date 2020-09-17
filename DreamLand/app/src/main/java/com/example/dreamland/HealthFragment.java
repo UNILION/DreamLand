@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.dreamland.database.Adjustment;
 import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
 import com.github.mikephil.charting.charts.BarChart;
@@ -72,6 +75,9 @@ public class HealthFragment extends Fragment {
     TextView strTrafficDaily;
     ImageView imgTrafficImg;
 
+    ArrayList<AvgOfMonthlyData> avgOfMonthlyDatas;
+    HealthScoreAdapter adapter;
+
     public HealthFragment() {
         // Required empty public constructor
     }
@@ -92,6 +98,7 @@ public class HealthFragment extends Fragment {
         db = AppDatabase.getDatabase(getContext());
         dateMap = new HashMap<>();
         scores = new ArrayList<>();
+        avgOfMonthlyDatas = new ArrayList<>();
 
         strTrafficTitle = view.findViewById(R.id.strTrafficTitle);
         strTrafficScore = view.findViewById(R.id.strTrafficScore);
@@ -255,6 +262,14 @@ public class HealthFragment extends Fragment {
             }
         });
 
+        // 건강 점수 리스트
+        RecyclerView recyclerview = (RecyclerView) view.findViewById(R.id.health_score_recyclerview);
+
+        recyclerview.setLayoutManager(
+                new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+        adapter = new HealthScoreAdapter(avgOfMonthlyDatas);
+        recyclerview.setAdapter(adapter);
+
         db.sleepDao().getLastSleep().observe(this, new Observer<Sleep>() {
             @Override
             public void onChanged(Sleep sleep) {
@@ -290,19 +305,15 @@ public class HealthFragment extends Fragment {
 
         final ArrayList<Entry> scoreEntries = new ArrayList<>();
 
-        scoreEntries.add(new Entry(0, 40));
-        scoreEntries.add(new Entry(1, 96));
-        scoreEntries.add(new Entry(2, 99));
-        scoreEntries.add(new Entry(3, 68));
-        scoreEntries.add(new Entry(4, 97));
-        scoreEntries.add(new Entry(5, 80));
-
+        // 수면데이터 변경시
         db.sleepDao().getAll().observe(this, new Observer<List<Sleep>>() {
             @Override
             public void onChanged(List<Sleep> sleeps) {
-                // scoreEntries.clear();
+                scoreEntries.clear();
                 scoreChartXLabels.clear();
                 dateMap.clear();
+                avgOfMonthlyDatas.clear();
+
                 if (!sleeps.isEmpty()) {
                     String thisMonth = sdf3.format(Calendar.getInstance().getTime()).substring(0, 6);
 
@@ -321,15 +332,37 @@ public class HealthFragment extends Fragment {
                         Collections.sort(keys); // 키를 시간순으로 정렬
                         int i = 0;
                         for (String key : keys) {
+                            AvgOfMonthlyData monthlyData = new AvgOfMonthlyData();
+
                             int sumOfScore = 0;
+                            int sumOfSpo = 0;
+                            int sumOfHeartRate = 0;
+
                             // x라벨에 해당 달을 추가
-                            scoreChartXLabels.add(key.substring(2, 4) + "/" + key.substring(4, 6));
+                            String date = key.substring(2, 4) + "/" + key.substring(4, 6);
+                            scoreChartXLabels.add(date);
+                            monthlyData.setDate(date); // 날짜 데이터
+
                             ArrayList<Sleep> sleepArrayList = dateMap.get(key); // 해당 달의 Sleep 리스트
                             for (Sleep sleep : sleepArrayList) {
                                 sumOfScore += sleep.getScore();
+                                sumOfSpo += sleep.getOxyStr();
+                                sumOfHeartRate += sleep.getHeartRate();
                             }
-                            int avgOfScore = sumOfScore / sleepArrayList.size(); // 한달 수면 점수의 평균
-                            // scoreEntries.add(new Entry(i, avgOfScore)); // 엔트리에 추가
+
+                            // 한 달의 평균 데이터
+                            int avgOfScore = sumOfScore / sleepArrayList.size();
+                            int avgOfSpo = sumOfSpo / sleepArrayList.size();
+                            int avgOfHeartRate = sumOfHeartRate / sleepArrayList.size();
+
+                            monthlyData.setHealthScore(avgOfScore);
+                            monthlyData.setSpo(avgOfSpo);
+                            monthlyData.setHeartRate(avgOfHeartRate);
+
+                            avgOfMonthlyDatas.add(monthlyData);
+                            adapter.notifyDataSetChanged();
+
+                            scoreEntries.add(new Entry(i, avgOfScore)); // 엔트리에 추가
                             i++;
                             scores.add(avgOfScore);
                         }
@@ -661,7 +694,6 @@ public class HealthFragment extends Fragment {
                 barChart3.invalidate();
             }
         });
-
 
     }
 
