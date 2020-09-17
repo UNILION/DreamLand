@@ -513,11 +513,8 @@ public class HealthFragment extends Fragment {
                                     sleep.getWhenWake(), 0)));
 
                             // 잠들기까지 시간
-                            long diffTime = sdf1.parse(sleep.getWhenSleep()).getTime()
-                                    - sdf1.parse(sleep.getWhenStart()).getTime();
-
                             entries3.add(new Entry(i, timeToFloatForMinute(
-                                    sdf1.format(diffTime), 5)));
+                                    sleep.getAsleepAfter(), 5)));
                             entries4.add(new Entry(i, timeToFloatForMinute(
                                     sleep.getSleepTime(), 30)));
                             entries5.add(new Entry(i, timeToFloatForMinute(

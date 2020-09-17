@@ -15,6 +15,7 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/sleepDataLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -31,8 +32,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="16dp">
+                android:layout_margin="16dp"
+                android:orientation="horizontal">
 
                 <at.grabner.circleprogress.CircleProgressView
                     android:id="@+id/circle_progressview"
@@ -48,9 +49,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp">
+                    android:layout_marginRight="16dp"
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -79,7 +80,7 @@
                         android:layout_height="wrap_content"
                         android:text="건강 점수"
                         android:textColor="@color/colorGray"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
 
                 </LinearLayout>
 
@@ -96,7 +97,6 @@
                     android:orientation="vertical">
 
                     <LinearLayout
-                        android:id="@+id/sleepDataLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical">
@@ -539,7 +539,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="2"
-                                    android:orientation="vertical"/>
+                                    android:orientation="vertical" />
 
                             </LinearLayout>
                         </LinearLayout>

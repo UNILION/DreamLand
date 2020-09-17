@@ -33,6 +33,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import iammert.com.library.StatusView;
@@ -255,6 +256,21 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    // 수면 시작 시간 생성 함수
+    private String createRandomStartTime() {
+        Calendar calendar = Calendar.getInstance();
+
+        int hour = (int) (Math.random() * 4) + 22; // 시간 랜덤 생성 22 ~ 01시 사이
+        if (hour >= 24) {
+            hour -= 24;
+        }
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+
+        int minute = (int) (Math.random() * 59); // 분 랜덤 생성 0 ~ 59분 사이
+        calendar.set(Calendar.MINUTE, minute);
+        return sdf1.format(calendar.getTime());
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -266,10 +282,12 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < 190; i++) {
                     sleepDate = sdf3.format(c.getTime());
                     c.add(Calendar.DAY_OF_MONTH, 1);
+
+                    // 샘플 데이터 생성
                     new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-                            sleepDate, "01:00", "01:10", "07:10",
-                            "08:00", "00:50", 1, 3, 40,
-                            70, 40, 29, 50)
+                            sleepDate, "01:00", "01:10", "00:10",
+                            "07:10", "08:00", "00:50", 1,
+                            3, 40, 70, 40, 29, 50)
                     );
                 }
 
@@ -575,6 +593,18 @@ public class MainActivity extends AppCompatActivity {
                             sleep.setWhenSleep(whenSleep); // 잠에 든 시각
                             isSleep = true;
                             Log.d("BLT", "사용자가 잠에 들었습니다 / " + whenSleep);
+
+                            // 잠들기까지 걸린 시간
+                            long diffTime = 0L;
+                            try {
+                                diffTime = sdf1.parse(whenSleep).getTime() - sdf1.parse(sleep.getWhenStart()).getTime();
+                                diffTime -= (1000 * 60 * 60 * 9); // 기본 9시간을 뺌
+                                String asleepAfter = sdf1.format(diffTime);
+                                sleep.setAsleepAfter(asleepAfter);
+                                Log.d("BLT", "잠들기까지 걸린 시간 / " + asleepAfter);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                             break;
                         case "end": // 밴드에서 수면 종료
                             stopSleep();

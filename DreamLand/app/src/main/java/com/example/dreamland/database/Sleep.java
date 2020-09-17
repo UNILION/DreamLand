@@ -11,11 +11,12 @@ public class Sleep {
     private String sleepDate;  // 날짜
     private String whenStart;  // 측정 시작 시간
     private String whenSleep;  // 수면 시작 시간
+    private String asleepAfter;  // 잠들기까지 걸린 시간
     private String whenWake;  // 기상 시간
     private String sleepTime;  // 수면 시간
-    private String conTime;  // 상태 지속 시간 *
+    private String conTime;  // 상태 지속 시간
     private int adjCount; // 교정 횟수
-    private int satLevel;  // 수면 만족도 *
+    private int satLevel;  // 수면 만족도
     private int oxyStr;  // 산소 포화도
     private int heartRate; // 심박수
     private int humidity; // 습도
@@ -23,12 +24,13 @@ public class Sleep {
     private int score; // 건강 점수
 
     public Sleep(
-            String sleepDate, String whenStart, String whenSleep, String whenWake,
-            String sleepTime, String conTime, int adjCount, int satLevel, int oxyStr,
-            int heartRate, int humidity, int temperature, int score) {
+            String sleepDate, String whenStart, String whenSleep, String asleepAfter,
+            String whenWake, String sleepTime, String conTime, int adjCount, int satLevel,
+            int oxyStr, int heartRate, int humidity, int temperature, int score) {
         this.sleepDate = sleepDate;
         this.whenStart = whenStart;
         this.whenSleep = whenSleep;
+        this.asleepAfter = asleepAfter;
         this.whenWake = whenWake;
         this.sleepTime = sleepTime;
         this.conTime = conTime;
@@ -48,10 +50,10 @@ public class Sleep {
     @Override
     public String toString() {
         return "sleepDate: " + sleepDate + " whenStart: " + whenStart + " whenSleep: " + whenSleep
-                + " whenWake: " + whenWake + " sleepTime: " + sleepTime + " conTime: " + conTime
-                + " adjCount: " + adjCount + " satLevel: " + satLevel + " oxyStr: " + oxyStr
-                + " heartRate: " + heartRate + "humidity: " + humidity + " temperature: " + temperature
-                + " score: " + score;
+                + "asleepAfter: " + asleepAfter + " whenWake: " + whenWake + " sleepTime: "
+                + sleepTime + " conTime: " + conTime + " adjCount: " + adjCount + " satLevel: "
+                + satLevel + " oxyStr: " + oxyStr + " heartRate: " + heartRate + "humidity: "
+                + humidity + " temperature: " + temperature + " score: " + score;
     }
 
     public int getSleepId() {
@@ -77,6 +79,10 @@ public class Sleep {
     public void setWhenStart(String whenStart) {
         this.whenStart = whenStart;
     }
+
+    public String getAsleepAfter() { return asleepAfter; }
+
+    public void setAsleepAfter(String asleepAfter) { this.asleepAfter = asleepAfter; }
 
     public String getWhenSleep() {
         return whenSleep;

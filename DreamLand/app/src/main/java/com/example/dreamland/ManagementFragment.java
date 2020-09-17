@@ -64,8 +64,8 @@ public class ManagementFragment extends Fragment {
     private TextView tvTemperature;
     private TextView tvHealthScore;
     private ImageView ivCondition;
-    private ScrollView scrollView;
     private LinearLayout infoLayout;
+    private LinearLayout sleepDataLayout;
     private LinearLayout posLayout;
     private ScaleRatingBar ratingBar;
     private CircleProgressView circleProgressView;
@@ -130,7 +130,7 @@ public class ManagementFragment extends Fragment {
         tvTemperature = (TextView) view.findViewById(R.id.tvTemperature);
         infoLayout = (LinearLayout) view.findViewById(R.id.infoLayout);
         posLayout = (LinearLayout) view.findViewById(R.id.posLayout);
-        scrollView = (ScrollView) view.findViewById(R.id.scrollView);
+        sleepDataLayout = (LinearLayout) view.findViewById(R.id.sleepDataLayout);
         ivCondition = (ImageView) view.findViewById(R.id.iv_condition);
         tvCondition = (TextView) view.findViewById(R.id.tv_condition);
         ratingBar = (ScaleRatingBar) view.findViewById(R.id.ratingBar);
@@ -248,11 +248,7 @@ public class ManagementFragment extends Fragment {
                     // TextView들의 text 변경
                     tvWhenWake.setText(sleep.getWhenWake());
                     tvConTime.setText(sleep.getConTime());
-                    // 시작 시간과 잠든 시간의 차
-                    long diffTime = sdf1.parse(sleep.getWhenSleep()).getTime()
-                            - sdf1.parse(sleep.getWhenStart()).getTime();
-                    diffTime -= (1000 * 60 * 60 * 9); // 기본 9시간을 뺌
-                    tvWaitTime.setText(sdf1.format(diffTime));
+                    tvWaitTime.setText(sleep.getAsleepAfter());
                     tvWhenSleep.setText(sleep.getWhenSleep());
                     tvSleepTime.setText(sleep.getSleepTime());
                     tvOxy.setText(Integer.toString(sleep.getOxyStr()));
@@ -300,10 +296,10 @@ public class ManagementFragment extends Fragment {
         if (sleepList != null) {
             if (sleepList.size() == 0) {
                 infoLayout.setVisibility(View.VISIBLE);
-                scrollView.setVisibility(View.GONE);
+                sleepDataLayout.setVisibility(View.GONE);
             } else {
                 infoLayout.setVisibility(View.GONE);
-                scrollView.setVisibility(View.VISIBLE);
+                sleepDataLayout.setVisibility(View.VISIBLE);
             }
         }
     }
