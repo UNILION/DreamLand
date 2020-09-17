@@ -332,7 +332,6 @@ public class HealthFragment extends Fragment {
                         Collections.sort(keys); // 키를 시간순으로 정렬
                         int i = 0;
                         for (String key : keys) {
-                            AvgOfMonthlyData monthlyData = new AvgOfMonthlyData();
 
                             int sumOfScore = 0;
                             int sumOfSpo = 0;
@@ -341,6 +340,7 @@ public class HealthFragment extends Fragment {
                             // x라벨에 해당 달을 추가
                             String date = key.substring(2, 4) + "/" + key.substring(4, 6);
                             scoreChartXLabels.add(date);
+                            AvgOfMonthlyData monthlyData = new AvgOfMonthlyData();
                             monthlyData.setDate(date); // 날짜 데이터
 
                             ArrayList<Sleep> sleepArrayList = dateMap.get(key); // 해당 달의 Sleep 리스트
@@ -360,7 +360,6 @@ public class HealthFragment extends Fragment {
                             monthlyData.setHeartRate(avgOfHeartRate);
 
                             avgOfMonthlyDatas.add(monthlyData);
-                            adapter.notifyDataSetChanged();
 
                             scoreEntries.add(new Entry(i, avgOfScore)); // 엔트리에 추가
                             i++;
@@ -373,6 +372,8 @@ public class HealthFragment extends Fragment {
                         avgOfTotalScore = sum / scores.size(); // 전체 수면점수의 평균
                     }
                 }
+
+                adapter.notifyDataSetChanged();
 
                 scoreChartXAxis.setValueFormatter(new IndexAxisValueFormatter() {
                     @Override

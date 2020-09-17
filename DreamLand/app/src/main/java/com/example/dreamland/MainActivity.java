@@ -32,6 +32,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -256,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    // 수면 시작 시간 생성 함수
+    // 수면 시작 시간 랜덤 생성 함수
     private String createRandomStartTime() {
         Calendar calendar = Calendar.getInstance();
 
@@ -271,6 +272,73 @@ public class MainActivity extends AppCompatActivity {
         return sdf1.format(calendar.getTime());
     }
 
+    // 잠에 든 시간 랜덤 생성 함수
+    private String createRandomWhenSleep(String startTime) {
+        Date date;
+        Calendar calendar = null;
+        try {
+            date = sdf1.parse(startTime);
+            calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int additionalTime = (int) (Math.random() * 30) + 3;
+            calendar.add(Calendar.MINUTE, additionalTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return sdf1.format(calendar.getTime());
+    }
+
+    // 기상 시각 랜덤 생성 함수
+    private String createRandomWhenWake() {
+        Calendar calendar = Calendar.getInstance();
+
+        int hour = (int) (Math.random() * 4) + 6; // 시간 랜덤 생성 22 ~ 01시 사이
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+
+        int minute = (int) (Math.random() * 59); // 분 랜덤 생성 0 ~ 59분 사이
+        calendar.set(Calendar.MINUTE, minute);
+        return sdf1.format(calendar.getTime());
+    }
+
+    // 잠에 든 시간 랜덤 생성 함수
+    private String createRandomConTime() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+
+        int minute = (int) (Math.random() * 40);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.MINUTE, minute);
+        return sdf1.format(calendar.getTime());
+    }
+
+    // 잠들기까지 걸린 시간을 반환하는 함수
+    private String getAsleepAfter(String whenSleep, String whenStart) {
+        long diffTime = 0L;
+        String asleepAfter = "";
+        try {
+            diffTime = sdf1.parse(whenSleep).getTime() - sdf1.parse(whenStart).getTime();
+            diffTime -= (1000 * 60 * 60 * 9); // 기본 9시간을 뺌
+            asleepAfter = sdf1.format(diffTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return asleepAfter;
+    }
+
+    // 수면 시간을 반환하는 함수
+    private String getSleepTime(String whenSleep, String whenWake) {
+        String sleepTime = "";
+        try {
+            Date startTime = sdf1.parse(whenSleep);
+            long diff = sdf1.parse(whenWake).getTime() - startTime.getTime()
+                    - 1000 * 60 * 60 * 9;
+            sleepTime = sdf1.format(diff);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return sleepTime;
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -283,49 +351,22 @@ public class MainActivity extends AppCompatActivity {
                     sleepDate = sdf3.format(c.getTime());
                     c.add(Calendar.DAY_OF_MONTH, 1);
 
+                    String whenStart = createRandomStartTime();
+                    String whenSleep = createRandomWhenSleep(whenStart);
+                    String whenWake = createRandomWhenWake();
+                    int heartRate = (int) (Math.random() * 70) + 40;
+                    int spo = (int) (Math.random() * 14) + 88;
                     // 샘플 데이터 생성
                     new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-                            sleepDate, "01:00", "01:10", "00:10",
-                            "07:10", "08:00", "00:50", 1,
-                            3, 40, 70, 40, 29, 50)
+                            sleepDate, whenSleep, whenStart, getAsleepAfter(whenSleep, whenStart),
+                            whenWake, getSleepTime(whenSleep, whenWake), createRandomConTime(),
+                            (int) (Math.random() * 7) , (int) (Math.random() * 5) + 1,
+                            spo, heartRate, (int) (Math.random() * 50) + 10,
+                            (int) (Math.random() * 5) + 20,
+                            getScore(spo, heartRate))
                     );
                 }
 
-//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-//                        s[i], "01:00", "01:10",
-//                        "07:10", "08:00", "00:50",
-//                        1, 3, 40, 70, 40, 29)
-//                );
-//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-//                        s2, "02:12", "02:24",
-//                        "07:24", "05:00", "00:35",
-//                        2, 5, 30, 77, 60, 31)
-//                );
-//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-//                        s3, "01:40", "01:50",
-//                        "08:10", "06:20", "00:10",
-//                        3, 5, 20, 80, 50, 26)
-//                );
-//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-//                        s4, "23:55", "00:20",
-//                        "05:20", "05:00", "00:10",
-//                        3, 1, 10, 72, 46, 27)
-//                );
-//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-//                        s5, "01:10", "01:30",
-//                        "08:15", "06:45", "00:15",
-//                        2, 2, 60, 83, 59, 28)
-//                );
-//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-//                        s6, "00:51", "01:00",
-//                        "06:40", "05:40", "00:00",
-//                        0, 4, 60, 81, 43, 29)
-//                );
-//                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-//                        s7, "03:20", "03:25",
-//                        "08:55", "05:30", "00:00",
-//                        0, 0, 80, 75, 39, 30)
-//                );
 //                new InsertAdjAsyncTask(db.adjustmentDao()).execute(new Adjustment(
 //                        s1, "00:32", "0", "2"
 //                ));
@@ -404,14 +445,8 @@ public class MainActivity extends AppCompatActivity {
         if (isSleep) { // 잠에 들었다가 중지했을 경우
             Calendar calendar = Calendar.getInstance();
             String whenWake = sdf1.format(calendar.getTime());
-            String sleepTime = "";
-            try {
-                long diff = calendar.getTimeInMillis() - sdf1.parse(sleep.getWhenSleep()).getTime()
-                        - 1000 * 60 * 60 * 9;
-                sleepTime = sdf1.format(diff);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+
+            String sleepTime = getSleepTime(sleep.getWhenSleep(), whenWake);
             sleep.setSleepTime(sleepTime);
             sleep.setWhenWake(whenWake);
             int heartRate = getAverage(heartRates);  // 심박수 평균
@@ -421,7 +456,7 @@ public class MainActivity extends AppCompatActivity {
             sleep.setHumidity(getAverage(humidities));  // 습도 평균
             sleep.setTemperature(getAverage(temps));  // 온도 평균
             sleep.setAdjCount(adjCount);  // 교정 횟수
-            sleep.setScore(getScore(heartRate, spo)); // 건강 점수
+            sleep.setScore(getScore(spo, heartRate)); // 건강 점수
 
 
             Log.d("BLT",
@@ -441,7 +476,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 건강 점수
-    int getScore(int heartRate, int spo) { // TODO: 수정 필요
+    int getScore(int spo, int heartRate) { // TODO: 수정 필요
         int spoScore;
         int heartRateScore;
         if (spo >= 95) {  // 산소포화도 95이상, 정상
@@ -595,16 +630,8 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("BLT", "사용자가 잠에 들었습니다 / " + whenSleep);
 
                             // 잠들기까지 걸린 시간
-                            long diffTime = 0L;
-                            try {
-                                diffTime = sdf1.parse(whenSleep).getTime() - sdf1.parse(sleep.getWhenStart()).getTime();
-                                diffTime -= (1000 * 60 * 60 * 9); // 기본 9시간을 뺌
-                                String asleepAfter = sdf1.format(diffTime);
-                                sleep.setAsleepAfter(asleepAfter);
-                                Log.d("BLT", "잠들기까지 걸린 시간 / " + asleepAfter);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                            String asleepAfter = getAsleepAfter(whenSleep, sleep.getWhenStart());
+                            sleep.setAsleepAfter(asleepAfter);
                             break;
                         case "end": // 밴드에서 수면 종료
                             stopSleep();
