@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import at.grabner.circleprogress.CircleProgressView;
 import devs.mulham.horizontalcalendar.HorizontalCalendar;
 import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
 import static com.example.dreamland.MySimpleDateFormat.sdf1;
@@ -61,11 +62,13 @@ public class ManagementFragment extends Fragment {
     private TextView tvHeartRate;
     private TextView tvHumidity;
     private TextView tvTemperature;
+    private TextView tvHealthScore;
     private ImageView ivCondition;
     private ScrollView scrollView;
     private LinearLayout infoLayout;
     private LinearLayout posLayout;
     private ScaleRatingBar ratingBar;
+    private CircleProgressView circleProgressView;
 
     private Sleep firstSleep;
     private Sleep lastSleep;
@@ -131,6 +134,8 @@ public class ManagementFragment extends Fragment {
         ivCondition = (ImageView) view.findViewById(R.id.iv_condition);
         tvCondition = (TextView) view.findViewById(R.id.tv_condition);
         ratingBar = (ScaleRatingBar) view.findViewById(R.id.ratingBar);
+        circleProgressView = (CircleProgressView) view.findViewById(R.id.circle_progressview);
+        tvHealthScore = (TextView) view.findViewById(R.id.tv_health_score);
 
         sf = getContext().getSharedPreferences("bed", Context.MODE_PRIVATE);
 
@@ -256,6 +261,18 @@ public class ManagementFragment extends Fragment {
                     tvHeartRate.setText(Integer.toString(sleep.getHeartRate()));
                     tvHumidity.setText(Integer.toString(sleep.getHumidity()));
                     tvTemperature.setText(Integer.toString(sleep.getTemperature()));
+                    int score = sleep.getScore();
+                    circleProgressView.setValue(score);
+                    tvHealthScore.setText(Integer.toString(score));
+                    int color;
+                    if (score <= 40) {
+                        color = R.color.colorSignalRed;
+                    } else if (score <= 70) {
+                        color = R.color.colorOrange;
+                    } else {
+                        color = R.color.trafficColorGreen;
+                    }
+                    circleProgressView.setBarColor(getResources().getColor(color));
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
