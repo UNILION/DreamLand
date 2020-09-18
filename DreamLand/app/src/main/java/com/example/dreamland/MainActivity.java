@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     int adjCount;
     int mode;  // 모드
     boolean customAct = false;  // 사용자 설정 여부
-    boolean useHumidifier = false;  // 가습기 사용 여부
+    boolean autoHumidifier = true;  // 가습기 사용 여부
     boolean useO2 = false;
 
     String act;

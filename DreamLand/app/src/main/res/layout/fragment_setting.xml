@@ -51,7 +51,7 @@
                     android:checked="true"
                     android:enabled="false"
                     android:text="자동 가습기 조절"
-                    android:textColor="@color/colorWhite" />
+                    android:textColor="@color/colorGray" />
 
                 <Switch
                     android:id="@+id/switch_manual"
@@ -74,6 +74,15 @@
                     android:layout_marginRight="16dp"
                     android:background="@color/colorGray" />
 
+                <Switch
+                    android:id="@+id/switch_pos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:layout_weight="1"
+                    android:text="원하는 교정 자세 사용"
+                    android:textColor="@color/colorWhite" />
+
                 <LinearLayout
                     android:id="@+id/bedActButtonLayout"
                     android:layout_width="match_parent"
@@ -81,13 +90,16 @@
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:orientation="horizontal"
-                    android:paddingRight="16dp">
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
-                        android:text="사용자 조정"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:text="교정 자세 설정"
                         android:textColor="@android:color/white"
                         android:textSize="14sp" />
 

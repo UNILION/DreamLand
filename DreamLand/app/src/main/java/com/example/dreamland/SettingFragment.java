@@ -39,6 +39,7 @@ public class SettingFragment extends Fragment {
     TextView tvDisease;
     Switch autoSwitch;
     Switch manualSwitch;
+    Switch posSwitch;
 
     View line1;
     RadioGroup diseaseRadioGroup;
@@ -80,6 +81,7 @@ public class SettingFragment extends Fragment {
         tvSleepSetting = (TextView) view.findViewById(R.id.tvSleepSetting);
         autoSwitch = (Switch) view.findViewById(R.id.switch_auto);
         manualSwitch = (Switch) view.findViewById(R.id.switch_manual);
+        posSwitch = (Switch) view.findViewById(R.id.switch_pos);
         tvDisease = (TextView) view.findViewById(R.id.tvDisease);
         line1 = (View) view.findViewById(R.id.view1);
 
@@ -113,8 +115,10 @@ public class SettingFragment extends Fragment {
                 if (b) {  // 자동 사용
                     manualSwitch.setVisibility(View.GONE);
                     ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_AUTO");
+                    ((MainActivity) getActivity()).autoHumidifier = true;
                 } else {  // 수동 사용
                     manualSwitch.setVisibility(View.VISIBLE);
+                    ((MainActivity) getActivity()).autoHumidifier = false;
                     if (manualSwitch.isChecked()) {
                         ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_ON");
                     } else {
@@ -132,6 +136,20 @@ public class SettingFragment extends Fragment {
                     ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_ON");
                 } else {  // 사용 안함
                     ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_OFF");
+                }
+            }
+        });
+
+        // 사용자 설정 자세 스위치
+        posSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    bedActButton.setVisibility(View.VISIBLE);
+                    ((MainActivity) getActivity()).customAct = true;
+                } else {
+                    bedActButton.setVisibility(View.GONE);
+                    ((MainActivity) getActivity()).customAct = false;
                 }
             }
         });
@@ -287,5 +305,6 @@ public class SettingFragment extends Fragment {
     public void enableSwitch() {
         autoSwitch.setEnabled(true);
         manualSwitch.setEnabled(true);
+        autoSwitch.setTextColor(getResources().getColor(R.color.colorWhite));
     }
 }
