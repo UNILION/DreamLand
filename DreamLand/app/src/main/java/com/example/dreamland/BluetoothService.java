@@ -84,10 +84,12 @@ public class BluetoothService {
 
     // 연결이 모두 완료되면 호출
     void connectionCompleted() {
+        ((MainActivity) context).isConnected = true;
         StatusView statusView = (StatusView) ((MainActivity)context).findViewById(R.id.status);
         statusView.setStatus(Status.COMPLETE);
         LinearLayout connectButton = (LinearLayout) ((MainActivity)context).findViewById(R.id.bltSettingLayout);
         connectButton.setEnabled(false);
+        ((MainActivity) context).settingFragment.enableSwitch();
     }
 
     // 엑추에이터에 전송
@@ -142,7 +144,6 @@ public class BluetoothService {
 
             if (deviceCount == 3) { // 3개의 기기 연결 완료
                 Log.d(TAG, "연결 완료");
-                ((MainActivity) context).isConnected = true;
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {

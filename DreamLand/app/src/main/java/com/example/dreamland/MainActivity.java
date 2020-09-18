@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     private HomeFragment homeFragment;
     private ManagementFragment managementFragment;
-    private SettingFragment settingFragment;
+    public SettingFragment settingFragment;
     private HealthFragment healthFragment;
     private Fragment curFragment;
     private StatusView statusView;
