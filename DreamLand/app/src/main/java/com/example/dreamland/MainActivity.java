@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import iammert.com.library.StatusView;
@@ -80,9 +79,14 @@ public class MainActivity extends AppCompatActivity {
     Sleep sleep;
     int adjCount;
     int mode;  // 모드
-    String position = null;
-    String beforePos = null;
-    String afterPos = null;
+    boolean customAct = false;  // 사용자 설정 여부
+    boolean useHumidifier = false;  // 가습기 사용 여부
+    boolean useO2 = false;
+
+    String act;
+    String position = null;  // 무게 센서에서 받은 자세 정보
+    String beforePos = null;  // 교정 전 자세
+    String afterPos = null;  // 교정 후 자세
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -552,6 +556,14 @@ public class MainActivity extends AppCompatActivity {
                             case "spo": // 산소포화도
                                 currentOxy = Integer.parseInt(msgArray[1]);
                                 oxygenSaturations.add(currentOxy);
+                                if (currentOxy >= 95 && useO2) {  // 산소포화도가 정상
+                                    useO2 = false;
+                                    bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
+                                }
+                                if (currentOxy < 95 && !useO2) {  // 산소포화도가 정상수치보다 낮음
+                                    useO2 = true;
+                                    bluetoothService.writeBLT2("O2_ON");  // 산소발생기 on
+                                }
                                 break;
                             case "HUM": // 습도
                                 currentHumidity = Integer.parseInt(msgArray[1]);
@@ -568,7 +580,6 @@ public class MainActivity extends AppCompatActivity {
                                 if (position != null) { // 교정을 하기 위해 자세 정보가 필요함
                                     if (mode == 1) { // 코골이 방지 모드
                                         if (decibel > 60) {
-                                            String act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
                                             // TODO: position으로 어떤 자세인지 판별해서 beforePos에 대입
 
                                             bluetoothService.writeBLT1("act:" + act); // 교정 정보 전송
@@ -632,11 +643,15 @@ public class MainActivity extends AppCompatActivity {
                             String whenSleep = sdf1.format(Calendar.getInstance().getTime());
                             sleep.setWhenSleep(whenSleep); // 잠에 든 시각
                             isSleep = true;
-                            Log.d("BLT", "사용자가 잠에 들었습니다 / " + whenSleep);
+                            Log.d("BLT", "사용자가 잠에 들었습니다 / " + sleep.getWhenSleep());
 
                             // 잠들기까지 걸린 시간
                             String asleepAfter = getAsleepAfter(whenSleep, sleep.getWhenStart());
                             sleep.setAsleepAfter(asleepAfter);
+                            Log.d("BLT", "잠들기까지 걸린 시간 / " + sleep.getAsleepAfter());
+
+                            // 사용자 교정자세 정보
+                            act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
                             break;
                         case "end": // 밴드에서 수면 종료
                             stopSleep();

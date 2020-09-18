@@ -36,7 +36,7 @@ public class BluetoothService {
         this.context = context;
         this.handler = handler;
         bltSockets = new ArrayList<>();
-        connectedThread = new ConnectedThread[2];
+        connectedThread = new ConnectedThread[3];  // 0: 엑추에이터, 1: 침대 센서, 2: 손목 밴드
         deviceCount = 0;
         mHandler = new Handler();
     }
@@ -60,7 +60,8 @@ public class BluetoothService {
             connectedThread[1] = new BluetoothService.ConnectedThread(socket);
             connectedThread[1].start();
         } else if (device.getName().equals("BLT3")) {
-            new BluetoothService.ConnectedThread(socket).start();
+            connectedThread[2] = new BluetoothService.ConnectedThread(socket);
+            connectedThread[2].start();
         }
     }
 
@@ -89,12 +90,19 @@ public class BluetoothService {
         connectButton.setEnabled(false);
     }
 
+    // 엑추에이터에 전송
     void writeBLT1(String msg) {
         connectedThread[0].write(msg.getBytes());
     }
 
+    // 침대 센서에 전송
     void writeBLT2(String msg) {
         connectedThread[1].write(msg.getBytes());
+    }
+
+    // 손목 밴드에 전송
+    void writeBLT3(String msg) {
+        connectedThread[2].write(msg.getBytes());
     }
 
     // 기기 연결 후 사용
@@ -133,7 +141,7 @@ public class BluetoothService {
             deviceCount++;
 
             if (deviceCount == 3) { // 3개의 기기 연결 완료
-                Log.d("BLT", "연결 완료");
+                Log.d(TAG, "연결 완료");
                 ((MainActivity) context).isConnected = true;
                 mHandler.post(new Runnable() {
                     @Override
