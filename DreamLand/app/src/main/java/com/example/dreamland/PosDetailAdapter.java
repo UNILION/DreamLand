@@ -15,7 +15,6 @@ import java.util.List;
 public class PosDetailAdapter extends RecyclerView.Adapter<PosDetailAdapter.ViewHolder> {
 
     List<Adjustment> items;
-    String[] postures = {"오른쪽", "왼쪽", "정면"};
 
     public PosDetailAdapter(List<Adjustment> items) {
         this.items = items;
@@ -34,10 +33,8 @@ public class PosDetailAdapter extends RecyclerView.Adapter<PosDetailAdapter.View
         Adjustment item = items.get(position);
         holder.tvId.setText(String.valueOf(position + 1));
         holder.tvTime.setText(item.getAdjTime());
-        int beforeIndex = Integer.parseInt(item.getBeforePos());
-        int afterIndex = Integer.parseInt(item.getAfterPos());
-        holder.tvBeforePos.setText(postures[beforeIndex]);
-        holder.tvAfterPos.setText(postures[afterIndex]);
+        holder.tvBeforePos.setText(item.getBeforePos());
+        holder.tvAfterPos.setText(item.getAfterPos());
     }
 
     @Override

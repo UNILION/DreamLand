@@ -63,10 +63,12 @@ public class MainActivity extends AppCompatActivity {
     BluetoothService bluetoothService;
     ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
     Handler bluetoothMessageHandler;
+    PostureInfo postureInfo;
 
     boolean isConnected = false; // 블루투스 연결 여부
     boolean isSleep = false; // 잠에 들었는지 여부
     boolean isAdjust = false; // 교정 중인지 여부
+    boolean isSense = false; // 이산화탄소 감지 여부
     ArrayList<Integer> heartRates;
     int currentHeartRate;
     ArrayList<Integer> oxygenSaturations; // 산소포화도 리스트
@@ -84,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
     boolean useO2 = false;
 
     String act;
-    String position = null;  // 무게 센서에서 받은 자세 정보
     String beforePos = null;  // 교정 전 자세
     String afterPos = null;  // 교정 후 자세
 
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         probleems = new ArrayList<>();
         sleep = new Sleep();
         adjCount = 0;
+        postureInfo = new PostureInfo();
 
         statusView = (StatusView) findViewById(R.id.status);
 
@@ -531,9 +533,7 @@ public class MainActivity extends AppCompatActivity {
         currentHumidity = 0;
         currentOxy = 0;
         currentTemp = 0;
-        position = null;
-        beforePos = null;
-        afterPos = null;
+        postureInfo = new PostureInfo();
     }
 
     // 블루투스 메시지 핸들러
@@ -577,28 +577,33 @@ public class MainActivity extends AppCompatActivity {
                                 int decibel = Integer.parseInt(msgArray[1]);
                                 probleems.add(decibel); // 데시벨 저장
                                 Log.d("BLT", "decibel: " + decibel);
-                                if (position != null) { // 교정을 하기 위해 자세 정보가 필요함
+                                if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
                                     if (mode == 1) { // 코골이 방지 모드
                                         if (decibel > 60) {
-                                            // TODO: position으로 어떤 자세인지 판별해서 beforePos에 대입
-
+                                            beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
                                             bluetoothService.writeBLT1("act:" + act); // 교정 정보 전송
                                             Log.d("BLT", "act:" + act + " 전송");
 
                                             Calendar calendar = Calendar.getInstance();
-                                            String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
-                                            isAdjust = true; // 교정중
+                                            final String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
+                                            isAdjust = true; // 교정중으로 상태 변경
 
                                             new Thread() { // 2분 후 down 메시지 전송
                                                 @Override
-                                                public synchronized void start() {
+                                                public synchronized void run() {
                                                     try {
                                                         sleep(1000 * 5); // 2분 대기 현재는 5초로 설정
                                                         bluetoothService.writeBLT1("down"); // 교정 해제
                                                         isAdjust = false; // 교정중 아님
                                                         Log.d("BLT", "down 전송");
                                                         adjCount++; // 교정 횟수 증가
-                                                        // TODO: position으로 어떤 자세인지 판별해서 afterPos에 대입 후 교정 정보 저장
+                                                        afterPos = postureInfo.getCurrentPos();  // 교정 후 자세
+                                                        new InsertAdjAsyncTask(db.adjustmentDao())
+                                                                .execute(new Adjustment(sleep.getSleepDate(), adjTime, beforePos, afterPos));
+                                                        Log.d("BLT", "교정 정보 삽입 -> Date: " + sleep.getSleepDate() + "  교정 시각: "
+                                                                + adjTime + "  교정 전 자세: " + beforePos + "  교정 후 자세: " + afterPos);
+                                                        beforePos = null;  // 자세정보 삽입 후 교정 전, 후 자세 정보 초기화
+                                                        afterPos = null;
                                                     } catch (InterruptedException e) {
                                                         e.printStackTrace();
                                                     }
@@ -613,14 +618,17 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 break;
                             case "position": // 무게 센서
-                                position = msgArray[1];
-                                Log.d("BLT", "현재의 position: " + position);
+                                String position = msgArray[1];
+                                Log.d("BLT", "position: " + position);
+                                postureInfo.setCurrentPos(position, isSense);  // 자세 정보 입력
                                 break;
                             case "CO2_L": // 이산화탄소 센서 왼쪽
                                 break;
                             case "CO2_R": // 이산화탄소 센서 오른쪽
                                 break;
                             case "CO2_M": // 이산화탄소 센서 중앙
+                                int co2 = Integer.parseInt(msgArray[1]);
+                                isSense = co2 > 100;
                                 break;
                             case "moved": // 뒤척임
                                 break;
@@ -630,8 +638,9 @@ public class MainActivity extends AppCompatActivity {
                     } else { // 잠들기 전 입력
                         switch (msgArray[0]) {
                             case "position": // 무게 센서
-                                position = msgArray[1];
+                                String position = msgArray[1];
                                 Log.d("BLT", "position: " + position);
+                                postureInfo.setCurrentPos(position, isSense);  // 자세 정보 입력
                                 break;
                             default:
                                 Log.d("BLT", "동작 없음");
