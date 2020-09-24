@@ -52,12 +52,6 @@ public class SettingFragment extends Fragment {
             R.id.actButton6, R.id.actButton7, R.id.actButton8};
     String act;
 
-    // Test
-    Button button1;
-    Button button2;
-    EditText editText1;
-    EditText editText2;
-
     public SettingFragment() {
         // Required empty public constructor
     }
@@ -85,28 +79,8 @@ public class SettingFragment extends Fragment {
         tvDisease = (TextView) view.findViewById(R.id.tvDisease);
         line1 = (View) view.findViewById(R.id.view1);
 
-        // Test
-        button1 = (Button) view.findViewById(R.id.button);
-        button2 = (Button) view.findViewById(R.id.button2);
-        editText1 = (EditText) view.findViewById(R.id.editTextTextPersonName);
-        editText2 = (EditText) view.findViewById(R.id.editTextTextPersonName2);
-
         actButtons = new ToggleButton[10];
-
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity) getContext()).bluetoothService.writeBLT1(editText1.getText().toString());
-            }
-        });
-
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity) getContext()).bluetoothService.writeBLT2(editText2.getText().toString());
-            }
-        });
-        // End
+        sf = getContext().getSharedPreferences("bed", getContext().MODE_PRIVATE);
 
         // 가습기 자동 사용 스위치
         autoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -140,7 +114,13 @@ public class SettingFragment extends Fragment {
             }
         });
 
+
         // 사용자 설정 자세 스위치
+        boolean customAct = sf.getBoolean("customAct", false);
+        if (customAct) {
+            bedActButton.setVisibility(View.VISIBLE);
+        }
+        posSwitch.setChecked(customAct);
         posSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -151,10 +131,10 @@ public class SettingFragment extends Fragment {
                     bedActButton.setVisibility(View.GONE);
                     ((MainActivity) getActivity()).customAct = false;
                 }
+                sf.edit().putBoolean("customAct", ((MainActivity) getActivity()).customAct).apply();
             }
         });
 
-        sf = getContext().getSharedPreferences("bed", getContext().MODE_PRIVATE);
         int mode = sf.getInt("mode", 0); // 사용자가 설정한 모드를 불러옴
 
         // 코골이, 무호흡모드이면 질병 관련 뷰들을 숨김

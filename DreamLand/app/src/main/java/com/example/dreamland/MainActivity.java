@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     BluetoothService bluetoothService;
     ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
     Handler bluetoothMessageHandler;
-    PostureInfo postureInfo;
+    PostureInfo postureInfo;  // 현제 자세 정보
 
     boolean isConnected = false; // 블루투스 연결 여부
     boolean isSleep = false; // 잠에 들었는지 여부
@@ -78,17 +78,17 @@ public class MainActivity extends AppCompatActivity {
     int currentHumidity;
     ArrayList<Integer> temps; // 온도 리스트
     int currentTemp;
-    ArrayList<Integer> probleems; // 코골이, 무호흡 리스트
+    ArrayList<Integer> problems; // 코골이, 무호흡 리스트
     Sleep sleep;
-    int adjCount;
+    int adjCount;  // 자세 교정 횟수
     int mode;  // 모드
     boolean customAct = false;  // 사용자 설정 여부
     boolean autoHumidifier = true;  // 가습기 사용 여부
     boolean useO2 = false;
-    long conMilliTime = 0L;
-    long conStartTime = 0L;
-    long conEndTime = 0L;
-    int noConditionCount = 0;
+    long conMilliTime = 0L;  // 상태 지속 총 시간
+    long conStartTime = 0L;  // 상태 시작 시간
+    long conEndTime = 0L;  // 상태 종료 시간
+    int noConditionCount = 0;  // 정상 상태 감지 카운트
 
     String act;
     String beforePos = null;  // 교정 전 자세
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         oxygenSaturations = new ArrayList<>();
         humidities = new ArrayList<>();
         temps = new ArrayList<>();
-        probleems = new ArrayList<>();
+        problems = new ArrayList<>();
         sleep = new Sleep();
         adjCount = 0;
         postureInfo = new PostureInfo();
@@ -511,7 +511,7 @@ public class MainActivity extends AppCompatActivity {
         heartRates.clear();
         humidities.clear();
         oxygenSaturations.clear();
-        probleems.clear();
+        problems.clear();
         adjCount = 0;
         currentHeartRate = 0;
         currentHumidity = 0;
@@ -559,7 +559,7 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             case "SOU": // 소리 센서
                                 int decibel = Integer.parseInt(msgArray[1]);
-                                probleems.add(decibel); // 데시벨 저장
+                                problems.add(decibel); // 데시벨 저장
                                 Log.d("BLT", "SOU: " + decibel);
                                 if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
                                     if (mode == 1) { // 코골이 방지 모드
@@ -661,7 +661,12 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("BLT", "잠들기까지 걸린 시간 / " + sleep.getAsleepAfter());
 
                             // 사용자 교정자세 정보
-                            act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
+                            if (customAct) {  // 사용
+                                act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
+                            } else {  // 사용 안함
+                                act = "1,0,1,0,1,0,1,0,0";  // 왼쪽  // TODO: 왼쪽 오른쪽 지정
+                            }
+
                             break;
                         case "end": // 밴드에서 수면 종료
                             stopSleep();
