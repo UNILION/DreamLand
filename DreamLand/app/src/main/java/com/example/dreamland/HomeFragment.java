@@ -70,7 +70,7 @@ public class HomeFragment extends Fragment {
         Intent intent = new Intent(getContext(), SleepingActivity.class);
         intent.putExtra("hour", timePicker.getHour());
         intent.putExtra("minute", timePicker.getMinute());
-        intent.putExtra("selectedMenu", selectedMenu);
+        // TODO: 선택한 메뉴에 따라 교정 방식을 분기
         Calendar calendar = Calendar.getInstance();
         String whenStart = sdf1.format(calendar.getTime());
         ((MainActivity) context).sleep.setWhenStart(whenStart);

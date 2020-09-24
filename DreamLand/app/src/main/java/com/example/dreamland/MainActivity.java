@@ -7,17 +7,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.dreamland.asynctask.DeleteAdjAsyncTask;
@@ -28,6 +34,7 @@ import com.example.dreamland.database.Adjustment;
 import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.willy.ratingbar.ScaleRatingBar;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -465,6 +472,26 @@ public class MainActivity extends AppCompatActivity {
                             + "  습도: " + sleep.getHumidity()
                             + "  교정 횟수: " + sleep.getAdjCount()
                             + "  건강 점수: " + sleep.getScore());
+
+            View dlgView = getLayoutInflater().from(this).inflate(
+                    R.layout.dialog_sat_level, null);
+            Button satConfirmButton = dlgView.findViewById(R.id.sat_confirm_button);
+            final ScaleRatingBar scaleRatingBar = dlgView.findViewById(R.id.dialog_rating_bar);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final AlertDialog dialog = builder.setView(dlgView).create();
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
+
+            // 평가 버튼
+            satConfirmButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sleep.setSatLevel((int) scaleRatingBar.getRating());
+                    dialog.dismiss();
+                }
+            });
+            // TODO: sleep 삽입
             isSleep = false;
             clearData();
         }
@@ -564,7 +591,6 @@ public class MainActivity extends AppCompatActivity {
                                 if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
                                     if (mode == 1) { // 코골이 방지 모드
                                         if (decibel > 60) {
-                                            Log.d("BLT", "코골이 수치");
                                             noConditionCount = 0;
                                             if (!isCon) {
                                                 isCon = true;
@@ -640,7 +666,6 @@ public class MainActivity extends AppCompatActivity {
                         switch (msgArray[0]) {
                             case "position": // 무게 센서
                                 String position = msgArray[1];
-                                Log.d("BLT", "position: " + position);
                                 postureInfo.setCurrentPos(position, isSense);  // 자세 정보 입력
                                 break;
                             default:
@@ -669,6 +694,7 @@ public class MainActivity extends AppCompatActivity {
 
                             break;
                         case "end": // 밴드에서 수면 종료
+                            ((SleepingActivity) SleepingActivity.mContext).finish();
                             stopSleep();
                             break;
                         default:

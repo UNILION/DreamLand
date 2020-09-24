@@ -16,6 +16,7 @@ import java.util.Calendar;
 
 public class SleepingActivity extends AppCompatActivity {
 
+    static Context mContext;
     Button stopButton;
     ImageView ivSleepSate;
     TextView tvSleepState;
@@ -28,6 +29,9 @@ public class SleepingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sleeping);
+
+        mContext = this;
+
         stopButton = findViewById(R.id.stopButton);
         ivSleepSate = findViewById(R.id.ivSleepState);
         tvSleepState = findViewById(R.id.tvSleepState);
@@ -36,9 +40,6 @@ public class SleepingActivity extends AppCompatActivity {
         // 설정한 시간을 가져옴
         int hour = getIntent().getIntExtra("hour", -1);
         int minute = getIntent().getIntExtra("minute", -1);
-
-        // 선택한 교정 방식
-        int selectedMenu = getIntent().getIntExtra("selectedMenu", -1);
 
         //알람 시간 텍스트뷰
         if (minute < 10) {

@@ -16,7 +16,7 @@ public class Sleep {
     private String sleepTime;  // 수면 시간
     private String conTime;  // 상태 지속 시간
     private int adjCount; // 교정 횟수
-    private int satLevel;  // 수면 만족도
+    private int satLevel = 0;  // 수면 만족도
     private int oxyStr;  // 산소 포화도
     private int heartRate; // 심박수
     private int humidity; // 습도
