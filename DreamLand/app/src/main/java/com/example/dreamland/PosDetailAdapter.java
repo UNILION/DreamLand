@@ -50,10 +50,10 @@ public class PosDetailAdapter extends RecyclerView.Adapter<PosDetailAdapter.View
 
         public ViewHolder(View view) {
             super(view);
-            tvId = view.findViewById(R.id.tvId);
-            tvTime = view.findViewById(R.id.tvTime);
-            tvBeforePos = view.findViewById(R.id.tvBeforePos);
-            tvAfterPos = view.findViewById(R.id.tvAfterPos);
+            tvId = view.findViewById(R.id.tv_id);
+            tvTime = view.findViewById(R.id.tv_time);
+            tvBeforePos = view.findViewById(R.id.tv_before_pos);
+            tvAfterPos = view.findViewById(R.id.tv_after_pos);
         }
     }
 }

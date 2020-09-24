@@ -5,14 +5,14 @@
     android:layout_height="wrap_content">
 
     <RadioGroup
-        android:id="@+id/diseaseRadioGroup"
+        android:id="@+id/disease_radio_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
-            android:id="@+id/radioButton"
+            android:id="@+id/radio_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
@@ -25,7 +25,7 @@
             android:textColor="@color/colorWhite" />
 
         <RadioButton
-            android:id="@+id/radioButton2"
+            android:id="@+id/radio_button2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -34,7 +34,7 @@
             android:textColor="@color/colorWhite" />
 
         <RadioButton
-            android:id="@+id/radioButton3"
+            android:id="@+id/radio_button3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -43,7 +43,7 @@
             android:textColor="@color/colorWhite" />
 
         <RadioButton
-            android:id="@+id/radioButton4"
+            android:id="@+id/radio_button4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"

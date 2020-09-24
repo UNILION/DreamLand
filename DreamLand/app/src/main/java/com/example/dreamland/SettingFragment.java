@@ -243,12 +243,12 @@ public class SettingFragment extends Fragment {
                         R.layout.dialog_disease, null);
                 Button diseaseSelectButton = dlgView.findViewById(R.id.diseaseSelectButton);
 
-                diseaseRadioGroup = dlgView.findViewById(R.id.diseaseRadioGroup);
+                diseaseRadioGroup = dlgView.findViewById(R.id.disease_radio_group);
                 RadioButton[] radioButtons = new RadioButton[4];
-                radioButtons[0] = dlgView.findViewById(R.id.radioButton);
-                radioButtons[1] = dlgView.findViewById(R.id.radioButton2);
-                radioButtons[2] = dlgView.findViewById(R.id.radioButton3);
-                radioButtons[3] = dlgView.findViewById(R.id.radioButton4);
+                radioButtons[0] = dlgView.findViewById(R.id.radio_button);
+                radioButtons[1] = dlgView.findViewById(R.id.radio_button2);
+                radioButtons[2] = dlgView.findViewById(R.id.radio_button3);
+                radioButtons[3] = dlgView.findViewById(R.id.radio_button4);
                 radioButtons[diseaseIndex].setChecked(true);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -261,16 +261,16 @@ public class SettingFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         switch (diseaseRadioGroup.getCheckedRadioButtonId()) {
-                            case R.id.radioButton:
+                            case R.id.radio_button:
                                 diseaseIndex = 0;
                                 break;
-                            case R.id.radioButton2:
+                            case R.id.radio_button2:
                                 diseaseIndex = 1;
                                 break;
-                            case R.id.radioButton3:
+                            case R.id.radio_button3:
                                 diseaseIndex = 2;
                                 break;
-                            case R.id.radioButton4:
+                            case R.id.radio_button4:
                                 diseaseIndex = 3;
                                 break;
                         }

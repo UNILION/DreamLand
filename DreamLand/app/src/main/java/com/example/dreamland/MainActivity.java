@@ -355,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             // 테스트 데이터 삽입
-            case R.id.insertSleep:
+            case R.id.insert_sleeps:
                 Calendar c = Calendar.getInstance();
                 String sleepDate;
                 c.set(2020, 2, 1);
@@ -381,10 +381,20 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             // 수면 데이터 모두 삭제
-            case R.id.deleteSleep:
+            case R.id.delete_sleeps:
                 new DeleteSleepAsyncTask(db.sleepDao()).execute();
                 new DeleteAdjAsyncTask(db.adjustmentDao()).execute();
                 return true;
+
+            // 오늘 수면 데이터 삽입
+            case R.id.insert_today_sleep:
+                new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
+                        sdf3.format(new Date()), "00:11", "00:41", "00:31",
+                        "09:02", "08:20", "00:06", 3, 1,
+                        88, 47, 49, 20, 27)
+                );
+                return true;
+
             default:
                 return false;
         }

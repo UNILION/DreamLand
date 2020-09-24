@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/insertSleep"
-        android:title="insert sleep" />
+        android:id="@+id/insert_sleeps"
+        android:title="insert sleeps" />
     <item
-        android:id="@+id/deleteSleep"
-        android:title="delete sleep" />
+        android:id="@+id/delete_sleeps"
+        android:title="delete sleeps" />
+
+    <item
+        android:id="@+id/insert_today_sleep"
+        android:title="오늘 수면 정보 삽입" />
 </menu>

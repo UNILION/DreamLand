@@ -16,6 +16,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dreamland.asynctask.GetAdjsBySleepDateAsyncTask;
 import com.example.dreamland.asynctask.GetSleepByDateAsyncTask;
@@ -41,7 +43,10 @@ import java.util.concurrent.ExecutionException;
 
 import at.grabner.circleprogress.CircleProgressView;
 import devs.mulham.horizontalcalendar.HorizontalCalendar;
+import devs.mulham.horizontalcalendar.model.CalendarItemStyle;
 import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
+import devs.mulham.horizontalcalendar.utils.HorizontalCalendarPredicate;
+
 import static com.example.dreamland.MySimpleDateFormat.sdf1;
 import static com.example.dreamland.MySimpleDateFormat.sdf3;
 
@@ -87,6 +92,8 @@ public class ManagementFragment extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_management, container, false);
 
+        context = getContext();
+
         posImages = new int[]{R.drawable.pos1, R.drawable.pos2, R.drawable.pos3,
                 R.drawable.pos4, R.drawable.pos5};
 
@@ -98,6 +105,21 @@ public class ManagementFragment extends Fragment {
         /* end after 1 month from now */
         endDate = Calendar.getInstance();
         endDate.add(Calendar.MONTH, 1);
+
+        HorizontalCalendarPredicate horizontalCalendarPredicate = new HorizontalCalendarPredicate() {
+            @Override
+            public boolean test(Calendar date) {
+                Sleep testSleep = getSleepByDate(date.getTime());
+                return testSleep == null;
+            }
+
+            @Override
+            public CalendarItemStyle style() {
+                return new CalendarItemStyle().setColorTopText(getResources().getColor(R.color.colorGray))
+                        .setColorMiddleText(getResources().getColor(R.color.colorGray))
+                        .setColorBottomText(getResources().getColor(R.color.colorGray));
+            }
+        };
 
         horizontalCalendar = new HorizontalCalendar.Builder(root, R.id.calendarView)
                 .range(startDate, endDate)
@@ -111,6 +133,7 @@ public class ManagementFragment extends Fragment {
                 .showBottomText(true)
                 .textColor(Color.LTGRAY, Color.WHITE)
                 .end()
+                .disableDates(horizontalCalendarPredicate)
                 .build();
         return root;
     }
@@ -189,6 +212,8 @@ public class ManagementFragment extends Fragment {
                     } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    Toast.makeText(context, "수면 정보가 없어요.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -31,7 +31,7 @@ public class SleepingActivity extends AppCompatActivity {
         stopButton = findViewById(R.id.stopButton);
         ivSleepSate = findViewById(R.id.ivSleepState);
         tvSleepState = findViewById(R.id.tvSleepState);
-        tvTime = findViewById(R.id.tvTime);
+        tvTime = findViewById(R.id.tv_time);
 
         // 설정한 시간을 가져옴
         int hour = getIntent().getIntExtra("hour", -1);
