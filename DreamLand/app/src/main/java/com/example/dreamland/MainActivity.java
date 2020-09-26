@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
     Handler bluetoothMessageHandler;
     PostureInfo postureInfo;  // 현제 자세 정보
+    RequestThread requestThread;  // 밴드로 데이터를 요청하는 스레드
 
     boolean isConnected = false; // 블루투스 연결 여부
     boolean isSleep = false; // 잠에 들었는지 여부
@@ -442,6 +443,9 @@ public class MainActivity extends AppCompatActivity {
 
     void stopSleep() { // 측정 중지
         if (isSleep) { // 잠에 들었다가 중지했을 경우
+
+            requestThread.setStop(true);  // 쓰레드 종료
+
             Calendar calendar = Calendar.getInstance();
             String whenWake = sdf1.format(calendar.getTime());
 
@@ -704,6 +708,9 @@ public class MainActivity extends AppCompatActivity {
                         } else {  // 사용 안함
                             act = "1,0,1,0,1,0,1,0,0";  // 왼쪽  // TODO: 왼쪽 오른쪽 지정
                         }
+
+                        requestThread = new RequestThread(bluetoothService);
+                        requestThread.start();  // 밴드로 주기적으로 데이터 요청
 
                         break;
                     case "end": // 밴드에서 수면 종료
