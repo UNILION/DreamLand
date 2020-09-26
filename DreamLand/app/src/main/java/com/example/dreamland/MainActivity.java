@@ -556,150 +556,162 @@ public class MainActivity extends AppCompatActivity {
                 String readMessage = new String(readBuf, 0, msg.arg1);
                 Log.d("BLT", "message -> " + readMessage);
 
-                if (readMessage.contains(":")) {
-                    String[] msgArray = readMessage.split(":");
-                    if (isSleep) {
-                        switch (msgArray[0]) {
-                            case "heartrate": // 심박수
-                                currentHeartRate = Integer.parseInt(msgArray[1]);
-                                heartRates.add(currentHeartRate);
-                                break;
-                            case "spo": // 산소포화도
-                                currentOxy = Integer.parseInt(msgArray[1]);
-                                oxygenSaturations.add(currentOxy);
-                                if (currentOxy >= 95 && useO2) {  // 산소포화도가 정상
-                                    useO2 = false;
-                                    bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
-                                }
-                                if (currentOxy < 95 && !useO2) {  // 산소포화도가 정상수치보다 낮음
-                                    useO2 = true;
-                                    bluetoothService.writeBLT2("O2_ON");  // 산소발생기 on
-                                }
-                                break;
-                            case "HUM": // 습도
-                                currentHumidity = Integer.parseInt(msgArray[1]);
-                                humidities.add(currentHumidity);
-                                break;
-                            case "TEM": // 온도
-                                currentTemp = Integer.parseInt(msgArray[1]);
-                                temps.add(currentTemp);
-                                break;
-                            case "SOU": // 소리 센서
-                                int decibel = Integer.parseInt(msgArray[1]);
-                                problems.add(decibel); // 데시벨 저장
-                                Log.d("BLT", "SOU: " + decibel);
-                                if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
-                                    if (mode == 1) { // 코골이 방지 모드
-                                        if (decibel > 60) {
-                                            noConditionCount = 0;
-                                            if (!isCon) {
-                                                isCon = true;
-                                                conStartTime = System.currentTimeMillis();
-                                                beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
-                                                bluetoothService.writeBLT1("act:" + act); // 교정 정보 전송
-                                                Log.d("BLT", "act:" + act + " 전송");
+                if (readMessage.contains("/")) {  // /가 포함되어있으면 /기준으로 나눠서 명령 처리
+                    String[] msgArray = readMessage.split("/");
 
-                                                Calendar calendar = Calendar.getInstance();
-                                                final String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
-                                                isAdjust = true; // 교정중으로 상태 변경
-
-                                                new Thread() { // 2분 후 down 메시지 전송
-                                                    @Override
-                                                    public synchronized void run() {
-                                                        try {
-                                                            sleep(1000 * 5); // 2분 대기 현재는 5초로 설정
-                                                            bluetoothService.writeBLT1("down"); // 교정 해제
-                                                            isAdjust = false; // 교정중 아님
-                                                            Log.d("BLT", "down 전송");
-                                                            adjCount++; // 교정 횟수 증가
-                                                            afterPos = postureInfo.getCurrentPos();  // 교정 후 자세
-                                                            new InsertAdjAsyncTask(db.adjustmentDao())
-                                                                    .execute(new Adjustment(sleep.getSleepDate(), adjTime, beforePos, afterPos));
-                                                            Log.d("BLT", "교정 정보 삽입 -> Date: " + sleep.getSleepDate() + "  교정 시각: "
-                                                                    + adjTime + "  교정 전 자세: " + beforePos + "  교정 후 자세: " + afterPos);
-                                                            beforePos = null;  // 자세정보 삽입 후 교정 전, 후 자세 정보 초기화
-                                                            afterPos = null;
-                                                        } catch (InterruptedException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                }.start();
-                                            }
-                                        } else {  // 코골이 데시벨 이하일때
-                                            if (noConditionCount == 10) {  // 카운트가 10이 되면 코골이 끝
-                                                conEndTime = System.currentTimeMillis();
-                                                Log.d("BLT", "코골이 종료");
-                                                isCon = false;
-                                                noConditionCount = 0;
-                                                conMilliTime += conEndTime - conStartTime;
-                                            } else {
-                                                Log.d("BLT", "noConditionCount -> " + noConditionCount);
-                                                noConditionCount++;
-                                            }
-                                        }
-                                    } else if (mode == 2) { // 무호흡 모드
-
-                                    } else { // 질환 모드
-
-                                    }
-                                }
-                                break;
-                            case "position": // 무게 센서
-                                String position = msgArray[1];
-                                Log.d("BLT", "position: " + position);
-                                postureInfo.setCurrentPos(position, isSense);  // 자세 정보 입력
-                                break;
-                            case "CO2_L": // 이산화탄소 센서 왼쪽
-                                break;
-                            case "CO2_R": // 이산화탄소 센서 오른쪽
-                                break;
-                            case "CO2_M": // 이산화탄소 센서 중앙
-                                int co2 = Integer.parseInt(msgArray[1]);
-                                isSense = co2 > 100;
-                                break;
-                            case "moved": // 뒤척임
-                                break;
-                            default:
-                                Log.d("BLT", "동작 없음");
-                        }
-                    } else { // 잠들기 전 입력
-                        switch (msgArray[0]) {
-                            case "position": // 무게 센서
-                                String position = msgArray[1];
-                                postureInfo.setCurrentPos(position, isSense);  // 자세 정보 입력
-                                break;
-                            default:
-                                Log.d("BLT", "동작 없음");
-                        }
+                    for (String message : msgArray) {
+                        processCommand(message);
                     }
-                } else {
-                    switch (readMessage) {
-                        case "start": // 잠에 듦
-                            String whenSleep = sdf1.format(Calendar.getInstance().getTime());
-                            sleep.setWhenSleep(whenSleep); // 잠에 든 시각
-                            isSleep = true;
-                            Log.d("BLT", "사용자가 잠에 들었습니다 / " + sleep.getWhenSleep());
+                } else {  // /가 포함되어 있지 않은 메시지
+                    processCommand(readMessage);
+                }
+            }
+        }
 
-                            // 잠들기까지 걸린 시간
-                            String asleepAfter = getAsleepAfter(whenSleep, sleep.getWhenStart());
-                            sleep.setAsleepAfter(asleepAfter);
-                            Log.d("BLT", "잠들기까지 걸린 시간 / " + sleep.getAsleepAfter());
-
-                            // 사용자 교정자세 정보
-                            if (customAct) {  // 사용
-                                act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
-                            } else {  // 사용 안함
-                                act = "1,0,1,0,1,0,1,0,0";  // 왼쪽  // TODO: 왼쪽 오른쪽 지정
-                            }
-
+        private void processCommand(String message) {
+            Log.d("BLT", "명령 -> " + message);
+            if (message.contains(":")) {
+                String[] msgArray = message.split(":");
+                if (isSleep) {
+                    switch (msgArray[0]) {
+                        case "heartrate": // 심박수
+                            currentHeartRate = Integer.parseInt(msgArray[1]);
+                            heartRates.add(currentHeartRate);
                             break;
-                        case "end": // 밴드에서 수면 종료
-                            ((SleepingActivity) SleepingActivity.mContext).finish();
-                            stopSleep();
+                        case "spo": // 산소포화도
+                            currentOxy = Integer.parseInt(msgArray[1]);
+                            oxygenSaturations.add(currentOxy);
+                            if (currentOxy >= 95 && useO2) {  // 산소포화도가 정상
+                                useO2 = false;
+                                bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
+                            }
+                            if (currentOxy < 95 && !useO2) {  // 산소포화도가 정상수치보다 낮음
+                                useO2 = true;
+                                bluetoothService.writeBLT2("O2_ON");  // 산소발생기 on
+                            }
+                            break;
+                        case "HUM": // 습도
+                            currentHumidity = Integer.parseInt(msgArray[1]);
+                            humidities.add(currentHumidity);
+                            break;
+                        case "TEM": // 온도
+                            currentTemp = Integer.parseInt(msgArray[1]);
+                            temps.add(currentTemp);
+                            break;
+                        case "SOU": // 소리 센서
+                            int decibel = Integer.parseInt(msgArray[1]);
+                            problems.add(decibel); // 데시벨 저장
+                            if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
+                                if (mode == 1) { // 코골이 방지 모드
+                                    if (decibel > 60) {
+                                        noConditionCount = 0;
+                                        if (!isCon) {
+                                            isCon = true;
+                                            conStartTime = System.currentTimeMillis();
+                                            beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
+                                            bluetoothService.writeBLT1("act:" + act); // 교정 정보 전송
+                                            Log.d("BLT", "act:" + act + " 전송");
+
+                                            Calendar calendar = Calendar.getInstance();
+                                            final String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
+                                            isAdjust = true; // 교정중으로 상태 변경
+
+                                            new Thread() { // 2분 후 down 메시지 전송
+                                                @Override
+                                                public synchronized void run() {
+                                                    try {
+                                                        sleep(1000 * 5); // 2분 대기 현재는 5초로 설정
+                                                        bluetoothService.writeBLT1("down"); // 교정 해제
+                                                        isAdjust = false; // 교정중 아님
+                                                        Log.d("BLT", "down 전송");
+                                                        adjCount++; // 교정 횟수 증가
+                                                        afterPos = postureInfo.getCurrentPos();  // 교정 후 자세
+                                                        new InsertAdjAsyncTask(db.adjustmentDao())
+                                                                .execute(new Adjustment(sleep.getSleepDate(), adjTime, beforePos, afterPos));
+                                                        Log.d("BLT", "교정 정보 삽입 -> Date: " + sleep.getSleepDate() + "  교정 시각: "
+                                                                + adjTime + "  교정 전 자세: " + beforePos + "  교정 후 자세: " + afterPos);
+                                                        beforePos = null;  // 자세정보 삽입 후 교정 전, 후 자세 정보 초기화
+                                                        afterPos = null;
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }.start();
+                                        }
+                                    } else {  // 코골이 데시벨 이하일때
+                                        if (noConditionCount == 10) {  // 카운트가 10이 되면 코골이 끝
+                                            conEndTime = System.currentTimeMillis();
+                                            Log.d("BLT", "코골이 종료");
+                                            isCon = false;
+                                            noConditionCount = 0;
+                                            conMilliTime += conEndTime - conStartTime;
+                                        } else {
+                                            Log.d("BLT", "noConditionCount -> " + noConditionCount);
+                                            noConditionCount++;
+                                        }
+                                    }
+                                } else if (mode == 2) { // 무호흡 모드
+
+                                } else { // 질환 모드
+
+                                }
+                            }
+                            break;
+                        case "position": // 무게 센서
+                            String position = msgArray[1];
+                            Log.d("BLT", "position: " + position);
+                            postureInfo.setCurrentPos(position, isSense);  // 자세 정보 입력
+                            break;
+                        case "CO2_L": // 이산화탄소 센서 왼쪽
+                            break;
+                        case "CO2_R": // 이산화탄소 센서 오른쪽
+                            break;
+                        case "CO2_M": // 이산화탄소 센서 중앙
+                            int co2 = Integer.parseInt(msgArray[1]);
+                            isSense = co2 > 100;
+                            break;
+                        case "moved": // 뒤척임
                             break;
                         default:
                             Log.d("BLT", "동작 없음");
                     }
+                } else { // 잠들기 전 입력
+                    switch (msgArray[0]) {
+                        case "position": // 무게 센서
+                            String position = msgArray[1];
+                            postureInfo.setCurrentPos(position, isSense);  // 자세 정보 입력
+                            break;
+                        default:
+                            Log.d("BLT", "동작 없음");
+                    }
+                }
+            } else {
+                switch (message) {
+                    case "start": // 잠에 듦
+                        String whenSleep = sdf1.format(Calendar.getInstance().getTime());
+                        sleep.setWhenSleep(whenSleep); // 잠에 든 시각
+                        isSleep = true;
+                        Log.d("BLT", "사용자가 잠에 들었습니다 / " + sleep.getWhenSleep());
+
+                        // 잠들기까지 걸린 시간
+                        String asleepAfter = getAsleepAfter(whenSleep, sleep.getWhenStart());
+                        sleep.setAsleepAfter(asleepAfter);
+                        Log.d("BLT", "잠들기까지 걸린 시간 / " + sleep.getAsleepAfter());
+
+                        // 사용자 교정자세 정보
+                        if (customAct) {  // 사용
+                            act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
+                        } else {  // 사용 안함
+                            act = "1,0,1,0,1,0,1,0,0";  // 왼쪽  // TODO: 왼쪽 오른쪽 지정
+                        }
+
+                        break;
+                    case "end": // 밴드에서 수면 종료
+                        ((SleepingActivity) SleepingActivity.mContext).finish();
+                        stopSleep();
+                        break;
+                    default:
+                        Log.d("BLT", "동작 없음");
                 }
             }
         }
