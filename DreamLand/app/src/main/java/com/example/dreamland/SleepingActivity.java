@@ -140,4 +140,10 @@ public class SleepingActivity extends AppCompatActivity {
         ivSleepSate.setImageResource(res);
         tvSleepState.setText(text);
     }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.stop, R.anim.up_out);
+    }
 }

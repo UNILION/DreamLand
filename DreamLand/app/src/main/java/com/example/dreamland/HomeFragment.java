@@ -18,7 +18,6 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import static com.example.dreamland.MySimpleDateFormat.sdf1;
 import static com.example.dreamland.MySimpleDateFormat.sdf3;
@@ -81,6 +80,7 @@ public class HomeFragment extends Fragment {
         ((MainActivity) context).sleep.setSleepDate(sleepDate);
         Log.d("BLT", "측정 시작 / " + sleepDate + " " + whenStart);
         ((MainActivity) getActivity()).startActivityForResult(intent, 2000);
+        ((MainActivity) getActivity()).overridePendingTransition(R.anim.down_in, R.anim.stop);
     }
 
     // 교정방식 선택 화면
