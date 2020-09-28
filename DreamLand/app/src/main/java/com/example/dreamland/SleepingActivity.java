@@ -93,8 +93,13 @@ public class SleepingActivity extends AppCompatActivity {
             @Override
             public void onAlarm() { // 알람 시간이 되었을때
                 Log.d("AlarmTest", "onAlarm");
-                changeState(3);
+                changeState(3);  // 리소스 변경
+
+                // 수면 중지
                 ((MainActivity) MainActivity.context).stopSleep();
+
+                // 침대에 알람 메시지 전송
+                ((MainActivity) MainActivity.context).bluetoothService.writeBLT1("alarm");
             }
         };
 
