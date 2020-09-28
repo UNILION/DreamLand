@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     final int REQUEST_ENABLE_BT = 111;
     final int RC_INIT_ACTIVITY = 1000;
     final int RC_SLEEPING_ACTIVITY = 2000;
+    final int DOWN_WAIT_TIME = 1000 * 5;  // 엑추에이터 내림 대기시간
 
     private HomeFragment homeFragment;
     private ManagementFragment managementFragment;
@@ -595,11 +596,11 @@ public class MainActivity extends AppCompatActivity {
                             }
                             break;
                         case "HUM": // 습도
-                            currentHumidity = Integer.parseInt(msgArray[1]);
+                            currentHumidity = (int) Double.parseDouble(msgArray[1]);
                             humidities.add(currentHumidity);
                             break;
                         case "TEM": // 온도
-                            currentTemp = Integer.parseInt(msgArray[1]);
+                            currentTemp = (int) Double.parseDouble(msgArray[1]);
                             temps.add(currentTemp);
                             break;
                         case "SOU": // 소리 센서
@@ -607,14 +608,14 @@ public class MainActivity extends AppCompatActivity {
                             problems.add(decibel); // 데시벨 저장
                             if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
                                 if (mode == 1) { // 코골이 방지 모드
-                                    if (decibel > 60) {
+                                    if (decibel > 50) {
                                         noConditionCount = 0;
                                         if (!isCon) {
                                             isCon = true;
                                             conStartTime = System.currentTimeMillis();
                                             beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
-                                            bluetoothService.writeBLT1("act:" + act); // 교정 정보 전송
-                                            Log.d("BLT", "act:" + act + " 전송");
+                                            bluetoothService.writeBLT1("Act:" + act); // 교정 정보 전송
+                                            Log.d("BLT", "Act:" + act + " 전송");
 
                                             Calendar calendar = Calendar.getInstance();
                                             final String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
@@ -624,7 +625,7 @@ public class MainActivity extends AppCompatActivity {
                                                 @Override
                                                 public synchronized void run() {
                                                     try {
-                                                        sleep(1000 * 5); // 2분 대기 현재는 5초로 설정
+                                                        sleep(DOWN_WAIT_TIME); // 2분 대기
                                                         bluetoothService.writeBLT1("down"); // 교정 해제
                                                         isAdjust = false; // 교정중 아님
                                                         Log.d("BLT", "down 전송");
@@ -671,8 +672,8 @@ public class MainActivity extends AppCompatActivity {
                         case "CO2_R": // 이산화탄소 센서 오른쪽
                             break;
                         case "CO2_M": // 이산화탄소 센서 중앙
-                            int co2 = Integer.parseInt(msgArray[1]);
-                            isSense = co2 > 100;
+                            int co2 = (int) Double.parseDouble(msgArray[1]);
+                            isSense = co2 > 6;
                             break;
                         case "moved": // 뒤척임
                             break;
