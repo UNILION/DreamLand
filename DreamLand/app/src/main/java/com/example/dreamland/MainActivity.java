@@ -12,6 +12,7 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private HealthFragment healthFragment;
     private Fragment curFragment;
     private StatusView statusView;
+    public static Context context;
 
     private AppDatabase db;
     private ActionBar actionBar;
@@ -107,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
 
         heartRates = new ArrayList<>();
         oxygenSaturations = new ArrayList<>();
@@ -381,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
                     new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                             sleepDate, whenSleep, whenStart, getAsleepAfter(whenSleep, whenStart),
                             whenWake, getSleepTime(whenSleep, whenWake), createRandomConTime(),
-                            (int) (Math.random() * 7) , (int) (Math.random() * 5) + 1,
+                            (int) (Math.random() * 7), (int) (Math.random() * 5) + 1,
                             spo, heartRate, (int) (Math.random() * 50) + 10,
                             (int) (Math.random() * 5) + 20,
                             getScore(spo, heartRate))
@@ -616,6 +619,8 @@ public class MainActivity extends AppCompatActivity {
                                             beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
                                             bluetoothService.writeBLT1("Act:" + act); // 교정 정보 전송
                                             Log.d("BLT", "Act:" + act + " 전송");
+                                            ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
+                                                    SleepingActivity.STATE_SNORING);
 
                                             Calendar calendar = Calendar.getInstance();
                                             final String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
@@ -647,6 +652,9 @@ public class MainActivity extends AppCompatActivity {
                                         if (noConditionCount == 10) {  // 카운트가 10이 되면 코골이 끝
                                             conEndTime = System.currentTimeMillis();
                                             Log.d("BLT", "코골이 종료");
+                                            ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
+                                                    SleepingActivity.STATE_SLEEP);
+
                                             isCon = false;
                                             noConditionCount = 0;
                                             conMilliTime += conEndTime - conStartTime;
@@ -673,7 +681,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case "CO2_M": // 이산화탄소 센서 중앙
                             int co2 = (int) Double.parseDouble(msgArray[1]);
-                            isSense = co2 > 6;
+                            isSense = co2 >= 6;
                             break;
                         case "moved": // 뒤척임
                             break;
@@ -693,26 +701,29 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 switch (message) {
                     case "start": // 잠에 듦
-                        String whenSleep = sdf1.format(Calendar.getInstance().getTime());
-                        sleep.setWhenSleep(whenSleep); // 잠에 든 시각
-                        isSleep = true;
-                        Log.d("BLT", "사용자가 잠에 들었습니다 / " + sleep.getWhenSleep());
+                        if (!isSleep) {
+                            String whenSleep = sdf1.format(Calendar.getInstance().getTime());
+                            sleep.setWhenSleep(whenSleep); // 잠에 든 시각
+                            isSleep = true;
+                            Log.d("BLT", "사용자가 잠에 들었습니다 / " + sleep.getWhenSleep());
+                            ((SleepingActivity) SleepingActivity.mContext).changeState(
+                                    SleepingActivity.STATE_SLEEP);
 
-                        // 잠들기까지 걸린 시간
-                        String asleepAfter = getAsleepAfter(whenSleep, sleep.getWhenStart());
-                        sleep.setAsleepAfter(asleepAfter);
-                        Log.d("BLT", "잠들기까지 걸린 시간 / " + sleep.getAsleepAfter());
+                            // 잠들기까지 걸린 시간
+                            String asleepAfter = getAsleepAfter(whenSleep, sleep.getWhenStart());
+                            sleep.setAsleepAfter(asleepAfter);
+                            Log.d("BLT", "잠들기까지 걸린 시간 / " + sleep.getAsleepAfter());
 
-                        // 사용자 교정자세 정보
-                        if (customAct) {  // 사용
-                            act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
-                        } else {  // 사용 안함
-                            act = "1,0,1,0,1,0,1,0,0";  // 왼쪽  // TODO: 왼쪽 오른쪽 지정
+                            // 사용자 교정자세 정보
+                            if (customAct) {  // 사용
+                                act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
+                            } else {  // 사용 안함
+                                act = "1,0,1,0,1,0,1,0,0";  // 왼쪽  // TODO: 왼쪽 오른쪽 지정
+                            }
+
+                            requestThread = new RequestThread(bluetoothService);
+                            requestThread.start();  // 밴드로 주기적으로 데이터 요청
                         }
-
-                        requestThread = new RequestThread(bluetoothService);
-                        requestThread.start();  // 밴드로 주기적으로 데이터 요청
-
                         break;
                     case "end": // 밴드에서 수면 종료
                         ((SleepingActivity) SleepingActivity.mContext).finish();

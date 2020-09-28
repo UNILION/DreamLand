@@ -142,7 +142,7 @@ public class BluetoothService {
 
             deviceCount++;
 
-            if (deviceCount == 3) { // 3개의 기기 연결 완료
+            if (deviceCount == 1) { // 3개의 기기 연결 완료
                 Log.d(TAG, "연결 완료");
                 mHandler.post(new Runnable() {
                     @Override

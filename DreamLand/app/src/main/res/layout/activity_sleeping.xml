@@ -66,13 +66,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/timeLayout"
-        app:srcCompat="@drawable/ic_sleep_256dp" />
+        app:srcCompat="@drawable/ic_sheep_256dp" />
 
     <TextView
         android:id="@+id/tvSleepState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="수면 중이에요"
+        android:text="수면 대기중이에요"
         android:textColor="@color/colorWhite"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/stopButton"

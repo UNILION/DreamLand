@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +16,11 @@ import android.widget.Toast;
 import java.util.Calendar;
 
 public class SleepingActivity extends AppCompatActivity {
+
+    public final static int STATE_SLEEP = 0;
+    public final static int STATE_SNORING = 1;
+    public final static int STATE_APNEA = 2;
+    public final static int STATE_ALARM = 3;
 
     static Context mContext;
     Button stopButton;
@@ -29,6 +35,8 @@ public class SleepingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sleeping);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);  // 화면 켜짐 유지
 
         mContext = this;
 
@@ -85,8 +93,8 @@ public class SleepingActivity extends AppCompatActivity {
             @Override
             public void onAlarm() { // 알람 시간이 되었을때
                 Log.d("AlarmTest", "onAlarm");
-                ivSleepSate.setImageResource(R.drawable.ic_alarm_256dp);
-                tvSleepState.setText("일어나세요!");
+                changeState(3);
+                ((MainActivity) MainActivity.context).stopSleep();
             }
         };
 
@@ -97,5 +105,34 @@ public class SleepingActivity extends AppCompatActivity {
                 onAlarmListener,
                 null
         );
+    }
+
+    // 상태 이미지와 문구를 변경하는 함수
+    public void changeState(int state) {
+        int res;
+        String text;
+        switch (state) {
+            case STATE_SLEEP:  // 잠에 든 상태
+                res = R.drawable.ic_sleep_256dp;
+                text = "수면 중이에요";
+                break;
+            case STATE_SNORING:  // 코골이
+                res = R.drawable.ic_blue_zzz_256dp;
+                text = "코골이 중이에요";
+                break;
+            case STATE_APNEA:
+                res = R.drawable.ic_crying_256dp;
+                text = "무호흡상태에요";
+                break;
+            case STATE_ALARM:
+                res = R.drawable.ic_alarm_256dp;
+                text = "일어나세요!";
+                break;
+            default:
+                res = R.drawable.ic_sleep_256dp;
+                text = "default";
+        }
+        ivSleepSate.setImageResource(res);
+        tvSleepState.setText(text);
     }
 }
