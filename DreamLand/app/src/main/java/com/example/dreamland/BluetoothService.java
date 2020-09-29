@@ -23,6 +23,7 @@ import iammert.com.library.StatusView;
 public class BluetoothService {
     private static final String TAG = "BLT";
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+    private static final int NUM_OF_DEVICES = 3;
     private Context context;
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter bluetoothAdapter;
@@ -53,15 +54,21 @@ public class BluetoothService {
 
     // 기기 연결 후 입출력 함수
     void connected(BluetoothSocket socket, BluetoothDevice device) {
-        if (device.getName().equals("BLT1")) {
-            connectedThread[0] = new BluetoothService.ConnectedThread(socket);
-            connectedThread[0].start();
-        } else if (device.getName().equals("BLT2")) {
-            connectedThread[1] = new BluetoothService.ConnectedThread(socket);
-            connectedThread[1].start();
-        } else if (device.getName().equals("BLT3")) {
-            connectedThread[2] = new BluetoothService.ConnectedThread(socket);
-            connectedThread[2].start();
+        switch (device.getName()) {
+            case "BLT1":
+                connectedThread[0] = new BluetoothService.ConnectedThread(socket);
+                connectedThread[0].start();
+                break;
+            case "BLT123":
+                connectedThread[1] = new BluetoothService.ConnectedThread(socket);
+                connectedThread[1].start();
+                break;
+            case "JCNET-JARDUINO-7826":
+                connectedThread[2] = new BluetoothService.ConnectedThread(socket);
+                connectedThread[2].start();
+                break;
+            default:
+                Log.d("BLT", "이름 다름");
         }
     }
 
@@ -142,7 +149,7 @@ public class BluetoothService {
 
             deviceCount++;
 
-            if (deviceCount == 1) { // 3개의 기기 연결 완료
+            if (deviceCount == NUM_OF_DEVICES) { // 3개의 기기 연결 완료
                 Log.d(TAG, "연결 완료");
                 mHandler.post(new Runnable() {
                     @Override
