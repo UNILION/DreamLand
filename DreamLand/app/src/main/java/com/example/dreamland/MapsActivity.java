@@ -12,7 +12,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.Bundle;
@@ -26,6 +28,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -130,7 +135,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Location location = locationResult.getLastLocation();
             if (location != null) {
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude()); // 현위치
-                mMap.addMarker(new MarkerOptions().position(latLng));
+
+                BitmapDrawable bitmapDrawable = (BitmapDrawable)getResources().getDrawable(R.drawable.current_location);
+                Bitmap b = bitmapDrawable.getBitmap();
+                Bitmap currentLocationMarker = Bitmap.createScaledBitmap(b, 50, 50, false);
+
+                mMap.addMarker(new MarkerOptions().title("현위치").position(latLng).icon(
+                        BitmapDescriptorFactory.fromBitmap(currentLocationMarker)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f));
             }
         }
