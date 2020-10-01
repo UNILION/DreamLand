@@ -53,8 +53,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-
     }
 
     @Override
@@ -132,7 +130,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Location location = locationResult.getLastLocation();
             if (location != null) {
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude()); // 현위치
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f));
+                mMap.addMarker(new MarkerOptions().position(latLng));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f));
             }
         }
     }
