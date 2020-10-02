@@ -725,7 +725,7 @@ public class MainActivity extends AppCompatActivity {
                             requestThread.start();  // 밴드로 주기적으로 데이터 요청
                         }
                         break;
-                    case "end": // 밴드에서 수면 종료
+                    case "stop": // 밴드에서 수면 종료
                         ((SleepingActivity) SleepingActivity.mContext).finish();
                         stopSleep();
                         break;
