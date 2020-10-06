@@ -78,7 +78,7 @@ public class HomeFragment extends Fragment {
         }
         String sleepDate = sdf3.format(calendar.getTime());
         ((MainActivity) context).sleep.setSleepDate(sleepDate);
-        Log.d("BLT", "측정 시작 / " + sleepDate + " " + whenStart);
+        Log.d(MainActivity.STATE_TAG, "측정 시작 / " + sleepDate + " " + whenStart);
         ((MainActivity) getActivity()).startActivityForResult(intent, 2000);
         ((MainActivity) getActivity()).overridePendingTransition(R.anim.down_in, R.anim.stop);
     }

@@ -35,6 +35,6 @@ public class PostureInfo {
         } else {
             currentPos = "자세 정보 없음";
         }
-        Log.d("BLT", "현제 자세 -> " + currentPos);
+        Log.d(MainActivity.STATE_TAG, "현제 자세 -> " + currentPos);
     }
 }

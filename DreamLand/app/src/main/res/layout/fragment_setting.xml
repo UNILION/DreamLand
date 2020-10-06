@@ -246,6 +246,18 @@
 
                 </LinearLayout>
 
+                <Button
+                    android:id="@+id/button2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="올리기" />
+
+                <Button
+                    android:id="@+id/button3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="내리기" />
+
             </LinearLayout>
 
         </LinearLayout>

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,9 @@ public class SettingFragment extends Fragment {
     Switch autoSwitch;
     Switch manualSwitch;
     Switch posSwitch;
+    // TEST
+    Button button2;
+    Button button3;
 
     View line1;
     RadioGroup diseaseRadioGroup;
@@ -78,6 +82,26 @@ public class SettingFragment extends Fragment {
         posSwitch = (Switch) view.findViewById(R.id.switch_pos);
         tvDisease = (TextView) view.findViewById(R.id.tvDisease);
         line1 = (View) view.findViewById(R.id.view1);
+        //TEST
+        button2 = (Button) view.findViewById(R.id.button2);
+        button3 = (Button) view.findViewById(R.id.button3);
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getContext()).bluetoothService.writeBLT1("act:0,1,0,1,0,1,0,1,0"); // 교정 정보 전송
+                Log.d(MainActivity.STATE_TAG, "act:0,1,0,1,0,1,0,1,0");
+            }
+        });
+
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getContext()).bluetoothService.writeBLT1("down");
+                Log.d(MainActivity.STATE_TAG, "down 전송");
+            }
+        });
+
 
         actButtons = new ToggleButton[10];
         sf = getContext().getSharedPreferences("bed", getContext().MODE_PRIVATE);
@@ -88,15 +112,18 @@ public class SettingFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {  // 자동 사용
                     manualSwitch.setVisibility(View.GONE);
-                    ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_AUTO");
+                    ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_AUTO\n");
+                    Log.d(MainActivity.STATE_TAG, "가습기 Auto");
                     ((MainActivity) getActivity()).autoHumidifier = true;
                 } else {  // 수동 사용
                     manualSwitch.setVisibility(View.VISIBLE);
                     ((MainActivity) getActivity()).autoHumidifier = false;
                     if (manualSwitch.isChecked()) {
-                        ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_ON");
+                        ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_ON\n");
+                        Log.d(MainActivity.STATE_TAG, "가습기 On");
                     } else {
-                        ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_OFF");
+                        ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_OFF\n");
+                        Log.d(MainActivity.STATE_TAG, "가습기 Off");
                     }
                 }
             }
@@ -107,9 +134,11 @@ public class SettingFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {  // 사용
-                    ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_ON");
+                    ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_ON\n");
+                    Log.d(MainActivity.STATE_TAG, "가습기 On");
                 } else {  // 사용 안함
-                    ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_OFF");
+                    ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_OFF\n");
+                    Log.d(MainActivity.STATE_TAG, "가습기 Off");
                 }
             }
         });

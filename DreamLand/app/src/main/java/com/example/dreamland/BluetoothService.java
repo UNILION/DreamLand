@@ -21,9 +21,8 @@ import iammert.com.library.Status;
 import iammert.com.library.StatusView;
 
 public class BluetoothService {
-    private static final String TAG = "BLT";
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-    private static final int NUM_OF_DEVICES = 3;
+    private static final int NUM_OF_DEVICES = 1;
     private Context context;
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter bluetoothAdapter;
@@ -59,7 +58,7 @@ public class BluetoothService {
                 connectedThread[0] = new BluetoothService.ConnectedThread(socket);
                 connectedThread[0].start();
                 break;
-            case "BLT123":
+            case "BLT2":
                 connectedThread[1] = new BluetoothService.ConnectedThread(socket);
                 connectedThread[1].start();
                 break;
@@ -68,7 +67,7 @@ public class BluetoothService {
                 connectedThread[2].start();
                 break;
             default:
-                Log.d("BLT", "이름 다름");
+                Log.d(MainActivity.STATE_TAG, "이름이 일치하지 않음");
         }
     }
 
@@ -131,12 +130,12 @@ public class BluetoothService {
             try {
                 tmpIn = socket.getInputStream();
             } catch (IOException e) {
-                Log.e(TAG, "Error occurred when creating input stream", e);
+                Log.e(MainActivity.STATE_TAG, "Error occurred when creating input stream", e);
             }
             try {
                 tmpOut = socket.getOutputStream();
             } catch (IOException e) {
-                Log.e(TAG, "Error occurred when creating output stream", e);
+                Log.e(MainActivity.STATE_TAG, "Error occurred when creating output stream", e);
             }
 
             mmInStream = tmpIn;
@@ -150,7 +149,7 @@ public class BluetoothService {
             deviceCount++;
 
             if (deviceCount == NUM_OF_DEVICES) { // 3개의 기기 연결 완료
-                Log.d(TAG, "연결 완료");
+                Log.d(MainActivity.STATE_TAG, "연결 완료");
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -174,7 +173,7 @@ public class BluetoothService {
                         readMsg.sendToTarget();
                     }
                 } catch (IOException e) {
-                    Log.d(TAG, "Input stream was disconnected", e);
+                    Log.d(MainActivity.STATE_TAG, "Input stream was disconnected", e);
                     break;
                 }
             }
@@ -190,7 +189,7 @@ public class BluetoothService {
                         MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);
                 writtenMsg.sendToTarget();
             } catch (IOException e) {
-                Log.e(TAG, "Error occurred when sending data", e);
+                Log.e(MainActivity.STATE_TAG, "Error occurred when sending data", e);
 
                 // Send a failure message back to the activity.
                 Message writeErrorMsg =
@@ -208,7 +207,7 @@ public class BluetoothService {
             try {
                 mmSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "Could not close the connect socket", e);
+                Log.e(MainActivity.STATE_TAG, "Could not close the connect socket", e);
             }
         }
     }
@@ -228,7 +227,7 @@ public class BluetoothService {
                 // MY_UUID is the app's UUID string, also used in the server code.
                 tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
             } catch (IOException e) {
-                Log.e(TAG, "Socket's create() method failed", e);
+                Log.e(MainActivity.STATE_TAG, "Socket's create() method failed", e);
             }
             mmSocket = tmp;
             bltSockets.add(mmSocket);
@@ -247,7 +246,7 @@ public class BluetoothService {
                 try {
                     mmSocket.close();
                 } catch (IOException closeException) {
-                    Log.e(TAG, "Could not close the client socket", closeException);
+                    Log.e(MainActivity.STATE_TAG, "Could not close the client socket", closeException);
                 }
                 return;
             }
@@ -262,7 +261,7 @@ public class BluetoothService {
             try {
                 mmSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "Could not close the client socket", e);
+                Log.e(MainActivity.STATE_TAG, "Could not close the client socket", e);
             }
         }
     }

@@ -55,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     final int RC_INIT_ACTIVITY = 1000;
     final int RC_SLEEPING_ACTIVITY = 2000;
     final int DOWN_WAIT_TIME = 1000 * 5;  // 엑추에이터 내림 대기시간
+    public static final String COMMAND_TAG = "BT-CMD";
+    public static final String STATE_TAG = "BT-STATE";
 
     private HomeFragment homeFragment;
     private ManagementFragment managementFragment;
@@ -74,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
     Handler bluetoothMessageHandler;
     PostureInfo postureInfo;  // 현제 자세 정보
-    RequestThread requestThread;  // 밴드로 데이터를 요청하는 스레드
 
     boolean isConnected = false; // 블루투스 연결 여부
     boolean isSleep = false; // 잠에 들었는지 여부
@@ -260,12 +261,12 @@ public class MainActivity extends AppCompatActivity {
     // 기기 연결 함수
     public void connectDevices() {
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-        Log.d("BLT", "페어링된 기기");
+        Log.d(STATE_TAG, "페어링된 기기");
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
-                Log.d("BLT", deviceName + " " + deviceHardwareAddress);
+                Log.d(STATE_TAG, deviceName + " " + deviceHardwareAddress);
                 // 기기 이름이 BLT1, BLT2, JCNET-JARDUINO-7826인 경우 연결
                 if (deviceName.equals("BLT1") || deviceName.equals("BLT2")
                         || deviceName.equals("JCNET-JARDUINO-7826")) {
@@ -430,25 +431,21 @@ public class MainActivity extends AppCompatActivity {
 
             case REQUEST_ENABLE_BT:
                 if (resultCode == RESULT_OK) { // 블루투스 활성화 성공
-                    Log.d("BLT", "블루투스 활성화 성공");
+                    Log.d(STATE_TAG, "블루투스 활성화 성공");
                     connectDevices();
                 } else if (resultCode == RESULT_CANCELED) { // 블루투스 활성화 실패
-                    Log.d("BLT", "블루투스 활성화 실패");
+                    Log.d(STATE_TAG, "블루투스 활성화 실패");
                 }
                 break;
 
             case RC_SLEEPING_ACTIVITY: // 수면 중지
-                Log.d("BLT", "RC_SLEEPING_ACTIVITY");
                 stopSleep();  // 측정 중지
                 break;
-
         }
     }
 
     void stopSleep() { // 측정 중지
         if (isSleep) { // 잠에 들었다가 중지했을 경우
-
-            requestThread.setStop(true);  // 쓰레드 종료
 
             Calendar calendar = Calendar.getInstance();
             String whenWake = sdf1.format(calendar.getTime());
@@ -468,7 +465,7 @@ public class MainActivity extends AppCompatActivity {
             String conTime = sdf1.format(date);
             sleep.setConTime(conTime);
 
-            Log.d("BLT",
+            Log.d(STATE_TAG,
                     "일자: " + sleep.getSleepDate()
                             + "  시작 시간: " + sleep.getWhenStart()
                             + "  잠에 든 시각: " + sleep.getWhenSleep()
@@ -562,7 +559,7 @@ public class MainActivity extends AppCompatActivity {
             byte[] readBuf = (byte[]) msg.obj;
             if (msg.arg1 > 0) {
                 String readMessage = new String(readBuf, 0, msg.arg1);
-                Log.d("BLT", "message -> " + readMessage);
+                Log.d(COMMAND_TAG, "message -> " + readMessage);
 
                 if (readMessage.contains("/")) {  // /가 포함되어있으면 /기준으로 나눠서 명령 처리
                     String[] msgArray = readMessage.split("/");
@@ -577,25 +574,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void processCommand(String message) {
-            Log.d("BLT", "명령 -> " + message);
+            Log.d(COMMAND_TAG, "명령 -> " + message);
             if (message.contains(":")) {
                 String[] msgArray = message.split(":");
                 if (isSleep) {
                     switch (msgArray[0]) {
                         case "heartrate": // 심박수
-                            currentHeartRate = Integer.parseInt(msgArray[1]);
+                            currentHeartRate = (int) Double.parseDouble(msgArray[1]);
                             heartRates.add(currentHeartRate);
                             break;
                         case "spo": // 산소포화도
-                            currentOxy = Integer.parseInt(msgArray[1]);
+                            currentOxy = (int) Double.parseDouble(msgArray[1]);
                             oxygenSaturations.add(currentOxy);
                             if (currentOxy >= 95 && useO2) {  // 산소포화도가 정상
                                 useO2 = false;
                                 bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
+                                Log.d(STATE_TAG, "산소발생기 Off");
                             }
                             if (currentOxy < 95 && !useO2) {  // 산소포화도가 정상수치보다 낮음
                                 useO2 = true;
                                 bluetoothService.writeBLT2("O2_ON");  // 산소발생기 on
+                                Log.d(STATE_TAG, "산소발생기 On");
                             }
                             break;
                         case "HUM": // 습도
@@ -618,7 +617,7 @@ public class MainActivity extends AppCompatActivity {
                                             conStartTime = System.currentTimeMillis();
                                             beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
                                             bluetoothService.writeBLT1("Act:" + act); // 교정 정보 전송
-                                            Log.d("BLT", "Act:" + act + " 전송");
+                                            Log.d(STATE_TAG, "자세 교정 -> act:" + act + " 전송");
                                             ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
                                                     SleepingActivity.STATE_SNORING);
 
@@ -633,12 +632,12 @@ public class MainActivity extends AppCompatActivity {
                                                         sleep(DOWN_WAIT_TIME); // 2분 대기
                                                         bluetoothService.writeBLT1("down"); // 교정 해제
                                                         isAdjust = false; // 교정중 아님
-                                                        Log.d("BLT", "down 전송");
+                                                        Log.d(STATE_TAG, "자세 교정 -> down 전송");
                                                         adjCount++; // 교정 횟수 증가
                                                         afterPos = postureInfo.getCurrentPos();  // 교정 후 자세
                                                         new InsertAdjAsyncTask(db.adjustmentDao())
                                                                 .execute(new Adjustment(sleep.getSleepDate(), adjTime, beforePos, afterPos));
-                                                        Log.d("BLT", "교정 정보 삽입 -> Date: " + sleep.getSleepDate() + "  교정 시각: "
+                                                        Log.d(STATE_TAG, "교정 정보 삽입 -> Date: " + sleep.getSleepDate() + "  교정 시각: "
                                                                 + adjTime + "  교정 전 자세: " + beforePos + "  교정 후 자세: " + afterPos);
                                                         beforePos = null;  // 자세정보 삽입 후 교정 전, 후 자세 정보 초기화
                                                         afterPos = null;
@@ -651,7 +650,7 @@ public class MainActivity extends AppCompatActivity {
                                     } else {  // 코골이 데시벨 이하일때
                                         if (noConditionCount == 10) {  // 카운트가 10이 되면 코골이 끝
                                             conEndTime = System.currentTimeMillis();
-                                            Log.d("BLT", "코골이 종료");
+                                            Log.d(STATE_TAG, "코골이 종료");
                                             ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
                                                     SleepingActivity.STATE_SLEEP);
 
@@ -659,7 +658,7 @@ public class MainActivity extends AppCompatActivity {
                                             noConditionCount = 0;
                                             conMilliTime += conEndTime - conStartTime;
                                         } else {
-                                            Log.d("BLT", "noConditionCount -> " + noConditionCount);
+                                            Log.d(STATE_TAG, "noConditionCount  -> " + noConditionCount);
                                             noConditionCount++;
                                         }
                                     }
@@ -672,7 +671,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case "position": // 무게 센서
                             String position = msgArray[1];
-                            Log.d("BLT", "position: " + position);
+                            Log.d(COMMAND_TAG, "position: " + position);
                             postureInfo.setCurrentPos(position, isSense);  // 자세 정보 입력
                             break;
                         case "CO2_L": // 이산화탄소 센서 왼쪽
@@ -686,7 +685,7 @@ public class MainActivity extends AppCompatActivity {
                         case "moved": // 뒤척임
                             break;
                         default:
-                            Log.d("BLT", "동작 없음");
+                            Log.d(COMMAND_TAG, "동작 없음1");
                     }
                 } else { // 잠들기 전 입력
                     switch (msgArray[0]) {
@@ -695,24 +694,30 @@ public class MainActivity extends AppCompatActivity {
                             postureInfo.setCurrentPos(position, isSense);  // 자세 정보 입력
                             break;
                         default:
-                            Log.d("BLT", "동작 없음");
+                            Log.d(COMMAND_TAG, "동작 없음2");
                     }
                 }
             } else {
+                Log.d("BLTTEST", "message:" + message + "  len:" + message.length());
+                if (message.equals("start")) {
+                    Log.d("BLTTEST", "start 맞음 message:" + message);
+                } else {
+                    Log.d("BLTTEST", "start 아님 message:" + message);
+                }
                 switch (message) {
                     case "start": // 잠에 듦
                         if (!isSleep) {
                             String whenSleep = sdf1.format(Calendar.getInstance().getTime());
                             sleep.setWhenSleep(whenSleep); // 잠에 든 시각
                             isSleep = true;
-                            Log.d("BLT", "사용자가 잠에 들었습니다 / " + sleep.getWhenSleep());
+                            Log.d(STATE_TAG, "사용자가 잠에 들었습니다 / " + sleep.getWhenSleep());
                             ((SleepingActivity) SleepingActivity.mContext).changeState(
                                     SleepingActivity.STATE_SLEEP);
 
                             // 잠들기까지 걸린 시간
                             String asleepAfter = getAsleepAfter(whenSleep, sleep.getWhenStart());
                             sleep.setAsleepAfter(asleepAfter);
-                            Log.d("BLT", "잠들기까지 걸린 시간 / " + sleep.getAsleepAfter());
+                            Log.d(STATE_TAG, "잠들기까지 걸린 시간 / " + sleep.getAsleepAfter());
 
                             // 사용자 교정자세 정보
                             if (customAct) {  // 사용
@@ -720,9 +725,6 @@ public class MainActivity extends AppCompatActivity {
                             } else {  // 사용 안함
                                 act = "1,0,1,0,1,0,1,0,0";  // 왼쪽  // TODO: 왼쪽 오른쪽 지정
                             }
-
-                            requestThread = new RequestThread(bluetoothService);
-                            requestThread.start();  // 밴드로 주기적으로 데이터 요청
                         }
                         break;
                     case "stop": // 밴드에서 수면 종료
@@ -730,7 +732,7 @@ public class MainActivity extends AppCompatActivity {
                         stopSleep();
                         break;
                     default:
-                        Log.d("BLT", "동작 없음");
+                        Log.d(COMMAND_TAG, "동작 없음3");
                 }
             }
         }
