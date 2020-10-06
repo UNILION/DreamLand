@@ -501,6 +501,7 @@ public class MainActivity extends AppCompatActivity {
             // TODO: sleep 삽입
             isSleep = false;
             clearData();
+            ((SleepingActivity) SleepingActivity.mContext).finish();
         }
         isStart = false;
     }
@@ -579,8 +580,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void processCommand(String message) {
-            Log.d(COMMAND_TAG, "명령 -> " + message);
             if (isStart) {  // 측정 중
+                Log.d(COMMAND_TAG, "명령 -> " + message);
                 if (message.contains(":")) {
                     String[] msgArray = message.split(":");
                     if (isSleep) {  // 잠에 들었을 때
@@ -612,11 +613,11 @@ public class MainActivity extends AppCompatActivity {
                                 temps.add(currentTemp);
                                 break;
                             case "SOU": // 소리 센서
-                                int decibel = Integer.parseInt(msgArray[1]);
+                                int decibel = (int) Double.parseDouble(msgArray[1]);
                                 problems.add(decibel); // 데시벨 저장
                                 if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
                                     if (mode == 1) { // 코골이 방지 모드
-                                        if (decibel > 50) {
+                                        if (decibel > 60) {
                                             noConditionCount = 0;
                                             if (!isCon) {
                                                 isCon = true;
@@ -704,12 +705,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 } else {
-                    Log.d("BLTTEST", "message:" + message + "  len:" + message.length());
-                    if (message.equals("start")) {
-                        Log.d("BLTTEST", "start 맞음 message:" + message);
-                    } else {
-                        Log.d("BLTTEST", "start 아님 message:" + message);
-                    }
                     switch (message) {
                         case "start": // 잠에 듦
                             if (!isSleep) {
@@ -734,7 +729,6 @@ public class MainActivity extends AppCompatActivity {
                             }
                             break;
                         case "stop": // 밴드에서 수면 종료
-                            ((SleepingActivity) SleepingActivity.mContext).finish();
                             stopSleep();
                             break;
                         default:
