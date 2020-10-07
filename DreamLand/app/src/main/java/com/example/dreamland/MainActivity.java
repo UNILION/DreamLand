@@ -54,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
     final int REQUEST_ENABLE_BT = 111;
     final int RC_INIT_ACTIVITY = 1000;
     final int RC_SLEEPING_ACTIVITY = 2000;
-    final int DOWN_WAIT_TIME = 1000 * 5;  // 엑추에이터 내림 대기시간
-    public static final String COMMAND_TAG = "BT-CMD";
-    public static final String STATE_TAG = "BT-STATE";
+    private final int DOWN_WAIT_TIME = 1000 * 5;  // 엑추에이터 내림 대기시간
+    public static final String COMMAND_TAG = "BT-CMD";  // 블루투스 메시지
+    public static final String STATE_TAG = "BT-STATE";  // 수면 상태 메시지
 
     private HomeFragment homeFragment;
     private ManagementFragment managementFragment;
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     boolean isAdjust = false; // 교정 중인지 여부
     boolean isSense = false; // 이산화탄소 감지 여부
     boolean isCon = false;  // 상태 지속 여부
-    boolean isStart = false;  // 수면 측정 여부
+    boolean isStarted = false;  // 수면 측정 여부
 
     ArrayList<Integer> heartRates;
     int currentHeartRate;
@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
     long conStartTime = 0L;  // 상태 시작 시간
     long conEndTime = 0L;  // 상태 종료 시간
     int noConditionCount = 0;  // 정상 상태 감지 카운트
+    int moved = 0;
 
     String act;
     String beforePos = null;  // 교정 전 자세
@@ -389,7 +390,7 @@ public class MainActivity extends AppCompatActivity {
                             whenWake, getSleepTime(whenSleep, whenWake), createRandomConTime(),
                             (int) (Math.random() * 7), (int) (Math.random() * 5) + 1,
                             spo, heartRate, (int) (Math.random() * 50) + 10,
-                            (int) (Math.random() * 5) + 20,
+                            (int) (Math.random() * 5) + 20, (int) (Math.random() * 7),
                             getScore(spo, heartRate))
                     );
                 }
@@ -406,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         sdf3.format(new Date()), "00:11", "00:41", "00:31",
                         "09:02", "08:20", "00:06", 3, 1,
-                        88, 47, 49, 20, 27)
+                        88, 47, 49, 20, 6, 27)
                 );
                 return true;
 
@@ -503,7 +504,7 @@ public class MainActivity extends AppCompatActivity {
             clearData();
             ((SleepingActivity) SleepingActivity.mContext).finish();
         }
-        isStart = false;
+        isStarted = false;
     }
 
     // 건강 점수
@@ -553,6 +554,7 @@ public class MainActivity extends AppCompatActivity {
         currentHumidity = 0;
         currentOxy = 0;
         currentTemp = 0;
+        moved = 0;
         postureInfo = new PostureInfo();
     }
 
@@ -580,7 +582,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void processCommand(String message) {
-            if (isStart) {  // 측정 중
+            if (isStarted) {  // 측정 중
                 Log.d(COMMAND_TAG, "명령 -> " + message);
                 if (message.contains(":")) {
                     String[] msgArray = message.split(":");
@@ -655,7 +657,7 @@ public class MainActivity extends AppCompatActivity {
                                                 }.start();
                                             }
                                         } else {  // 코골이 데시벨 이하일때
-                                            if (noConditionCount == 10) {  // 카운트가 10이 되면 코골이 끝
+                                            if (noConditionCount == 5) {  // 카운트가 5이 되면 코골이 끝
                                                 conEndTime = System.currentTimeMillis();
                                                 Log.d(STATE_TAG, "코골이 종료");
                                                 ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
@@ -690,6 +692,7 @@ public class MainActivity extends AppCompatActivity {
                                 isSense = co2 >= 6;
                                 break;
                             case "moved": // 뒤척임
+                                moved = Integer.parseInt(msgArray[1]);
                                 break;
                             default:
                                 Log.d(COMMAND_TAG, "동작 없음1");

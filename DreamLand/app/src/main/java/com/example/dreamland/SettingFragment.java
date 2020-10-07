@@ -113,17 +113,17 @@ public class SettingFragment extends Fragment {
                 if (b) {  // 자동 사용
                     manualSwitch.setVisibility(View.GONE);
                     ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_AUTO\n");
-                    Log.d(MainActivity.STATE_TAG, "가습기 Auto");
+                    Log.d(MainActivity.STATE_TAG, "가습기 -> Auto");
                     ((MainActivity) getActivity()).autoHumidifier = true;
                 } else {  // 수동 사용
                     manualSwitch.setVisibility(View.VISIBLE);
                     ((MainActivity) getActivity()).autoHumidifier = false;
                     if (manualSwitch.isChecked()) {
                         ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_ON\n");
-                        Log.d(MainActivity.STATE_TAG, "가습기 On");
+                        Log.d(MainActivity.STATE_TAG, "가습기 -> On");
                     } else {
                         ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_OFF\n");
-                        Log.d(MainActivity.STATE_TAG, "가습기 Off");
+                        Log.d(MainActivity.STATE_TAG, "가습기 -> Off");
                     }
                 }
             }
@@ -135,10 +135,10 @@ public class SettingFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {  // 사용
                     ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_ON\n");
-                    Log.d(MainActivity.STATE_TAG, "가습기 On");
+                    Log.d(MainActivity.STATE_TAG, "가습기 -> On");
                 } else {  // 사용 안함
                     ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_OFF\n");
-                    Log.d(MainActivity.STATE_TAG, "가습기 Off");
+                    Log.d(MainActivity.STATE_TAG, "가습기 -> Off");
                 }
             }
         });
@@ -187,7 +187,7 @@ public class SettingFragment extends Fragment {
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
 
-                // 초기화 버튼
+                // 초기화 확인 버튼
                 resetConfirmButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

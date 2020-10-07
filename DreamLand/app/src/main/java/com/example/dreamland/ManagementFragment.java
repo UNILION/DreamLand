@@ -67,6 +67,7 @@ public class ManagementFragment extends Fragment {
     private TextView tvHeartRate;
     private TextView tvHumidity;
     private TextView tvTemperature;
+    private TextView tvMoved;
     private TextView tvHealthScore;
     private ImageView ivCondition;
     private LinearLayout infoLayout;
@@ -151,6 +152,8 @@ public class ManagementFragment extends Fragment {
         tvHeartRate = (TextView) view.findViewById(R.id.tvHeartRate);
         tvHumidity = (TextView) view.findViewById(R.id.tvHumidity);
         tvTemperature = (TextView) view.findViewById(R.id.tvTemperature);
+        tvMoved = (TextView) view.findViewById(R.id.tvMoved);
+        tvHealthScore = (TextView) view.findViewById(R.id.tv_health_score);
         infoLayout = (LinearLayout) view.findViewById(R.id.infoLayout);
         posLayout = (LinearLayout) view.findViewById(R.id.posLayout);
         sleepDataLayout = (LinearLayout) view.findViewById(R.id.sleepDataLayout);
@@ -158,7 +161,6 @@ public class ManagementFragment extends Fragment {
         tvCondition = (TextView) view.findViewById(R.id.tv_condition);
         ratingBar = (ScaleRatingBar) view.findViewById(R.id.ratingBar);
         circleProgressView = (CircleProgressView) view.findViewById(R.id.circle_progressview);
-        tvHealthScore = (TextView) view.findViewById(R.id.tv_health_score);
 
         sf = getContext().getSharedPreferences("bed", Context.MODE_PRIVATE);
 
@@ -282,9 +284,12 @@ public class ManagementFragment extends Fragment {
                     tvHeartRate.setText(Integer.toString(sleep.getHeartRate()));
                     tvHumidity.setText(Integer.toString(sleep.getHumidity()));
                     tvTemperature.setText(Integer.toString(sleep.getTemperature()));
+                    tvMoved.setText(Integer.toString(sleep.getMoved()));
+
                     int score = sleep.getScore();
                     circleProgressView.setValue(score);
                     tvHealthScore.setText(Integer.toString(score));
+
                     int color;
                     if (score <= 40) {
                         color = R.color.colorSignalRed;

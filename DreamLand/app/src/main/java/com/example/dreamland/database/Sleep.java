@@ -21,12 +21,13 @@ public class Sleep {
     private int heartRate; // 심박수
     private int humidity; // 습도
     private int temperature; // 온도
+    private int moved;  // 뒤척임 수
     private int score; // 건강 점수
 
     public Sleep(
             String sleepDate, String whenStart, String whenSleep, String asleepAfter,
             String whenWake, String sleepTime, String conTime, int adjCount, int satLevel,
-            int oxyStr, int heartRate, int humidity, int temperature, int score) {
+            int oxyStr, int heartRate, int humidity, int temperature, int moved, int score) {
         this.sleepDate = sleepDate;
         this.whenStart = whenStart;
         this.whenSleep = whenSleep;
@@ -40,6 +41,7 @@ public class Sleep {
         this.heartRate = heartRate;
         this.humidity = humidity;
         this.temperature = temperature;
+        this.moved = moved;
         this.score = score;
     }
 
@@ -53,7 +55,7 @@ public class Sleep {
                 + "asleepAfter: " + asleepAfter + " whenWake: " + whenWake + " sleepTime: "
                 + sleepTime + " conTime: " + conTime + " adjCount: " + adjCount + " satLevel: "
                 + satLevel + " oxyStr: " + oxyStr + " heartRate: " + heartRate + "humidity: "
-                + humidity + " temperature: " + temperature + " score: " + score;
+                + humidity + " temperature: " + temperature + " moved: " + moved + " score: " + score;
     }
 
     public int getSleepId() {
@@ -151,6 +153,10 @@ public class Sleep {
     public int getTemperature() { return temperature; }
 
     public void setTemperature(int temperature) { this.temperature = temperature; }
+
+    public int getMoved() { return moved; }
+
+    public void setMoved(int moved) { this.moved = moved; }
 
     public int getScore() { return score; }
 

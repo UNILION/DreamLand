@@ -47,10 +47,12 @@ public class SleepingActivity extends AppCompatActivity {
         tvSleepState = findViewById(R.id.tvSleepState);
         tvTime = findViewById(R.id.tv_time);
 
-        ((MainActivity) MainActivity.context).isStart = true;
+        ((MainActivity) MainActivity.context).isStarted = true;
 
+        // 이미지 애니메이션
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.pongpong);
         ivSleepSate.startAnimation(animation);
+
         // 설정한 시간을 가져옴
         int hour = getIntent().getIntExtra("hour", -1);
         int minute = getIntent().getIntExtra("minute", -1);

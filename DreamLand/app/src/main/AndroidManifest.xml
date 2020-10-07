@@ -16,9 +16,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".MapsActivity" />
-        <activity android:name=".SleepingActivity" />
-        <activity android:name=".InitActivity" />
+        <activity android:name=".MapsActivity"
+            android:screenOrientation="locked"/>
+        <activity android:name=".SleepingActivity"
+            android:screenOrientation="locked"/>
+        <activity android:name=".InitActivity"
+            android:screenOrientation="locked"/>
         <activity
             android:name=".MainActivity"
             android:screenOrientation="locked">
