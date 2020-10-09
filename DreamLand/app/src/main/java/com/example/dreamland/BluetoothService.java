@@ -95,7 +95,6 @@ public class BluetoothService {
         statusView.setStatus(Status.COMPLETE);
         LinearLayout connectButton = (LinearLayout) ((MainActivity)context).findViewById(R.id.bltSettingLayout);
         connectButton.setEnabled(false);
-        ((MainActivity) context).settingFragment.enableSwitch();
     }
 
     // 엑추에이터에 전송

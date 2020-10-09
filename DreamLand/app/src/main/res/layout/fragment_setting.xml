@@ -49,9 +49,8 @@
                     android:layout_margin="16dp"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:enabled="false"
                     android:text="자동 가습기 조절"
-                    android:textColor="@color/colorGray" />
+                    android:textColor="@color/colorWhite" />
 
                 <Switch
                     android:id="@+id/switch_manual"
@@ -62,7 +61,6 @@
                     android:layout_marginRight="16dp"
                     android:layout_marginBottom="16dp"
                     android:layout_weight="1"
-                    android:enabled="false"
                     android:text="가습기 사용"
                     android:textColor="@color/colorWhite"
                     android:visibility="gone" />

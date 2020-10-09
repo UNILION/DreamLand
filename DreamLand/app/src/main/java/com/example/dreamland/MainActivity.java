@@ -779,7 +779,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (customAct) {  // 사용
                                     act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
                                 } else {  // 사용 안함
-                                    act = "1,0,1,0,1,0,1,0,0";  // 왼쪽  // TODO: 왼쪽 오른쪽 지정
+                                    act = "1,0,1,0,1,0,1,0,0";  // 왼쪽  // TODO: 왼쪽 오른쪽 질환 지정
                                 }
                             }
                             break;

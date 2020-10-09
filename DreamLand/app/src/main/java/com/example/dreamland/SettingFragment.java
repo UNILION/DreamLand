@@ -106,6 +106,23 @@ public class SettingFragment extends Fragment {
         actButtons = new ToggleButton[10];
         sf = getContext().getSharedPreferences("bed", getContext().MODE_PRIVATE);
 
+        ((MainActivity) getActivity()).autoHumidifier = sf.getBoolean("autoHumidifier", true);
+        ((MainActivity) getActivity()).useHumidifier = sf.getBoolean("useHumidifier", false);
+
+        // 가습기 뷰를 저장된 상태로 변경
+        if (((MainActivity) getActivity()).autoHumidifier) {
+            autoSwitch.setChecked(true);
+        } else {
+            autoSwitch.setChecked(false);
+            manualSwitch.setVisibility(View.VISIBLE);
+        }
+
+        if (((MainActivity) getActivity()).useHumidifier) {
+            manualSwitch.setChecked(true);
+        } else {
+            manualSwitch.setChecked(false);
+        }
+
         // 가습기 자동 사용 스위치
         autoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -113,13 +130,17 @@ public class SettingFragment extends Fragment {
                 if (b) {  // 자동 사용
                     manualSwitch.setVisibility(View.GONE);
                     ((MainActivity) getActivity()).autoHumidifier = true;
+                    sf.edit().putBoolean("autoHumidifier", true).apply();
                 } else {  // 수동 사용
                     manualSwitch.setVisibility(View.VISIBLE);
                     ((MainActivity) getActivity()).autoHumidifier = false;
+                    sf.edit().putBoolean("autoHumidifier", false).apply();
                     if (manualSwitch.isChecked()) {
                         ((MainActivity) getActivity()).useHumidifier = true;
+                        sf.edit().putBoolean("useHumidifier", true).apply();
                     } else {
                         ((MainActivity) getActivity()).useHumidifier = false;
+                        sf.edit().putBoolean("useHumidifier", false).apply();
                     }
                 }
             }
@@ -131,8 +152,10 @@ public class SettingFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {  // 사용
                     ((MainActivity) getActivity()).useHumidifier = true;
+                    sf.edit().putBoolean("useHumidifier", true).apply();
                 } else {  // 사용 안함
                     ((MainActivity) getActivity()).useHumidifier = false;
+                    sf.edit().putBoolean("useHumidifier", false).apply();
                 }
             }
         });
@@ -302,12 +325,5 @@ public class SettingFragment extends Fragment {
         tvSleepSetting.setVisibility(View.GONE);
         line1.setVisibility(View.GONE);
         sleepSettingLayout.setVisibility(View.GONE);
-    }
-
-    // 스위치 활성화 함수
-    public void enableSwitch() {
-        autoSwitch.setEnabled(true);
-        manualSwitch.setEnabled(true);
-        autoSwitch.setTextColor(getResources().getColor(R.color.colorWhite));
     }
 }
