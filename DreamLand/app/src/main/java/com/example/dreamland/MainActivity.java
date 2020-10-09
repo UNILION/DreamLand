@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
     int adjMode = 0;  // 교정 모드
     boolean customAct = false;  // 사용자 설정 여부
     boolean autoHumidifier = true;  // 가습기 사용 여부
+    boolean useHumidifier = false;
     boolean useO2 = false;
     long conMilliTime = 0L;  // 상태 지속 총 시간
     long conStartTime = 0L;  // 상태 시작 시간
@@ -507,6 +508,10 @@ public class MainActivity extends AppCompatActivity {
             ((SleepingActivity) SleepingActivity.mContext).finish();
         }
         isStarted = false;
+        bluetoothService.writeBLT2("H2O_OFF");  // 가습기 off
+        Log.d(STATE_TAG, "가습기 Off");
+        bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
+        Log.d(STATE_TAG, "산소발생기 Off");
     }
 
     // 건강 점수
@@ -581,6 +586,21 @@ public class MainActivity extends AppCompatActivity {
     void sendAct() {
         bluetoothService.writeBLT1("Act:" + act); // 교정 정보 전송
         Log.d(STATE_TAG, "자세 교정 -> act:" + act + " 전송");
+    }
+
+    void sendHumidifierMode() {  // 가습기 사용 메시지 전송
+        if (autoHumidifier) {
+            bluetoothService.writeBLT2("H2O_AUTO");
+            Log.d(STATE_TAG, "가습기 Auto");
+        } else {
+            if (useHumidifier) {
+                bluetoothService.writeBLT2("H2O_ON");
+                Log.d(STATE_TAG, "가습기 On");
+            } else {
+                bluetoothService.writeBLT2("H2O_OFF");
+                Log.d(STATE_TAG, "가습기 Off");
+            }
+        }
     }
 
     void adjustPosture() {

@@ -72,6 +72,9 @@ public class SleepingActivity extends AppCompatActivity {
             ((MainActivity) MainActivity.context).adjustPostureImmediately();
         }
 
+        // 가습기 사용 여부 메시지 전송
+        ((MainActivity) MainActivity.context).sendHumidifierMode();
+
         // 중지 버튼
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override

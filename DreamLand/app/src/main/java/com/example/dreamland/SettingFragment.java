@@ -112,18 +112,14 @@ public class SettingFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {  // 자동 사용
                     manualSwitch.setVisibility(View.GONE);
-                    ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_AUTO\n");
-                    Log.d(MainActivity.STATE_TAG, "가습기 -> Auto");
                     ((MainActivity) getActivity()).autoHumidifier = true;
                 } else {  // 수동 사용
                     manualSwitch.setVisibility(View.VISIBLE);
                     ((MainActivity) getActivity()).autoHumidifier = false;
                     if (manualSwitch.isChecked()) {
-                        ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_ON\n");
-                        Log.d(MainActivity.STATE_TAG, "가습기 -> On");
+                        ((MainActivity) getActivity()).useHumidifier = true;
                     } else {
-                        ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_OFF\n");
-                        Log.d(MainActivity.STATE_TAG, "가습기 -> Off");
+                        ((MainActivity) getActivity()).useHumidifier = false;
                     }
                 }
             }
@@ -134,11 +130,9 @@ public class SettingFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {  // 사용
-                    ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_ON\n");
-                    Log.d(MainActivity.STATE_TAG, "가습기 -> On");
+                    ((MainActivity) getActivity()).useHumidifier = true;
                 } else {  // 사용 안함
-                    ((MainActivity) getActivity()).bluetoothService.writeBLT2("H2O_OFF\n");
-                    Log.d(MainActivity.STATE_TAG, "가습기 -> Off");
+                    ((MainActivity) getActivity()).useHumidifier = false;
                 }
             }
         });
