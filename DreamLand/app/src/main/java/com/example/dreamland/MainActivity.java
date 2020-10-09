@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private final int DOWN_WAIT_TIME = 1000 * 5;  // 엑추에이터 내림 대기시간
     public static final String COMMAND_TAG = "BT-CMD";  // 블루투스 메시지
     public static final String STATE_TAG = "BT-STATE";  // 수면 상태 메시지
+    private static final String ACT_LEFT = "1,0,1,0,1,0,1,0,0";  // 자세를 왼쪽으로 교정
+    private static final String ACT_RIGHT = "0,1,0,1,0,1,0,1,0";  // 자세를 오른쪽으로 교정
 
     private HomeFragment homeFragment;
     private ManagementFragment managementFragment;
@@ -779,7 +781,23 @@ public class MainActivity extends AppCompatActivity {
                                 if (customAct) {  // 사용
                                     act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
                                 } else {  // 사용 안함
-                                    act = "1,0,1,0,1,0,1,0,0";  // 왼쪽  // TODO: 왼쪽 오른쪽 질환 지정
+                                    if (mode == 3) {
+                                        //TODO:질환에 맞게 act에 대입
+                                        switch (settingFragment.diseaseIndex) {
+                                            case 0:
+                                                break;
+                                            case 1:
+                                                break;
+                                            case 2:
+                                                break;
+                                            case 3:
+                                                break;
+                                            default:
+                                        }
+                                    } else {
+                                        // TODO: 왼쪽 오른쪽 값을 받아 대입
+                                        act = ACT_LEFT;
+                                    }
                                 }
                             }
                             break;
