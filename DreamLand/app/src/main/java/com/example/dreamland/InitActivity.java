@@ -30,7 +30,7 @@ public class InitActivity extends AppCompatActivity {
         modeButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editor.putInt("mode", 1);
+                editor.putInt("mode", 1).apply();
                 editor.commit();
                 setResult(1001);
                 finish();
@@ -41,7 +41,7 @@ public class InitActivity extends AppCompatActivity {
         modeButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editor.putInt("mode", 2);
+                editor.putInt("mode", 2).apply();
                 editor.commit();
                 setResult(1002);
                 finish();
@@ -52,7 +52,7 @@ public class InitActivity extends AppCompatActivity {
         modeButton3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editor.putInt("mode", 3);
+                editor.putInt("mode", 3).apply();
                 editor.commit();
                 setResult(1003);
                 finish();

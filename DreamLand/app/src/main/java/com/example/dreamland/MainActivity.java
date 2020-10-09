@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private final int DOWN_WAIT_TIME = 1000 * 5;  // 엑추에이터 내림 대기시간
     public static final String COMMAND_TAG = "BT-CMD";  // 블루투스 메시지
     public static final String STATE_TAG = "BT-STATE";  // 수면 상태 메시지
-    private static final String ACT_LEFT = "1,0,1,0,1,0,1,0,0";  // 자세를 왼쪽으로 교정
-    private static final String ACT_RIGHT = "0,1,0,1,0,1,0,1,0";  // 자세를 오른쪽으로 교정
+    public static final String ACT_LEFT = "1,0,1,0,1,0,1,0,0";  // 자세를 왼쪽으로 교정
+    public static final String ACT_RIGHT = "0,1,0,1,0,1,0,1,0";  // 자세를 오른쪽으로 교정
 
     private HomeFragment homeFragment;
     private ManagementFragment managementFragment;
@@ -427,12 +427,15 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case RC_INIT_ACTIVITY:
                 if (resultCode == 1001) {  // 코골이 모드 선택
+                    mode = 1;
                     settingFragment.hideDiseaseView();
                 } else if (resultCode == 1002) {  // 무호흡 모드 선택
+                    mode = 2;
                     settingFragment.hideDiseaseView();
                     managementFragment.changeConditionView();
                     healthFragment.changeView();
                 } else if (resultCode == 1003) {  // 질환 모드 선택
+                    mode = 3;
                     // TODO: 질환 모드에 맞는 UI 출력
                 }
                 break;
@@ -794,9 +797,6 @@ public class MainActivity extends AppCompatActivity {
                                                 break;
                                             default:
                                         }
-                                    } else {
-                                        // TODO: 왼쪽 오른쪽 값을 받아 대입
-                                        act = ACT_LEFT;
                                     }
                                 }
                             }

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ public class HomeFragment extends Fragment {
     Button selButton2;
     Button selButton3;
     AlertDialog selDiaglog;
+    ImageView ivPredicPos;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -91,6 +93,40 @@ public class HomeFragment extends Fragment {
         selButton1 = dlgView.findViewById(R.id.selButton1);
         selButton2 = dlgView.findViewById(R.id.selButton2);
         selButton3 = dlgView.findViewById(R.id.selButton3);
+        ivPredicPos = dlgView.findViewById(R.id.ivPredicPos);
+
+        switch (((MainActivity) getActivity()).mode) {
+            case 1:
+            case 2:
+                if ((int) (Math.random() * 2) == 0) {
+                    ivPredicPos.setImageResource(R.drawable.pos1);  // 왼쪽으로 교정
+                    ((MainActivity) getActivity()).act = MainActivity.ACT_LEFT;
+                } else {
+                    ivPredicPos.setImageResource(R.drawable.pos2);  // 오른쪽으로 교정
+                    ((MainActivity) getActivity()).act = MainActivity.ACT_RIGHT;
+                }
+                break;
+            case 3:
+                //TODO: 질환별 자세로 이미지를 변경
+                switch (((MainActivity) getActivity()).settingFragment.diseaseIndex) {
+                    case 0:
+                        ivPredicPos.setImageResource(R.drawable.pos5);
+                        break;
+                    case 1:
+                        ivPredicPos.setImageResource(R.drawable.pos5);
+                        break;
+                    case 2:
+                        ivPredicPos.setImageResource(R.drawable.pos5);
+                        break;
+                    case 3:
+                        ivPredicPos.setImageResource(R.drawable.pos5);
+                        break;
+                    default:
+                }
+                break;
+            default:
+        }
+
 
         selDiaglog = builder.setView(dlgView).create();
         selDiaglog.show();

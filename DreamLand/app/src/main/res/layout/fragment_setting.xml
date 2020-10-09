@@ -49,7 +49,7 @@
                     android:layout_margin="16dp"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:text="자동 가습기 조절"
+                    android:text="가습기 자동 사용"
                     android:textColor="@color/colorWhite" />
 
                 <Switch
@@ -155,7 +155,7 @@
                         android:id="@+id/tvDisease"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="5"
                         android:gravity="right"
                         android:text="없음"
@@ -165,9 +165,8 @@
                     <ImageView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="1"
-                        android:paddingBottom="4dp"
                         android:src="@drawable/ic_right_arrow_24dp"
                         app:tint="@color/colorGray" />
                 </LinearLayout>
