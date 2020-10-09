@@ -67,6 +67,11 @@ public class SleepingActivity extends AppCompatActivity {
         // 알람 설정
         setAlarm(hour, minute);
 
+        // 즉시 교정을 선택하면 교정
+        if (((MainActivity) MainActivity.context).adjMode == 3) {
+            ((MainActivity) MainActivity.context).adjustPostureImmediately();
+        }
+
         // 중지 버튼
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override

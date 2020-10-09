@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     boolean isSense = false; // 이산화탄소 감지 여부
     boolean isCon = false;  // 상태 지속 여부
     boolean isStarted = false;  // 수면 측정 여부
+    boolean adjEnd = false;  // 교정 횟수를 제한하기 위한 변수
 
     ArrayList<Integer> heartRates;
     int currentHeartRate;
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
     Sleep sleep;
     int adjCount;  // 자세 교정 횟수
     int mode;  // 모드
+    int adjMode = 0;  // 교정 모드
     boolean customAct = false;  // 사용자 설정 여부
     boolean autoHumidifier = true;  // 가습기 사용 여부
     boolean useO2 = false;
@@ -555,7 +557,71 @@ public class MainActivity extends AppCompatActivity {
         currentOxy = 0;
         currentTemp = 0;
         moved = 0;
+        adjMode = 0;
         postureInfo = new PostureInfo();
+    }
+
+    void adjustPostureImmediately() {
+        adjEnd = true;
+        sendAct();
+        new Thread() { // 2분 후 down 메시지를 전송
+            @Override
+            public synchronized void run() {
+                try {
+                    sleep(DOWN_WAIT_TIME); // 2분 대기
+                    bluetoothService.writeBLT1("down"); // 교정 해제
+                    Log.d(STATE_TAG, "자세 교정 -> down 전송");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
+    void sendAct() {
+        bluetoothService.writeBLT1("Act:" + act); // 교정 정보 전송
+        Log.d(STATE_TAG, "자세 교정 -> act:" + act + " 전송");
+    }
+
+    void adjustPosture() {
+        if (adjMode == 2) {  // 수면 중 한 번 교정을 선택하면 1회 교정 후 교정 불가
+            adjEnd = true;
+        }
+        noConditionCount = 0;
+        if (!isCon) {
+            isCon = true;
+            conStartTime = System.currentTimeMillis();
+            beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
+            sendAct();
+            ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
+                    SleepingActivity.STATE_SNORING);
+
+            Calendar calendar = Calendar.getInstance();
+            final String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
+            isAdjust = true; // 교정중으로 상태 변경
+
+            new Thread() { // 2분 후 down 메시지를 전송 후 자세정보 삽입
+                @Override
+                public synchronized void run() {
+                    try {
+                        sleep(DOWN_WAIT_TIME); // 2분 대기
+                        bluetoothService.writeBLT1("down"); // 교정 해제
+                        isAdjust = false; // 교정중 아님
+                        Log.d(STATE_TAG, "자세 교정 -> down 전송");
+                        adjCount++; // 교정 횟수 증가
+                        afterPos = postureInfo.getCurrentPos();  // 교정 후 자세
+                        new InsertAdjAsyncTask(db.adjustmentDao())
+                                .execute(new Adjustment(sleep.getSleepDate(), adjTime, beforePos, afterPos));
+                        Log.d(STATE_TAG, "교정 정보 삽입 -> Date: " + sleep.getSleepDate() + "  교정 시각: "
+                                + adjTime + "  교정 전 자세: " + beforePos + "  교정 후 자세: " + afterPos);
+                        beforePos = null;  // 자세정보 삽입 후 교정 전, 후 자세 정보 초기화
+                        afterPos = null;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
     }
 
     // 블루투스 메시지 핸들러
@@ -619,42 +685,9 @@ public class MainActivity extends AppCompatActivity {
                                 problems.add(decibel); // 데시벨 저장
                                 if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
                                     if (mode == 1) { // 코골이 방지 모드
-                                        if (decibel > 60) {
-                                            noConditionCount = 0;
-                                            if (!isCon) {
-                                                isCon = true;
-                                                conStartTime = System.currentTimeMillis();
-                                                beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
-                                                bluetoothService.writeBLT1("Act:" + act); // 교정 정보 전송
-                                                Log.d(STATE_TAG, "자세 교정 -> act:" + act + " 전송");
-                                                ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
-                                                        SleepingActivity.STATE_SNORING);
-
-                                                Calendar calendar = Calendar.getInstance();
-                                                final String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
-                                                isAdjust = true; // 교정중으로 상태 변경
-
-                                                new Thread() { // 2분 후 down 메시지 전송
-                                                    @Override
-                                                    public synchronized void run() {
-                                                        try {
-                                                            sleep(DOWN_WAIT_TIME); // 2분 대기
-                                                            bluetoothService.writeBLT1("down"); // 교정 해제
-                                                            isAdjust = false; // 교정중 아님
-                                                            Log.d(STATE_TAG, "자세 교정 -> down 전송");
-                                                            adjCount++; // 교정 횟수 증가
-                                                            afterPos = postureInfo.getCurrentPos();  // 교정 후 자세
-                                                            new InsertAdjAsyncTask(db.adjustmentDao())
-                                                                    .execute(new Adjustment(sleep.getSleepDate(), adjTime, beforePos, afterPos));
-                                                            Log.d(STATE_TAG, "교정 정보 삽입 -> Date: " + sleep.getSleepDate() + "  교정 시각: "
-                                                                    + adjTime + "  교정 전 자세: " + beforePos + "  교정 후 자세: " + afterPos);
-                                                            beforePos = null;  // 자세정보 삽입 후 교정 전, 후 자세 정보 초기화
-                                                            afterPos = null;
-                                                        } catch (InterruptedException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                }.start();
+                                        if (decibel > 60) {  // 60데시벨이 넘으면 자세 교정
+                                            if (!adjEnd) {
+                                                adjustPosture();
                                             }
                                         } else {  // 코골이 데시벨 이하일때
                                             if (noConditionCount == 5) {  // 카운트가 5이 되면 코골이 끝
@@ -662,7 +695,6 @@ public class MainActivity extends AppCompatActivity {
                                                 Log.d(STATE_TAG, "코골이 종료");
                                                 ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
                                                         SleepingActivity.STATE_SLEEP);
-
                                                 isCon = false;
                                                 noConditionCount = 0;
                                                 conMilliTime += conEndTime - conStartTime;
