@@ -324,6 +324,7 @@ public class HealthFragment extends Fragment {
 
                     // 달별로 hash map에 삽입
                     for (Sleep sleep : sleeps) {
+                        Log.d("dddd", sleep.getSleepDate());
                         String date = sleep.getSleepDate().substring(0, 6); // sleep에 저장된 날짜의 달
                         if (!date.equals(thisMonth)) { // 현재 달 제외
                             if (!dateMap.containsKey(date)) {

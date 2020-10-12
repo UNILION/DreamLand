@@ -499,15 +499,18 @@ public class MainActivity extends AppCompatActivity {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.show();
 
+
             // 평가 버튼
             satConfirmButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     sleep.setSatLevel((int) scaleRatingBar.getRating());
+                    new InsertSleepAsyncTask(db.sleepDao()).execute(sleep);
+                    sleep = new Sleep();
                     dialog.dismiss();
                 }
             });
-            // TODO: sleep 삽입
+            
             isSleep = false;
             clearData();
             ((SleepingActivity) SleepingActivity.mContext).finish();
@@ -556,7 +559,6 @@ public class MainActivity extends AppCompatActivity {
 
     // 잠에서 깬 후 데이터 삭제
     void clearData() {
-        sleep = new Sleep();
         heartRates.clear();
         humidities.clear();
         oxygenSaturations.clear();
