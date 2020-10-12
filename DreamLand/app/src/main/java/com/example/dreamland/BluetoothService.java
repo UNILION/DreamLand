@@ -10,6 +10,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +23,7 @@ import iammert.com.library.StatusView;
 
 public class BluetoothService {
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-    private static final int NUM_OF_DEVICES = 3;
+    private static final int NUM_OF_DEVICES = 1;
     private Context context;
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter bluetoothAdapter;
@@ -95,6 +96,8 @@ public class BluetoothService {
         statusView.setStatus(Status.COMPLETE);
         LinearLayout connectButton = (LinearLayout) ((MainActivity)context).findViewById(R.id.bltSettingLayout);
         connectButton.setEnabled(false);
+        TextView textView = ((MainActivity)context).findViewById(R.id.tv_con_bt);
+        textView.setTextColor(context.getResources().getColor(R.color.colorGray));
     }
 
     // 엑추에이터에 전송
@@ -155,7 +158,7 @@ public class BluetoothService {
                         connectionCompleted();
                     }
                 });
-            }
+        }
 
             // Keep listening to the InputStream until an exception occurs.
             while (true) {

@@ -73,6 +73,7 @@ public class ManagementFragment extends Fragment {
     private LinearLayout infoLayout;
     private LinearLayout sleepDataLayout;
     private LinearLayout posLayout;
+    private LinearLayout adjustLayout;
     private ScaleRatingBar ratingBar;
     private CircleProgressView circleProgressView;
 
@@ -157,6 +158,7 @@ public class ManagementFragment extends Fragment {
         infoLayout = (LinearLayout) view.findViewById(R.id.infoLayout);
         posLayout = (LinearLayout) view.findViewById(R.id.posLayout);
         sleepDataLayout = (LinearLayout) view.findViewById(R.id.sleepDataLayout);
+        adjustLayout = (LinearLayout) view.findViewById(R.id.adjust_layout);
         ivCondition = (ImageView) view.findViewById(R.id.iv_condition);
         tvCondition = (TextView) view.findViewById(R.id.tv_condition);
         ratingBar = (ScaleRatingBar) view.findViewById(R.id.ratingBar);
@@ -319,6 +321,10 @@ public class ManagementFragment extends Fragment {
     public void changeConditionView() {
         ivCondition.setImageResource(R.drawable.ic_cry_24dp);
         tvCondition.setText("무호흡");
+    }
+
+    public void hideAdjustLayout() {
+        adjustLayout.setVisibility(View.GONE);
     }
 
     // 수면 정보가 하나도 없다면 추가해달라는 화면으로 바꿈

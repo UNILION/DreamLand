@@ -75,6 +75,11 @@ public class SleepingActivity extends AppCompatActivity {
         // 가습기 사용 여부 메시지 전송
         ((MainActivity) MainActivity.context).sendHumidifierMode();
 
+        // 질환 완화 모드이면 측정 시작시 교정
+        if (((MainActivity) MainActivity.context).mode == InitActivity.DISEASE_ALLEVIATION_MODE) {
+            ((MainActivity) MainActivity.context).sendAct();
+        }
+
         // 중지 버튼
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override

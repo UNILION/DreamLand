@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     final int REQUEST_ENABLE_BT = 111;
     final int RC_INIT_ACTIVITY = 1000;
     final int RC_SLEEPING_ACTIVITY = 2000;
-    private final int DOWN_WAIT_TIME = 1000 * 5;  // 엑추에이터 내림 대기시간
+    private final int DOWN_WAIT_TIME = 1000 * 20;  // 엑추에이터 내림 대기시간
     public static final String COMMAND_TAG = "BT-CMD";  // 블루투스 메시지
     public static final String STATE_TAG = "BT-STATE";  // 수면 상태 메시지
     public static final String ACT_LEFT = "1,0,1,0,1,0,1,0,0";  // 자세를 왼쪽으로 교정
@@ -427,16 +427,16 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case RC_INIT_ACTIVITY:
                 if (resultCode == 1001) {  // 코골이 모드 선택
-                    mode = 1;
+                    mode = InitActivity.SNORING_PREVENTION_MODE;
                     settingFragment.hideDiseaseView();
                 } else if (resultCode == 1002) {  // 무호흡 모드 선택
-                    mode = 2;
+                    mode = InitActivity.APNEA_PREVENTION_MODE;
                     settingFragment.hideDiseaseView();
                     managementFragment.changeConditionView();
                     healthFragment.changeView();
                 } else if (resultCode == 1003) {  // 질환 모드 선택
-                    mode = 3;
-                    // TODO: 질환 모드에 맞는 UI 출력
+                    mode = InitActivity.DISEASE_ALLEVIATION_MODE;
+                    managementFragment.hideAdjustLayout();
                 }
                 break;
 
@@ -520,7 +520,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 건강 점수
-    int getScore(int spo, int heartRate) { // TODO: 수정 필요
+    int getScore(int spo, int heartRate) {
         int spoScore;
         int heartRateScore;
         if (spo >= 95) {  // 산소포화도 95이상, 정상
@@ -589,8 +589,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void sendAct() {
-        bluetoothService.writeBLT1("Act:" + act); // 교정 정보 전송
         Log.d(STATE_TAG, "자세 교정 -> act:" + act + " 전송");
+        bluetoothService.writeBLT1("Act:" + act); // 교정 정보 전송
     }
 
     void sendHumidifierMode() {  // 가습기 사용 메시지 전송
@@ -709,7 +709,7 @@ public class MainActivity extends AppCompatActivity {
                                 int decibel = (int) Double.parseDouble(msgArray[1]);
                                 problems.add(decibel); // 데시벨 저장
                                 if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
-                                    if (mode == 1) { // 코골이 방지 모드
+                                    if (mode == InitActivity.SNORING_PREVENTION_MODE) { // 코골이 방지 모드
                                         if (decibel > 60) {  // 60데시벨이 넘으면 자세 교정
                                             if (!adjEnd) {
                                                 adjustPosture();
@@ -728,9 +728,7 @@ public class MainActivity extends AppCompatActivity {
                                                 noConditionCount++;
                                             }
                                         }
-                                    } else if (mode == 2) { // 무호흡 모드
-
-                                    } else { // 질환 모드
+                                    } else if (mode == InitActivity.APNEA_PREVENTION_MODE) { // 무호흡 모드
 
                                     }
                                 }
@@ -784,7 +782,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (customAct) {  // 사용
                                     act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
                                 } else {  // 사용 안함
-                                    if (mode == 3) {
+                                    if (mode == InitActivity.DISEASE_ALLEVIATION_MODE) {
                                         //TODO:질환에 맞게 act에 대입
                                         switch (settingFragment.diseaseIndex) {
                                             case 0:

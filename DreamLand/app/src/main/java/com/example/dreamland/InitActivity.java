@@ -13,6 +13,9 @@ public class InitActivity extends AppCompatActivity {
     LinearLayout modeButton2;
     LinearLayout modeButton3;
     SharedPreferences sf;
+    public static final int SNORING_PREVENTION_MODE = 1;
+    public static final int APNEA_PREVENTION_MODE = 2;
+    public static final int DISEASE_ALLEVIATION_MODE = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +33,7 @@ public class InitActivity extends AppCompatActivity {
         modeButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editor.putInt("mode", 1).apply();
+                editor.putInt("mode", SNORING_PREVENTION_MODE).apply();
                 editor.commit();
                 setResult(1001);
                 finish();
@@ -41,7 +44,7 @@ public class InitActivity extends AppCompatActivity {
         modeButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editor.putInt("mode", 2).apply();
+                editor.putInt("mode", APNEA_PREVENTION_MODE).apply();
                 editor.commit();
                 setResult(1002);
                 finish();
@@ -52,7 +55,7 @@ public class InitActivity extends AppCompatActivity {
         modeButton3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editor.putInt("mode", 3).apply();
+                editor.putInt("mode", DISEASE_ALLEVIATION_MODE).apply();
                 editor.commit();
                 setResult(1003);
                 finish();

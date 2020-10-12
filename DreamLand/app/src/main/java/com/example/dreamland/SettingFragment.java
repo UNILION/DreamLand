@@ -184,7 +184,7 @@ public class SettingFragment extends Fragment {
         int mode = sf.getInt("mode", 0); // 사용자가 설정한 모드를 불러옴
 
         // 코골이, 무호흡모드이면 질병 관련 뷰들을 숨김
-        if (mode == 1 || mode == 2) {
+        if (mode == InitActivity.SNORING_PREVENTION_MODE || mode == InitActivity.APNEA_PREVENTION_MODE) {
             hideDiseaseView();
         } else { // 질환 완화 모드
             diseaseIndex = sf.getInt("disease", 0); // 설정한 질환을 불러옴
