@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private ActionBar actionBar;
     private BottomNavigationView bottomNavigation;
     private SharedPreferences sf;
-    private List<Sleep> sleepList;
+    public List<Sleep> sleepList;
     BluetoothAdapter bluetoothAdapter;
     BluetoothService bluetoothService;
     ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
@@ -232,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
                 sleepList = sleeps;
                 managementFragment.sleepList = sleeps;
                 managementFragment.switchScreen();
+                healthFragment.switchScreen();
                 managementFragment.updateUI();
             }
         });
@@ -480,6 +481,7 @@ public class MainActivity extends AppCompatActivity {
                     "일자: " + sleep.getSleepDate()
                             + "  시작 시간: " + sleep.getWhenStart()
                             + "  잠에 든 시각: " + sleep.getWhenSleep()
+                            + "  잠들기까지 걸린 시간: " + sleep.getAsleepAfter()
                             + "  기상 시각: " + sleep.getWhenWake()
                             + "  수면 시간: " + sleep.getSleepTime()
                             + "  상태 시간: " + sleep.getConTime()
@@ -510,7 +512,7 @@ public class MainActivity extends AppCompatActivity {
                     dialog.dismiss();
                 }
             });
-            
+
             isSleep = false;
             clearData();
             ((SleepingActivity) SleepingActivity.mContext).finish();
@@ -592,7 +594,7 @@ public class MainActivity extends AppCompatActivity {
 
     void sendAct() {
         Log.d(STATE_TAG, "자세 교정 -> act:" + act + " 전송");
-        bluetoothService.writeBLT1("Act:" + act); // 교정 정보 전송
+        //bluetoothService.writeBLT1("Act:" + act); // 교정 정보 전송
     }
 
     void sendHumidifierMode() {  // 가습기 사용 메시지 전송
@@ -632,7 +634,7 @@ public class MainActivity extends AppCompatActivity {
                 public synchronized void run() {
                     try {
                         sleep(DOWN_WAIT_TIME); // 2분 대기
-                        bluetoothService.writeBLT1("down"); // 교정 해제
+                        //bluetoothService.writeBLT1("down"); // 교정 해제
                         isAdjust = false; // 교정중 아님
                         Log.d(STATE_TAG, "자세 교정 -> down 전송");
                         adjCount++; // 교정 횟수 증가

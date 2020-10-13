@@ -11,15 +11,15 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.example.dreamland.database.Adjustment;
 import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
 import com.github.mikephil.charting.charts.BarChart;
@@ -42,9 +42,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+
 
 import static com.example.dreamland.MySimpleDateFormat.sdf1;
 import static com.example.dreamland.MySimpleDateFormat.sdf3;
@@ -57,6 +56,8 @@ public class HealthFragment extends Fragment {
     private HashMap<String, ArrayList<Sleep>> dateMap;
     private ArrayList<Integer> scores;
     int avgOfTotalScore;
+    LinearLayout healthInfoLayout;
+    ScrollView healthScrollView;
     LineChart lineChart; // 취침 시간
     LineChart lineChart2; // 기상 시간
     LineChart lineChart3; // 잠들기까지 걸린 시간
@@ -67,7 +68,6 @@ public class HealthFragment extends Fragment {
     BarChart barChart2; // 수면 만족도
     BarChart barChart3; // 산소 포화도
     MaterialSpinner spinner; // 통계 선택 드랍다운 스피너
-    Button detailButton; // 자세히 보기 버튼
     Button mapsButton;  // 맵 보기 버튼
 
     TextView strTrafficTitle;
@@ -105,11 +105,12 @@ public class HealthFragment extends Fragment {
         scores = new ArrayList<>();
         avgOfMonthlyDatas = new ArrayList<>();
 
+        healthInfoLayout = view.findViewById(R.id.health_info_layout);
+        healthScrollView = view.findViewById(R.id.health_scrollview);
         strTrafficTitle = view.findViewById(R.id.strTrafficTitle);
         strTrafficScore = view.findViewById(R.id.strTrafficScore);
         strTrafficDaily = view.findViewById(R.id.strTrafficDaily);
         imgTrafficImg = view.findViewById(R.id.imgTrafficImg);
-        detailButton = view.findViewById(R.id.detailButton);
         mapsButton = view.findViewById(R.id.maps_button);
 
         mapsButton.setOnClickListener(new View.OnClickListener() {
@@ -117,21 +118,6 @@ public class HealthFragment extends Fragment {
             public void onClick(View view) {
                 Intent mapsIntent = new Intent(getContext(), MapsActivity.class);
                 startActivity(mapsIntent);
-            }
-        });
-
-        detailButton.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                detailButton.setVisibility(View.GONE);
-                strTrafficTitle.setVisibility(View.GONE);
-                strTrafficScore.setVisibility(View.GONE);
-                strTrafficDaily.setVisibility(View.GONE);
-                imgTrafficImg.setVisibility(View.GONE);
-
-                Snackbar.make(view, "통계 자세히 보기", Snackbar.LENGTH_LONG).show();
-
             }
         });
 
@@ -145,7 +131,6 @@ public class HealthFragment extends Fragment {
 
                 if(position == 0) {
 
-                    detailButton.setVisibility(View.VISIBLE);
                     strTrafficTitle.setVisibility(View.VISIBLE);
                     strTrafficScore.setVisibility(View.VISIBLE);
                     strTrafficDaily.setVisibility(View.VISIBLE);
@@ -324,7 +309,6 @@ public class HealthFragment extends Fragment {
 
                     // 달별로 hash map에 삽입
                     for (Sleep sleep : sleeps) {
-                        Log.d("dddd", sleep.getSleepDate());
                         String date = sleep.getSleepDate().substring(0, 6); // sleep에 저장된 날짜의 달
                         if (!date.equals(thisMonth)) { // 현재 달 제외
                             if (!dateMap.containsKey(date)) {
@@ -806,5 +790,18 @@ public class HealthFragment extends Fragment {
             e.printStackTrace();
         }
         return 0f;
+    }
+
+    // 수면 정보가 하나도 없다면 추가해달라는 화면으로 바꿈
+    void switchScreen() {
+        if (((MainActivity) getActivity()).sleepList != null) {
+            if (((MainActivity) getActivity()).sleepList.size() > 0) {
+                healthScrollView.setVisibility(View.VISIBLE);
+                healthInfoLayout.setVisibility(View.GONE);
+            } else {
+                healthScrollView.setVisibility(View.GONE);
+                healthInfoLayout.setVisibility(View.VISIBLE);
+            }
+        }
     }
 }

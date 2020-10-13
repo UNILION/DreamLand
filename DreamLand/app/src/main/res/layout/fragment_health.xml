@@ -8,14 +8,31 @@
     android:orientation="vertical"
     tools:context=".HealthFragment">
 
+    <LinearLayout
+        android:id="@+id/health_info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="수면 정보를 추가해주세요"
+            android:textColor="@color/colorWhite"
+            android:textSize="24sp" />
+    </LinearLayout>
+
     <ScrollView
+        android:id="@+id/health_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -37,8 +54,7 @@
                         android:gravity="center"
                         android:text="수면 건강 신호등"
                         android:textColor="#ffff"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:textSize="24sp" />
 
                     <ImageView
                         android:id="@+id/imgTrafficImg"
@@ -59,8 +75,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
+                            android:layout_margin="8dp"
                             android:gravity="center"
-                            android:text="건강 점수 :  "
+                            android:text="건강 점수"
                             android:textColor="@color/colorWhite"
                             android:textSize="20dp"
                             android:textStyle="bold" />
@@ -83,9 +100,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="40dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/round_button_toggle"
                         android:gravity="center"
-                        android:text="일일평가 : \n\n사용자의 과거 기록 대비 평균수면 시간이 저조함.\n건강을 위해 충분한 수면을 취해주세요."
+                        android:padding="16dp"
+                        android:text="일일평가\n\n사용자의 과거 기록 대비 평균수면 시간이 저조함.\n건강을 위해 충분한 수면을 취해주세요."
                         android:textColor="#ffff"
                         android:textSize="15dp"
                         android:textStyle="bold" />
@@ -214,25 +233,23 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <Button
-                    android:id="@+id/detailButton"
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="16dp"
-                    android:background="@drawable/round_button_orange"
                     android:paddingLeft="64dp"
                     android:paddingRight="64dp"
                     android:text="자세히 보기"
                     android:textColor="@color/colorWhite"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textSize="24sp" />
 
                 <com.jaredrummler.materialspinner.MaterialSpinner
                     android:id="@+id/spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="25dp"
+                    android:layout_marginTop="16dp"
+                    android:textSize="24sp"
                     android:textStyle="bold"
                     app:ms_background_color="@color/colorGray"
                     app:ms_text_color="#ffff" />
