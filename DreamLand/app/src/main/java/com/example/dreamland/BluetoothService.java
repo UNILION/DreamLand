@@ -102,17 +102,12 @@ public class BluetoothService {
 
     // 엑추에이터에 전송
     void writeBLT1(String msg) {
-        connectedThread[0].write(msg.getBytes());
+        //connectedThread[0].write(msg.getBytes());
     }
 
     // 침대 센서에 전송
     void writeBLT2(String msg) {
         connectedThread[1].write(msg.getBytes());
-    }
-
-    // 손목 밴드에 전송
-    void writeBLT3(String msg) {
-        connectedThread[2].write(msg.getBytes());
     }
 
     // 기기 연결 후 사용

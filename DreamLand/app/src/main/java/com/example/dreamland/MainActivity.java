@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String STATE_TAG = "BT-STATE";  // 수면 상태 메시지
     public static final String ACT_LEFT = "1,0,1,0,1,0,1,0,0";  // 자세를 왼쪽으로 교정
     public static final String ACT_RIGHT = "0,1,0,1,0,1,0,1,0";  // 자세를 오른쪽으로 교정
+    public static final String ACT_DISC = "0,0,0,0,0,0,0,0,1";  // 허리디스크 교정 자세
+
 
     private HomeFragment homeFragment;
     private ManagementFragment managementFragment;
@@ -78,8 +80,10 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
     Handler bluetoothMessageHandler;
     PostureInfo postureInfo;  // 현제 자세 정보
+    int diseaseIndex;
 
-    boolean isConnected = false; // 블루투스 연결 여부
+    // TODO: 커밋시 변경
+    boolean isConnected = true; // 블루투스 연결 여부
     boolean isSleep = false; // 잠에 들었는지 여부
     boolean isAdjust = false; // 교정 중인지 여부
     boolean isSense = false; // 이산화탄소 감지 여부
@@ -551,7 +555,7 @@ public class MainActivity extends AppCompatActivity {
     // 입력값들의 평균을 구하는 함수
     int getAverage(ArrayList<Integer> arr) {
         if (arr.size() == 0) {
-            return -1;
+            return 0;
         }
         int sum = 0;
         for (Integer num : arr) {
@@ -596,7 +600,7 @@ public class MainActivity extends AppCompatActivity {
 
     void sendAct() {
         Log.d(STATE_TAG, "자세 교정 -> act:" + act + " 전송");
-        bluetoothService.writeBLT1("Act:" + act); // 교정 정보 전송
+        bluetoothService.writeBLT1("act:" + act); // 교정 정보 전송
     }
 
     void sendHumidifierMode() {  // 가습기 사용 메시지 전송
@@ -726,6 +730,9 @@ public class MainActivity extends AppCompatActivity {
                                 temps.add(currentTemp);
                                 break;
                             case "SOU": // 소리 센서
+                                if (mode == InitActivity.DISEASE_ALLEVIATION_MODE) {  // 무호흡모드는 무시
+                                    break;
+                                }
                                 int decibel = (int) Double.parseDouble(msgArray[1]);
                                 problems.add(decibel); // 데시벨 저장
                                 if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
@@ -758,7 +765,41 @@ public class MainActivity extends AppCompatActivity {
                             case "position": // 무게 센서
                                 String position = msgArray[1];
                                 Log.d(COMMAND_TAG, "position: " + position);
-                                postureInfo.setCurrentPos(position, isSense);  // 자세 정보 입력
+                                String pos = postureInfo.setCurrentPos(position, isSense);  // 자세 정보 입력
+                                if (mode == InitActivity.DISEASE_ALLEVIATION_MODE) {
+                                    switch (settingFragment.diseaseIndex) {
+                                        case 1:  // 강직성척추염
+                                            // 옆으로 누운 자세이면 정자세로
+                                            switch (pos) {
+                                                case PostureInfo.rightPos:
+                                                    // 왼쪽 교정
+                                                    act = ACT_LEFT;
+                                                    adjustPosture();
+                                                    break;
+                                                case PostureInfo.leftPos:
+                                                    // 오른쪽 교정
+                                                    act = ACT_RIGHT;
+                                                    adjustPosture();
+                                                    break;
+                                                default:
+                                            }
+                                            break;
+                                        case 2:  // 척추관협착증
+                                        case 3:  //척추전방전위증
+                                            // 정자세일시 옆으로 눞혀야한다.
+                                            if (pos == PostureInfo.upPos) {
+                                                if ((int) (Math.random() * 2) == 0) {
+                                                    act = MainActivity.ACT_LEFT;
+                                                } else {
+                                                    act = MainActivity.ACT_RIGHT;
+                                                }
+                                                adjustPosture();
+                                            }
+                                            break;
+                                        default:
+                                    }
+                                }
+
                                 break;
                             case "CO2_L": // 이산화탄소 센서 왼쪽
                                 break;
@@ -807,13 +848,15 @@ public class MainActivity extends AppCompatActivity {
                                     if (mode == InitActivity.DISEASE_ALLEVIATION_MODE) {
                                         //TODO:질환에 맞게 act에 대입
                                         switch (settingFragment.diseaseIndex) {
-                                            case 0:
+                                            case 0:  // 허리디스크
+                                                act = ACT_DISC;
                                                 break;
-                                            case 1:
+                                            case 1:  // 강직성척추염
+                                                // 바로누워야됨 옆으로 누운자세이면 정자세로
                                                 break;
-                                            case 2:
-                                                break;
-                                            case 3:
+                                            case 2:  // 척추관협착증
+                                            case 3:  //척추전방전위증
+                                                // 옆으로 누움 정자세일시 옆으로 눞혀야한다.
                                                 break;
                                             default:
                                         }

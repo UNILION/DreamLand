@@ -19,7 +19,7 @@ public class PostureInfo {
         return currentPos;
     }
 
-    public void setCurrentPos(String position, boolean isSense) {
+    public String setCurrentPos(String position, boolean isSense) {
         String[] posArr = position.split(",");
         if (posArr[0].equals("1") && posArr[2].equals("1") && posArr[4].equals("1")
                 && posArr[1].equals("1") && posArr[3].equals("1") && posArr[5].equals("1")) {
@@ -36,5 +36,6 @@ public class PostureInfo {
             currentPos = "자세 정보 없음";
         }
         Log.d(MainActivity.STATE_TAG, "현제 자세 -> " + currentPos);
+        return currentPos;
     }
 }

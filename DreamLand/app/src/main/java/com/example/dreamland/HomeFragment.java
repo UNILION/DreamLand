@@ -3,10 +3,13 @@ package com.example.dreamland;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.Guideline;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -31,8 +35,11 @@ public class HomeFragment extends Fragment {
     Button selButton1;
     Button selButton2;
     Button selButton3;
-    AlertDialog selDiaglog;
+    Button posCheckButton;
+    AlertDialog selDialog;
     ImageView ivPredicPos;
+    TextView tvSel;
+    Guideline guideline3;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -85,41 +92,57 @@ public class HomeFragment extends Fragment {
         ((MainActivity) getActivity()).overridePendingTransition(R.anim.down_in, R.anim.stop);
     }
 
+    public void changeDiseaseView() {
+        posCheckButton.setVisibility(View.VISIBLE);
+        selButton1.setVisibility(View.GONE);
+        selButton2.setVisibility(View.GONE);
+        selButton3.setVisibility(View.GONE);
+        tvSel.setVisibility(View.GONE);
+        guideline3.setGuidelinePercent(0.8f);
+    }
+
+    private void setRandomAdjDirection() {
+        if ((int) (Math.random() * 2) == 0) {
+            ivPredicPos.setImageResource(R.drawable.pos1);  // 왼쪽으로 교정
+            ((MainActivity) getActivity()).act = MainActivity.ACT_LEFT;
+        } else {
+            ivPredicPos.setImageResource(R.drawable.pos2);  // 오른쪽으로 교정
+            ((MainActivity) getActivity()).act = MainActivity.ACT_RIGHT;
+        }
+    }
+
     // 교정방식 선택 화면
     private void showDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
         final View dlgView = getLayoutInflater().from(getContext()).inflate(
                 R.layout.dialog_before_sleep, null);
+
         selButton1 = dlgView.findViewById(R.id.selButton1);
         selButton2 = dlgView.findViewById(R.id.selButton2);
         selButton3 = dlgView.findViewById(R.id.selButton3);
+        posCheckButton = dlgView.findViewById(R.id.pos_check_button);
         ivPredicPos = dlgView.findViewById(R.id.ivPredicPos);
+        tvSel = dlgView.findViewById(R.id.tv_sel);
+        guideline3 = (Guideline) dlgView.findViewById(R.id.guideline3);
 
         switch (((MainActivity) getActivity()).mode) {
             case 1:
             case 2:
-                if ((int) (Math.random() * 2) == 0) {
-                    ivPredicPos.setImageResource(R.drawable.pos1);  // 왼쪽으로 교정
-                    ((MainActivity) getActivity()).act = MainActivity.ACT_LEFT;
-                } else {
-                    ivPredicPos.setImageResource(R.drawable.pos2);  // 오른쪽으로 교정
-                    ((MainActivity) getActivity()).act = MainActivity.ACT_RIGHT;
-                }
+                setRandomAdjDirection();
                 break;
             case 3:
                 //TODO: 질환별 자세로 이미지를 변경
                 switch (((MainActivity) getActivity()).settingFragment.diseaseIndex) {
                     case 0:
                         ivPredicPos.setImageResource(R.drawable.pos5);
+                        changeDiseaseView();
                         break;
                     case 1:
-                        ivPredicPos.setImageResource(R.drawable.pos5);
+                        ivPredicPos.setImageResource(R.drawable.pos3);
                         break;
                     case 2:
-                        ivPredicPos.setImageResource(R.drawable.pos5);
-                        break;
                     case 3:
-                        ivPredicPos.setImageResource(R.drawable.pos5);
+                        setRandomAdjDirection();
                         break;
                     default:
                 }
@@ -127,15 +150,13 @@ public class HomeFragment extends Fragment {
             default:
         }
 
-
-        selDiaglog = builder.setView(dlgView).create();
-        selDiaglog.show();
+        builder.setView(dlgView).create().show();
 
         // 수면 중 교정
         selButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selDiaglog.dismiss();
+                selDialog.dismiss();
                 startSleep(1);
             }
         });
@@ -144,7 +165,7 @@ public class HomeFragment extends Fragment {
         selButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selDiaglog.dismiss();
+                selDialog.dismiss();
                 startSleep(2);
             }
         });
@@ -153,7 +174,7 @@ public class HomeFragment extends Fragment {
         selButton3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selDiaglog.dismiss();
+                selDialog.dismiss();
                 startSleep(3);
             }
         });
