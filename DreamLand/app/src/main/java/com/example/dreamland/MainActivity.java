@@ -548,8 +548,7 @@ public class MainActivity extends AppCompatActivity {
         } else {  // 정상 수치보다 낮음
             heartRateScore = 60 - heartRate;  // 정상 수치의 최소인 60에서 1이 떨어지면 1점 증가
         }
-
-        return 100 - heartRateScore - spoScore;
+        return Math.max(100 - heartRateScore - spoScore, 0);
     }
 
     // 입력값들의 평균을 구하는 함수
@@ -581,6 +580,11 @@ public class MainActivity extends AppCompatActivity {
         lowDecibelCount = 0;
     }
 
+    void maintainPosture() {
+        adjEnd = true;
+        sendAct();
+    }
+
     void adjustPostureImmediately() {
         adjEnd = true;
         sendAct();
@@ -601,6 +605,19 @@ public class MainActivity extends AppCompatActivity {
     void sendAct() {
         Log.d(STATE_TAG, "자세 교정 -> act:" + act + " 전송");
         bluetoothService.writeBLT1("act:" + act); // 교정 정보 전송
+        switch (act) {
+            case ACT_LEFT:
+                Log.d(STATE_TAG, "자세 교정 -> 왼쪽으로 교정");
+                break;
+            case ACT_RIGHT:
+                Log.d(STATE_TAG, "자세 교정 -> 오른쪽으로 교정");
+                break;
+            case ACT_DISC:
+                Log.d(STATE_TAG, "자세 교정 -> 허리디스크 교정");
+                break;
+            default:
+                Log.d(STATE_TAG, "자세 교정 -> 정해지지 않은 자세로 교정");
+        }
     }
 
     void sendHumidifierMode() {  // 가습기 사용 메시지 전송
@@ -742,17 +759,19 @@ public class MainActivity extends AppCompatActivity {
                                                 adjustPosture();
                                             }
                                         } else {  // 코골이 데시벨 이하일때
-                                            if (noConditionCount == 5) {  // 카운트가 5이 되면 코골이 끝
-                                                conEndTime = System.currentTimeMillis();
-                                                Log.d(STATE_TAG, "코골이 종료");
-                                                ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
-                                                        SleepingActivity.STATE_SLEEP);
-                                                isCon = false;
-                                                noConditionCount = 0;
-                                                conMilliTime += conEndTime - conStartTime;
-                                            } else {
-                                                Log.d(STATE_TAG, "noConditionCount  -> " + noConditionCount);
-                                                noConditionCount++;
+                                            if (isCon) {
+                                                if (noConditionCount == 5) {  // 카운트가 5이 되면 코골이 끝
+                                                    conEndTime = System.currentTimeMillis();
+                                                    Log.d(STATE_TAG, "코골이 종료");
+                                                    ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
+                                                            SleepingActivity.STATE_SLEEP);
+                                                    isCon = false;
+                                                    noConditionCount = 0;
+                                                    conMilliTime += conEndTime - conStartTime;
+                                                } else {
+                                                    Log.d(STATE_TAG, "noConditionCount  -> " + noConditionCount);
+                                                    noConditionCount++;
+                                                }
                                             }
                                         }
                                     } else if (mode == InitActivity.APNEA_PREVENTION_MODE) { // 무호흡 모드

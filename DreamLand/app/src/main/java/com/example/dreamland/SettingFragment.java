@@ -208,6 +208,7 @@ public class SettingFragment extends Fragment {
                 resetConfirmButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        dialog.dismiss();
                         // Main Activity 재시작
                         startActivity(new Intent(getContext(), MainActivity.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));

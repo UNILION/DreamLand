@@ -131,7 +131,6 @@ public class HomeFragment extends Fragment {
                 setRandomAdjDirection();
                 break;
             case 3:
-                //TODO: 질환별 자세로 이미지를 변경
                 switch (((MainActivity) getActivity()).settingFragment.diseaseIndex) {
                     case 0:
                         ivPredicPos.setImageResource(R.drawable.pos5);
@@ -150,7 +149,7 @@ public class HomeFragment extends Fragment {
             default:
         }
 
-        builder.setView(dlgView).create().show();
+        selDialog = builder.setView(dlgView).create();
 
         // 수면 중 교정
         selButton1.setOnClickListener(new View.OnClickListener() {
@@ -178,5 +177,16 @@ public class HomeFragment extends Fragment {
                 startSleep(3);
             }
         });
+
+        // 허리 디스크의 자세 확인 버튼
+        posCheckButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selDialog.dismiss();
+                startSleep(4);
+            }
+        });
+
+        selDialog.show();
     }
 }

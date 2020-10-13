@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -504,8 +505,9 @@ public class HealthFragment extends Fragment {
                                     sleep.getWhenWake(), 0)));
 
                             // 잠들기까지 시간
-                            entries3.add(new Entry(i, timeToFloatForMinute(
-                                    sleep.getAsleepAfter(), 5)));
+                            Entry entry = new Entry(i, timeToFloatForMinute(
+                                    sleep.getAsleepAfter(), 5));
+                            entries3.add(entry);
                             entries4.add(new Entry(i, timeToFloatForMinute(
                                     sleep.getSleepTime(), 30)));
                             entries5.add(new Entry(i, timeToFloatForMinute(
@@ -530,7 +532,10 @@ public class HealthFragment extends Fragment {
                 yAxis.setValueFormatter(new IndexAxisValueFormatter() {
                     @Override
                     public String getFormattedValue(float value) {
-                        return yLabels[(int) value];
+                        if (value < 0) {
+                            value = 0;
+                        }
+                        return yLabels[(int) value % yLabels.length];
                     }
                 });
 
@@ -544,7 +549,10 @@ public class HealthFragment extends Fragment {
                 yAxis2.setValueFormatter(new IndexAxisValueFormatter() {
                     @Override
                     public String getFormattedValue(float value) {
-                        return yLabels2[(int) value];
+                        if (value < 0) {
+                            value = 0;
+                        }
+                        return yLabels2[(int) value % yLabels2.length];
                     }
                 });
 
@@ -558,6 +566,9 @@ public class HealthFragment extends Fragment {
                 yAxis3.setValueFormatter(new IndexAxisValueFormatter() {
                     @Override
                     public String getFormattedValue(float value) {
+                        if (value < 0) {
+                            value = 0;
+                        }
                         return yLabels3[(int) value];
                     }
                 });
@@ -572,6 +583,9 @@ public class HealthFragment extends Fragment {
                 yAxis4.setValueFormatter(new IndexAxisValueFormatter() {
                     @Override
                     public String getFormattedValue(float value) {
+                        if (value < 0) {
+                            value = 0;
+                        }
                         return yLabels4[(int) value];
                     }
                 });
@@ -586,6 +600,9 @@ public class HealthFragment extends Fragment {
                 yAxis5.setValueFormatter(new IndexAxisValueFormatter() {
                     @Override
                     public String getFormattedValue(float value) {
+                        if (value < 0) {
+                            value = 0;
+                        }
                         return yLabels3[(int) value];
                     }
                 });
