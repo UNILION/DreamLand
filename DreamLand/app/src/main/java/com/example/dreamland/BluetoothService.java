@@ -23,7 +23,7 @@ import iammert.com.library.StatusView;
 
 public class BluetoothService {
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-    private static final int NUM_OF_DEVICES = 1;
+    private static final int NUM_OF_DEVICES = 3;
     private Context context;
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter bluetoothAdapter;

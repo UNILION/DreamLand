@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
     long conStartTime = 0L;  // 상태 시작 시간
     long conEndTime = 0L;  // 상태 종료 시간
     int noConditionCount = 0;  // 정상 상태 감지 카운트
+    int lowDecibelCount = 0;
     int moved = 0;
 
     String act;
@@ -573,6 +574,7 @@ public class MainActivity extends AppCompatActivity {
         moved = 0;
         adjMode = 0;
         postureInfo = new PostureInfo();
+        lowDecibelCount = 0;
     }
 
     void adjustPostureImmediately() {
@@ -594,7 +596,7 @@ public class MainActivity extends AppCompatActivity {
 
     void sendAct() {
         Log.d(STATE_TAG, "자세 교정 -> act:" + act + " 전송");
-        //bluetoothService.writeBLT1("Act:" + act); // 교정 정보 전송
+        bluetoothService.writeBLT1("Act:" + act); // 교정 정보 전송
     }
 
     void sendHumidifierMode() {  // 가습기 사용 메시지 전송
@@ -622,8 +624,13 @@ public class MainActivity extends AppCompatActivity {
             conStartTime = System.currentTimeMillis();
             beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
             sendAct();
-            ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
-                    SleepingActivity.STATE_SNORING);
+            if (mode == InitActivity.SNORING_PREVENTION_MODE) {
+                ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
+                        SleepingActivity.STATE_SNORING);
+            } else if (mode == InitActivity.APNEA_PREVENTION_MODE) {
+                ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
+                        SleepingActivity.STATE_APNEA);
+            }
 
             Calendar calendar = Calendar.getInstance();
             final String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
@@ -634,7 +641,7 @@ public class MainActivity extends AppCompatActivity {
                 public synchronized void run() {
                     try {
                         sleep(DOWN_WAIT_TIME); // 2분 대기
-                        //bluetoothService.writeBLT1("down"); // 교정 해제
+                        bluetoothService.writeBLT1("down"); // 교정 해제
                         isAdjust = false; // 교정중 아님
                         Log.d(STATE_TAG, "자세 교정 -> down 전송");
                         adjCount++; // 교정 횟수 증가
@@ -695,10 +702,19 @@ public class MainActivity extends AppCompatActivity {
                                     bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
                                     Log.d(STATE_TAG, "산소발생기 Off");
                                 }
-                                if (currentOxy < 95 && !useO2) {  // 산소포화도가 정상수치보다 낮음
-                                    useO2 = true;
-                                    bluetoothService.writeBLT2("O2_ON");  // 산소발생기 on
-                                    Log.d(STATE_TAG, "산소발생기 On");
+                                if (currentOxy < 95) {  // 산소포화도가 정상수치보다 낮음
+                                    if (!useO2) {
+                                        useO2 = true;
+                                        bluetoothService.writeBLT2("O2_ON");  // 산소발생기 on
+                                        Log.d(STATE_TAG, "산소발생기 On");
+                                    }
+                                    if (mode == InitActivity.APNEA_PREVENTION_MODE
+                                            && lowDecibelCount > 5) {  // 데시벨이 낮게 유지되고 산소포화도가 낮으면 무호흡이라고 판단
+                                        lowDecibelCount = 0;
+                                        if (!adjEnd) {  // 자세 교정
+                                            adjustPosture();
+                                        }
+                                    }
                                 }
                                 break;
                             case "HUM": // 습도
@@ -733,7 +749,9 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         }
                                     } else if (mode == InitActivity.APNEA_PREVENTION_MODE) { // 무호흡 모드
-
+                                        if (decibel < 50) {  // 데시벨이 50이하이고 카운트가 5 미만이면 카운트 증가
+                                            lowDecibelCount++;
+                                        }
                                     }
                                 }
                                 break;
