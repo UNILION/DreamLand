@@ -80,10 +80,9 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
     Handler bluetoothMessageHandler;
     PostureInfo postureInfo;  // 현제 자세 정보
-    int diseaseIndex;
 
     // TODO: 커밋시 변경
-    boolean isConnected = true; // 블루투스 연결 여부
+    boolean isConnected = false; // 블루투스 연결 여부
     boolean isSleep = false; // 잠에 들었는지 여부
     boolean isAdjust = false; // 교정 중인지 여부
     boolean isSense = false; // 이산화탄소 감지 여부
@@ -246,6 +245,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         bluetoothService.cancel(); // 소켓 close
+        bluetoothService.writeBLT1("down");
+        Log.d(STATE_TAG, "down 전송");
+        bluetoothService.writeBLT2("H2O_OFF");  // 가습기 off
+        Log.d(STATE_TAG, "가습기 Off");
+        bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
+        Log.d(STATE_TAG, "산소발생기 Off");
         super.onDestroy();
     }
 
@@ -578,6 +583,8 @@ public class MainActivity extends AppCompatActivity {
         adjMode = 0;
         postureInfo = new PostureInfo();
         lowDecibelCount = 0;
+        noConditionCount = 0;
+        adjEnd = false;
     }
 
     void maintainPosture() {
@@ -636,50 +643,54 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void adjustPosture() {
-        if (adjMode == 2) {  // 수면 중 한 번 교정을 선택하면 1회 교정 후 교정 불가
-            adjEnd = true;
-        }
-        noConditionCount = 0;
-        if (!isCon) {
-            isCon = true;
-            conStartTime = System.currentTimeMillis();
-            beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
-            sendAct();
-            if (mode == InitActivity.SNORING_PREVENTION_MODE) {
-                ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
-                        SleepingActivity.STATE_SNORING);
-            } else if (mode == InitActivity.APNEA_PREVENTION_MODE) {
-                ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
-                        SleepingActivity.STATE_APNEA);
+        if (!adjEnd) {
+            if (adjMode == 2) {  // 수면 중 한 번 교정을 선택하면 1회 교정 후 교정 불가
+                adjEnd = true;
             }
-
-            Calendar calendar = Calendar.getInstance();
-            final String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
-            isAdjust = true; // 교정중으로 상태 변경
-
-            new Thread() { // 2분 후 down 메시지를 전송 후 자세정보 삽입
-                @Override
-                public synchronized void run() {
-                    try {
-                        sleep(DOWN_WAIT_TIME); // 2분 대기
-                        bluetoothService.writeBLT1("down"); // 교정 해제
-                        isAdjust = false; // 교정중 아님
-                        Log.d(STATE_TAG, "자세 교정 -> down 전송");
-                        adjCount++; // 교정 횟수 증가
-                        afterPos = postureInfo.getCurrentPos();  // 교정 후 자세
-                        new InsertAdjAsyncTask(db.adjustmentDao())
-                                .execute(new Adjustment(sleep.getSleepDate(), adjTime, beforePos, afterPos));
-                        Log.d(STATE_TAG, "교정 정보 삽입 -> Date: " + sleep.getSleepDate() + "  교정 시각: "
-                                + adjTime + "  교정 전 자세: " + beforePos + "  교정 후 자세: " + afterPos);
-                        beforePos = null;  // 자세정보 삽입 후 교정 전, 후 자세 정보 초기화
-                        afterPos = null;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+            noConditionCount = 0;
+            if (!isCon || mode == InitActivity.DISEASE_ALLEVIATION_MODE) {
+                isCon = true;
+                conStartTime = System.currentTimeMillis();
+                beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
+                sendAct();
+                if (mode == InitActivity.SNORING_PREVENTION_MODE) {
+                    ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
+                            SleepingActivity.STATE_SNORING);
+                } else if (mode == InitActivity.APNEA_PREVENTION_MODE) {
+                    ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
+                            SleepingActivity.STATE_APNEA);
                 }
-            }.start();
+
+                Calendar calendar = Calendar.getInstance();
+                final String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
+                isAdjust = true; // 교정중으로 상태 변경
+
+                new Thread() { // 2분 후 down 메시지를 전송 후 자세정보 삽입
+                    @Override
+                    public synchronized void run() {
+                        try {
+                            sleep(DOWN_WAIT_TIME); // 2분 대기
+                            bluetoothService.writeBLT1("down"); // 교정 해제
+                            isAdjust = false; // 교정중 아님
+                            Log.d(STATE_TAG, "자세 교정 -> down 전송");
+                            adjCount++; // 교정 횟수 증가
+                            afterPos = postureInfo.getCurrentPos();  // 교정 후 자세
+                            new InsertAdjAsyncTask(db.adjustmentDao())
+                                    .execute(new Adjustment(sleep.getSleepDate(), adjTime, beforePos, afterPos));
+                            Log.d(STATE_TAG, "교정 정보 삽입 -> Date: " + sleep.getSleepDate() + "  교정 시각: "
+                                    + adjTime + "  교정 전 자세: " + beforePos + "  교정 후 자세: " + afterPos);
+                            beforePos = null;  // 자세정보 삽입 후 교정 전, 후 자세 정보 초기화
+                            afterPos = null;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+            }
         }
     }
+
+
 
     // 블루투스 메시지 핸들러
     class BluetoothMessageHandler extends Handler {
@@ -718,22 +729,40 @@ public class MainActivity extends AppCompatActivity {
                             case "spo": // 산소포화도
                                 currentOxy = (int) Double.parseDouble(msgArray[1]);
                                 oxygenSaturations.add(currentOxy);
-                                if (currentOxy >= 95 && useO2) {  // 산소포화도가 정상
-                                    useO2 = false;
-                                    bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
-                                    Log.d(STATE_TAG, "산소발생기 Off");
-                                }
-                                if (currentOxy < 95) {  // 산소포화도가 정상수치보다 낮음
+                                if (currentOxy >= 95) {  // 산소포화도가 정상
+                                    if (useO2) {
+                                        useO2 = false;
+                                        bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
+                                        Log.d(STATE_TAG, "산소발생기 Off");
+                                    }
+                                    if (mode == InitActivity.APNEA_PREVENTION_MODE && isCon) {
+                                        noConditionCount++;
+                                        Log.d(STATE_TAG, "noConditionCount  -> " + noConditionCount);
+                                        if (noConditionCount == 5) {  // 무호흡에서 정상 상태로 돌아옴
+                                            lowDecibelCount = 0;
+                                            conEndTime = System.currentTimeMillis();
+                                            Log.d(STATE_TAG, "무호흡 종료");
+                                            ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
+                                                    SleepingActivity.STATE_SLEEP);
+                                            isCon = false;
+                                            noConditionCount = 0;
+                                            conMilliTime += conEndTime - conStartTime;
+                                        }
+                                    }
+                                } else {  // 산소포화도가 정상수치보다 낮음
                                     if (!useO2) {
                                         useO2 = true;
                                         bluetoothService.writeBLT2("O2_ON");  // 산소발생기 on
                                         Log.d(STATE_TAG, "산소발생기 On");
                                     }
-                                    if (mode == InitActivity.APNEA_PREVENTION_MODE
-                                            && lowDecibelCount > 5) {  // 데시벨이 낮게 유지되고 산소포화도가 낮으면 무호흡이라고 판단
-                                        lowDecibelCount = 0;
-                                        if (!adjEnd) {  // 자세 교정
-                                            adjustPosture();
+                                    if (mode == InitActivity.APNEA_PREVENTION_MODE) {
+                                        if (isCon) {
+                                            noConditionCount = 0;
+                                        }
+                                        if(lowDecibelCount > 5) {  // 데시벨이 낮게 유지되고 산소포화도가 낮으면 무호흡이라고 판단
+                                            lowDecibelCount = 0;
+                                            noConditionCount = 0;
+                                            adjustPosture();// 자세 교정
                                         }
                                     }
                                 }
@@ -747,7 +776,7 @@ public class MainActivity extends AppCompatActivity {
                                 temps.add(currentTemp);
                                 break;
                             case "SOU": // 소리 센서
-                                if (mode == InitActivity.DISEASE_ALLEVIATION_MODE) {  // 무호흡모드는 무시
+                                if (mode == InitActivity.DISEASE_ALLEVIATION_MODE) {  // 질환 완화 모드는 무시
                                     break;
                                 }
                                 int decibel = (int) Double.parseDouble(msgArray[1]);
@@ -755,9 +784,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
                                     if (mode == InitActivity.SNORING_PREVENTION_MODE) { // 코골이 방지 모드
                                         if (decibel > 60) {  // 60데시벨이 넘으면 자세 교정
-                                            if (!adjEnd) {
-                                                adjustPosture();
-                                            }
+                                            adjustPosture();
                                         } else {  // 코골이 데시벨 이하일때
                                             if (isCon) {
                                                 if (noConditionCount == 5) {  // 카운트가 5이 되면 코골이 끝
@@ -777,6 +804,9 @@ public class MainActivity extends AppCompatActivity {
                                     } else if (mode == InitActivity.APNEA_PREVENTION_MODE) { // 무호흡 모드
                                         if (decibel < 50) {  // 데시벨이 50이하이고 카운트가 5 미만이면 카운트 증가
                                             lowDecibelCount++;
+                                            Log.d(STATE_TAG, "lowDecibelCount -> " + lowDecibelCount);
+                                        } else {
+                                            lowDecibelCount = 0;
                                         }
                                     }
                                 }
@@ -863,23 +893,6 @@ public class MainActivity extends AppCompatActivity {
                                 // 사용자 교정자세 정보
                                 if (customAct) {  // 사용
                                     act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
-                                } else {  // 사용 안함
-                                    if (mode == InitActivity.DISEASE_ALLEVIATION_MODE) {
-                                        //TODO:질환에 맞게 act에 대입
-                                        switch (settingFragment.diseaseIndex) {
-                                            case 0:  // 허리디스크
-                                                act = ACT_DISC;
-                                                break;
-                                            case 1:  // 강직성척추염
-                                                // 바로누워야됨 옆으로 누운자세이면 정자세로
-                                                break;
-                                            case 2:  // 척추관협착증
-                                            case 3:  //척추전방전위증
-                                                // 옆으로 누움 정자세일시 옆으로 눞혀야한다.
-                                                break;
-                                            default:
-                                        }
-                                    }
                                 }
                             }
                             break;

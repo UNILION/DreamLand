@@ -131,6 +131,7 @@ public class HomeFragment extends Fragment {
                 setRandomAdjDirection();
                 break;
             case 3:
+                changeDiseaseView();
                 switch (((MainActivity) getActivity()).settingFragment.diseaseIndex) {
                     case 0:
                         ivPredicPos.setImageResource(R.drawable.pos5);
@@ -178,12 +179,16 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // 허리 디스크의 자세 확인 버튼
+        // 질환 교정 자세 확인 버튼
         posCheckButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 selDialog.dismiss();
-                startSleep(4);
+                if (((MainActivity) getActivity()).settingFragment.diseaseIndex == 0) {  // 허리디스크시 교정 자세 고정
+                    startSleep(4);
+                } else {
+                    startSleep(1);  // 다른 질환은 수면중 교정
+                }
             }
         });
 
