@@ -177,4 +177,9 @@ public class SleepingActivity extends AppCompatActivity {
         Log.d(((MainActivity) MainActivity.context).STATE_TAG, "산소발생기 Off");
         super.onDestroy();
     }
+
+    @Override
+    public void onBackPressed() {
+
+    }
 }
