@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,11 +24,11 @@ import iammert.com.library.StatusView;
 
 public class BluetoothService {
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-    private static final int NUM_OF_DEVICES = 3;
+    private static final int NUM_OF_DEVICES = 1;
     private Context context;
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter bluetoothAdapter;
-    ConnectedThread[] connectedThread;
+    ConnectedThread[] connectedThreads;
     ArrayList<BluetoothSocket> bltSockets;
     int deviceCount;
     Handler mHandler;
@@ -37,7 +38,7 @@ public class BluetoothService {
         this.context = context;
         this.handler = handler;
         bltSockets = new ArrayList<>();
-        connectedThread = new ConnectedThread[3];  // 0: 엑추에이터, 1: 침대 센서, 2: 손목 밴드
+        connectedThreads = new ConnectedThread[3];  // 0: 엑추에이터, 1: 침대 센서, 2: 손목 밴드
         deviceCount = 0;
         mHandler = new Handler();
     }
@@ -56,16 +57,16 @@ public class BluetoothService {
     void connected(BluetoothSocket socket, BluetoothDevice device) {
         switch (device.getName()) {
             case "BLT1":
-                connectedThread[0] = new BluetoothService.ConnectedThread(socket);
-                connectedThread[0].start();
+                connectedThreads[0] = new BluetoothService.ConnectedThread(socket);
+                connectedThreads[0].start();
                 break;
             case "BLT2":
-                connectedThread[1] = new BluetoothService.ConnectedThread(socket);
-                connectedThread[1].start();
+                connectedThreads[1] = new BluetoothService.ConnectedThread(socket);
+                connectedThreads[1].start();
                 break;
             case "JCNET-JARDUINO-7826":
-                connectedThread[2] = new BluetoothService.ConnectedThread(socket);
-                connectedThread[2].start();
+                connectedThreads[2] = new BluetoothService.ConnectedThread(socket);
+                connectedThreads[2].start();
                 break;
             default:
                 Log.d(MainActivity.STATE_TAG, "이름이 일치하지 않음");
@@ -79,13 +80,18 @@ public class BluetoothService {
 
     // 기기 연결 해제 함수
     void cancel() {
-        for (BluetoothSocket socket : bltSockets) {
-            try {
-                socket.close();
+        for (ConnectedThread thread : connectedThreads) {
+            if (thread != null) {
+                thread.cancel();
                 deviceCount--;
-            } catch (IOException e) {
-                e.printStackTrace();
+                Log.d(MainActivity.STATE_TAG, "연결된 디바이스 수 -> " + deviceCount);
             }
+        }
+        if (deviceCount == 0) {  // 모두 연결 해제
+            disconnectionCompleted();
+            bltSockets = new ArrayList<>();
+            connectedThreads = new ConnectedThread[3];
+            Log.d(MainActivity.STATE_TAG, "모든 기기 연결 해제");
         }
     }
 
@@ -94,20 +100,38 @@ public class BluetoothService {
         ((MainActivity) context).isConnected = true;
         StatusView statusView = (StatusView) ((MainActivity)context).findViewById(R.id.status);
         statusView.setStatus(Status.COMPLETE);
-        LinearLayout connectButton = (LinearLayout) ((MainActivity)context).findViewById(R.id.bltSettingLayout);
-        connectButton.setEnabled(false);
-        TextView textView = ((MainActivity)context).findViewById(R.id.tv_con_bt);
-        textView.setTextColor(context.getResources().getColor(R.color.colorGray));
+        ((MainActivity) context).settingFragment.progressBar.setVisibility(View.GONE);
+        ((MainActivity) context).settingFragment.conBtSwitch.setVisibility(View.VISIBLE);
+
+//        LinearLayout connectButton = (LinearLayout) ((MainActivity)context).findViewById(R.id.connecting_bt_Layout);
+//        connectButton.setEnabled(false);
+//        ((MainActivity) context).settingFragment.disconnectingBtLayout.setEnabled(true);
+//        TextView conTextView = ((MainActivity)context).findViewById(R.id.tv_con_bt);
+//        conTextView.setTextColor(context.getResources().getColor(R.color.colorGray));
+//        TextView disconTextView = ((MainActivity)context).findViewById(R.id.tv_discon_bt);
+//        disconTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
+    }
+
+    void disconnectionCompleted() {
+        ((MainActivity) context).isConnected = false;
+        ((MainActivity) context).settingFragment.progressBar.setVisibility(View.GONE);
+        ((MainActivity) context).settingFragment.conBtSwitch.setVisibility(View.VISIBLE);
+//        ((MainActivity) context).settingFragment.connectingBtLayout.setEnabled(true);
+//        ((MainActivity) context).settingFragment.disconnectingBtLayout.setEnabled(false);
+//        TextView conTextView = ((MainActivity)context).findViewById(R.id.tv_con_bt);
+//        conTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
+//        TextView disconTextView = ((MainActivity)context).findViewById(R.id.tv_discon_bt);
+//        disconTextView.setTextColor(context.getResources().getColor(R.color.colorGray));
     }
 
     // 엑추에이터에 전송
     void writeBLT1(String msg) {
-        connectedThread[0].write(msg.getBytes());
+        //connectedThreads[0].write(msg.getBytes());
     }
 
     // 침대 센서에 전송
     void writeBLT2(String msg) {
-        connectedThread[1].write(msg.getBytes());
+        connectedThreads[1].write(msg.getBytes());
     }
 
     // 기기 연결 후 사용
@@ -121,6 +145,7 @@ public class BluetoothService {
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
+            bltSockets.add(mmSocket);
 
             // Get the input and output streams; using temp objects because
             // member streams are final.
@@ -142,9 +167,8 @@ public class BluetoothService {
         public void run() {
             mmBuffer = new byte[1024];
             int numBytes; // bytes returned from read()
-
             deviceCount++;
-
+            Log.d(MainActivity.STATE_TAG, "연결된 디바이스 수 -> " + deviceCount);
             if (deviceCount == NUM_OF_DEVICES) { // 3개의 기기 연결 완료
                 Log.d(MainActivity.STATE_TAG, "연결 완료");
                 mHandler.post(new Runnable() {
@@ -227,7 +251,6 @@ public class BluetoothService {
                 Log.e(MainActivity.STATE_TAG, "Socket's create() method failed", e);
             }
             mmSocket = tmp;
-            bltSockets.add(mmSocket);
         }
 
         public void run() {
@@ -248,9 +271,6 @@ public class BluetoothService {
                 return;
             }
             connected(mmSocket, mmDevice);
-            // The connection attempt succeeded. Perform work associated with
-            // the connection in a separate thread.
-            //manageMyConnectedSocket(mmSocket);
         }
 
         // Closes the client socket and causes the thread to finish.

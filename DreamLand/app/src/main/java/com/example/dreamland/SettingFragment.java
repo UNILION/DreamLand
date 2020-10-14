@@ -11,14 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
@@ -34,16 +33,15 @@ public class SettingFragment extends Fragment {
     LinearLayout resetButton;
     LinearLayout myDiseaseButton;
     LinearLayout bedActButton;
-    LinearLayout bltSettingLayout;
     LinearLayout sleepSettingLayout;
     TextView tvSleepSetting;
     TextView tvDisease;
     Switch autoSwitch;
     Switch manualSwitch;
     Switch posSwitch;
-    // TEST
-    Button button2;
-    Button button3;
+    Switch conBtSwitch;
+    ProgressBar progressBar;
+    int numOfAttempt = 0;
 
     View line1;
     RadioGroup diseaseRadioGroup;
@@ -74,34 +72,15 @@ public class SettingFragment extends Fragment {
         resetButton = (LinearLayout) view.findViewById(R.id.resetButtonLayout);
         myDiseaseButton = (LinearLayout) view.findViewById(R.id.myDiseaseLayout);
         bedActButton = (LinearLayout) view.findViewById(R.id.bedActButtonLayout);
-        bltSettingLayout = (LinearLayout) view.findViewById(R.id.bltSettingLayout);
         sleepSettingLayout = (LinearLayout) view.findViewById(R.id.sleep_setting_layout);
         tvSleepSetting = (TextView) view.findViewById(R.id.tvSleepSetting);
         autoSwitch = (Switch) view.findViewById(R.id.switch_auto);
         manualSwitch = (Switch) view.findViewById(R.id.switch_manual);
         posSwitch = (Switch) view.findViewById(R.id.switch_pos);
+        conBtSwitch = (Switch) view.findViewById(R.id.con_bt_switch);
         tvDisease = (TextView) view.findViewById(R.id.tvDisease);
         line1 = (View) view.findViewById(R.id.view1);
-        //TEST
-        button2 = (Button) view.findViewById(R.id.button2);
-        button3 = (Button) view.findViewById(R.id.button3);
-
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity) getContext()).bluetoothService.writeBLT1("act:0,1,0,1,0,1,0,1,0"); // 교정 정보 전송
-                Log.d(MainActivity.STATE_TAG, "act:0,1,0,1,0,1,0,1,0");
-            }
-        });
-
-        button3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity) getContext()).bluetoothService.writeBLT1("down");
-                Log.d(MainActivity.STATE_TAG, "down 전송");
-            }
-        });
-
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
         actButtons = new ToggleButton[10];
         sf = getContext().getSharedPreferences("bed", getContext().MODE_PRIVATE);
@@ -224,7 +203,7 @@ public class SettingFragment extends Fragment {
             public void onClick(View view) {
                 final View dlgView = getLayoutInflater().from(getContext()).inflate(
                         R.layout.dialog_bed_act, null);
-                act = sf.getString("act", "0,0,0,0,0,0,0,0,0");
+                act = sf.getString("act", "0,0,0,0,0,0,0,0,0,0");
                 String[] actArray = act.split(",");
 
                 for (int i = 0; i < 9; i++) {
@@ -250,8 +229,14 @@ public class SettingFragment extends Fragment {
                         for (int i = 0; i < 9; i++) {
                             if (actButtons[i].isChecked()) {
                                 actStr.append("1,");
+                                if (i == 8) {
+                                    actStr.append("1,");
+                                }
                             } else {
                                 actStr.append("0,");
+                                if (i == 8) {
+                                    actStr.append("0,");
+                                }
                             }
                         }
                         actStr.deleteCharAt(actStr.length() - 1);
@@ -309,13 +294,42 @@ public class SettingFragment extends Fragment {
             }
         });
 
-        // 블루투스 연결 버튼
-        bltSettingLayout.setOnClickListener(new View.OnClickListener() {
+        // 블루투스 연결 스위치
+        conBtSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                ((MainActivity) getActivity()).enableBluetooth();
-                StatusView statusView = (StatusView) ((MainActivity) getContext()).findViewById(R.id.status);
-                statusView.setStatus(Status.LOADING);
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    conBtSwitch.setVisibility(View.GONE);
+                    ((MainActivity) getActivity()).enableBluetooth();
+                    final StatusView statusView = (StatusView) ((MainActivity) getContext()).findViewById(R.id.status);
+                    numOfAttempt++;
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                int num = numOfAttempt;
+                                sleep(20000L);
+                                if (!((MainActivity) getContext()).isConnected && conBtSwitch.isChecked()
+                                && numOfAttempt == num) {
+                                    ((MainActivity) getContext()).bluetoothService.mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            statusView.setStatus(Status.ERROR);
+                                            conBtSwitch.setChecked(false);
+                                        }
+                                    });
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }.start();
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);
+                    conBtSwitch.setVisibility(View.GONE);
+                    ((MainActivity) getActivity()).bluetoothService.cancel();
+                }
             }
         });
     }

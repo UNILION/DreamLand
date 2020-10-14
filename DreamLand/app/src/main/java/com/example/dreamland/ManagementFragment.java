@@ -16,15 +16,12 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +44,6 @@ import devs.mulham.horizontalcalendar.model.CalendarItemStyle;
 import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
 import devs.mulham.horizontalcalendar.utils.HorizontalCalendarPredicate;
 
-import static com.example.dreamland.MySimpleDateFormat.sdf1;
 import static com.example.dreamland.MySimpleDateFormat.sdf3;
 
 public class ManagementFragment extends Fragment {
@@ -165,6 +161,10 @@ public class ManagementFragment extends Fragment {
         circleProgressView = (CircleProgressView) view.findViewById(R.id.circle_progressview);
 
         sf = getContext().getSharedPreferences("bed", Context.MODE_PRIVATE);
+
+        if (((MainActivity) getActivity()).mode == InitActivity.DISEASE_ALLEVIATION_MODE) {
+            hideAdjustLayout();
+        }
 
         // 초기 화면 세팅
         switchScreen();
