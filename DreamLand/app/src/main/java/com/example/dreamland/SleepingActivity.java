@@ -166,4 +166,15 @@ public class SleepingActivity extends AppCompatActivity {
         super.finish();
         overridePendingTransition(R.anim.stop, R.anim.up_out);
     }
+
+    @Override
+    protected void onDestroy() {
+        ((MainActivity) MainActivity.context).bluetoothService.writeBLT1("down");
+        Log.d(((MainActivity) MainActivity.context).STATE_TAG, "down 전송");
+        ((MainActivity) MainActivity.context).bluetoothService.writeBLT2("H2O_OFF");  // 가습기 off
+        Log.d(((MainActivity) MainActivity.context).STATE_TAG, "가습기 Off");
+        ((MainActivity) MainActivity.context).bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
+        Log.d(((MainActivity) MainActivity.context).STATE_TAG, "산소발생기 Off");
+        super.onDestroy();
+    }
 }

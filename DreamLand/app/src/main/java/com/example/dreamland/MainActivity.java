@@ -245,12 +245,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         bluetoothService.cancel(); // 소켓 close
-        bluetoothService.writeBLT1("down");
-        Log.d(STATE_TAG, "down 전송");
-        bluetoothService.writeBLT2("H2O_OFF");  // 가습기 off
-        Log.d(STATE_TAG, "가습기 Off");
-        bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
-        Log.d(STATE_TAG, "산소발생기 Off");
         super.onDestroy();
     }
 
