@@ -309,7 +309,7 @@ public class SettingFragment extends Fragment {
                         public void run() {
                             try {
                                 int num = numOfAttempt;
-                                sleep(20000L);
+                                sleep(20000L);  // 20초 후 연결이 안되면 에러 메시지 출력
                                 if (!((MainActivity) getContext()).isConnected && conBtSwitch.isChecked()
                                 && numOfAttempt == num) {
                                     ((MainActivity) getContext()).bluetoothService.mHandler.post(new Runnable() {
@@ -317,6 +317,22 @@ public class SettingFragment extends Fragment {
                                         public void run() {
                                             statusView.setStatus(Status.ERROR);
                                             conBtSwitch.setChecked(false);
+                                            new Thread() {
+                                                @Override
+                                                public void run() {
+                                                    try {
+                                                        sleep(2000);  // 2초 후 에러메지시 숨김
+                                                        ((MainActivity) getContext()).bluetoothService.mHandler.post(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                statusView.setStatus(Status.IDLE);
+                                                            }
+                                                        });
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }.start();
                                         }
                                     });
                                 }
