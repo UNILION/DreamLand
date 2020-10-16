@@ -42,15 +42,29 @@
                     android:layout_marginRight="16dp"
                     android:background="@color/colorGray" />
 
-                <Switch
-                    android:id="@+id/switch_auto"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:layout_weight="1"
-                    android:checked="true"
-                    android:text="가습기 자동 사용"
-                    android:textColor="@color/colorWhite" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_humidity_24dp"
+                        app:tint="@color/colorAccent" />
+
+                    <Switch
+                        android:id="@+id/switch_auto"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:checked="true"
+                        android:text="가습기 자동 사용"
+                        android:textColor="@color/colorWhite" />
+                </LinearLayout>
 
                 <Switch
                     android:id="@+id/switch_manual"
@@ -63,7 +77,8 @@
                     android:layout_weight="1"
                     android:text="가습기 사용"
                     android:textColor="@color/colorWhite"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <View
                     android:layout_width="match_parent"
@@ -72,14 +87,28 @@
                     android:layout_marginRight="16dp"
                     android:background="@color/colorGray" />
 
-                <Switch
-                    android:id="@+id/switch_pos"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:layout_weight="1"
-                    android:text="원하는 교정 자세 사용"
-                    android:textColor="@color/colorWhite" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_up_and_down_24dp"
+                        app:tint="@color/colorAccent" />
+
+                    <Switch
+                        android:id="@+id/switch_pos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:text="원하는 교정 자세 사용"
+                        android:textColor="@color/colorWhite" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/bedActButtonLayout"
@@ -88,18 +117,26 @@
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:orientation="horizontal"
-                    android:visibility="gone">
+                    android:padding="16dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_marginBottom="16dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
                         android:text="교정 자세 설정"
                         android:textColor="@android:color/white"
                         android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/imageView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
+                        app:tint="@color/colorGray" />
 
                 </LinearLayout>
 
@@ -120,7 +157,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
-                    android:text="수면 설정"
+                    android:text="질환 설정"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                     android:textColor="@android:color/white"
                     android:textSize="20sp" />
@@ -140,12 +177,20 @@
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:orientation="horizontal"
-                    android:paddingRight="16dp">
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_disease_24dp"
+                        app:tint="@color/colorAccent" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
                         android:layout_weight="5"
                         android:text="나의 질환"
                         android:textColor="@android:color/white"
@@ -164,10 +209,10 @@
 
                     <ImageView
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
                         android:layout_weight="1"
-                        android:src="@drawable/ic_right_arrow_24dp"
+                        android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
                         app:tint="@color/colorGray" />
                 </LinearLayout>
 
@@ -202,13 +247,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
-                    android:paddingRight="16dp">
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_bluetooth_24dp"
+                        app:tint="@color/colorAccent" />
 
                     <TextView
                         android:id="@+id/tv_con_bt"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
                         android:layout_weight="1"
                         android:text="블루투스 연결"
                         android:textColor="@android:color/white"
@@ -217,7 +271,7 @@
                     <Switch
                         android:id="@+id/con_bt_switch"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
                         android:visibility="visible" />
 
@@ -225,8 +279,9 @@
                         android:id="@+id/progressBar"
                         style="?android:attr/progressBarStyle"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                 </LinearLayout>
 
@@ -244,12 +299,21 @@
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:orientation="horizontal"
-                    android:paddingRight="16dp">
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_refresh_24dp"
+                        app:tint="@color/colorAccent" />
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
                         android:text="초기화"
                         android:textColor="@android:color/white"
                         android:textSize="14sp" />
