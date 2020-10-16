@@ -40,6 +40,7 @@ public class HomeFragment extends Fragment {
     ImageView ivPredicPos;
     TextView tvSel;
     Guideline guideline3;
+    private MainActivity mainActivity;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -59,12 +60,13 @@ public class HomeFragment extends Fragment {
         timePicker = view.findViewById(R.id.timePicker);
         context = getContext();
 
+        mainActivity = (MainActivity) getActivity();
 
         // 수면 시작 버튼
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (((MainActivity) context).isConnected) {
+                if (mainActivity.isConnected) {
                     showDialog();
                 } else {
                     Toast.makeText(context, "블루투스 연결을 해주세요", Toast.LENGTH_SHORT).show();
@@ -75,21 +77,21 @@ public class HomeFragment extends Fragment {
 
     // 수면 시작 함수
     private void startSleep(int selectedMenu) {
-        ((MainActivity) getActivity()).adjMode = selectedMenu;
+        mainActivity.adjMode = selectedMenu;
         Intent intent = new Intent(getContext(), SleepingActivity.class);
         intent.putExtra("hour", timePicker.getHour());
         intent.putExtra("minute", timePicker.getMinute());
         Calendar calendar = Calendar.getInstance();
         String whenStart = sdf1.format(calendar.getTime());
-        ((MainActivity) context).sleep.setWhenStart(whenStart);
+        mainActivity.sleep.setWhenStart(whenStart);
         if (calendar.get(Calendar.HOUR_OF_DAY) < 6) { // 자정이 지나면 전날로 표기
             calendar.roll(Calendar.HOUR_OF_DAY, 7);
         }
         String sleepDate = sdf3.format(calendar.getTime());
-        ((MainActivity) context).sleep.setSleepDate(sleepDate);
+        mainActivity.sleep.setSleepDate(sleepDate);
         Log.d(MainActivity.STATE_TAG, "측정 시작 / " + sleepDate + " " + whenStart);
-        ((MainActivity) getActivity()).startActivityForResult(intent, 2000);
-        ((MainActivity) getActivity()).overridePendingTransition(R.anim.down_in, R.anim.stop);
+        mainActivity.startActivityForResult(intent, 2000);
+        mainActivity.overridePendingTransition(R.anim.down_in, R.anim.stop);
     }
 
     public void changeDiseaseView() {
@@ -104,10 +106,10 @@ public class HomeFragment extends Fragment {
     private void setRandomAdjDirection() {
         if ((int) (Math.random() * 2) == 0) {
             ivPredicPos.setImageResource(R.drawable.pos1);  // 왼쪽으로 교정
-            ((MainActivity) getActivity()).act = MainActivity.ACT_LEFT;
+            mainActivity.act = MainActivity.ACT_LEFT;
         } else {
             ivPredicPos.setImageResource(R.drawable.pos2);  // 오른쪽으로 교정
-            ((MainActivity) getActivity()).act = MainActivity.ACT_RIGHT;
+            mainActivity.act = MainActivity.ACT_RIGHT;
         }
     }
 
@@ -125,14 +127,14 @@ public class HomeFragment extends Fragment {
         tvSel = dlgView.findViewById(R.id.tv_sel);
         guideline3 = (Guideline) dlgView.findViewById(R.id.guideline3);
 
-        switch (((MainActivity) getActivity()).mode) {
+        switch (mainActivity.mode) {
             case 1:
             case 2:
                 setRandomAdjDirection();
                 break;
             case 3:
                 changeDiseaseView();
-                switch (((MainActivity) getActivity()).settingFragment.diseaseIndex) {
+                switch (mainActivity.settingFragment.diseaseIndex) {
                     case 0:
                         ivPredicPos.setImageResource(R.drawable.pos5);
                         changeDiseaseView();
@@ -184,7 +186,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 selDialog.dismiss();
-                if (((MainActivity) getActivity()).settingFragment.diseaseIndex == 0) {  // 허리디스크시 교정 자세 고정
+                if (mainActivity.settingFragment.diseaseIndex == 0) {  // 허리디스크시 교정 자세 고정
                     startSleep(4);
                 } else {
                     startSleep(1);  // 다른 질환은 수면중 교정

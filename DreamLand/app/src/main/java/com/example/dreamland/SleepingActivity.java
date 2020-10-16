@@ -32,6 +32,7 @@ public class SleepingActivity extends AppCompatActivity {
     AlarmManager alarmManager;
     AlarmManager.OnAlarmListener onAlarmListener;
     boolean isSleep = false;
+    MainActivity mainActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +42,14 @@ public class SleepingActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);  // 화면 켜짐 유지
 
         mContext = this;
+        mainActivity = (MainActivity) MainActivity.context;
 
         stopButton = findViewById(R.id.stopButton);
         ivSleepSate = findViewById(R.id.ivSleepState);
         tvSleepState = findViewById(R.id.tvSleepState);
         tvTime = findViewById(R.id.tv_time);
 
-        ((MainActivity) MainActivity.context).isStarted = true;
+        mainActivity.isStarted = true;
 
         // 이미지 애니메이션
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.pongpong);
@@ -68,16 +70,16 @@ public class SleepingActivity extends AppCompatActivity {
         setAlarm(hour, minute);
 
         // 즉시 교정을 선택하면 교정
-        if (((MainActivity) MainActivity.context).adjMode == 3) {
-            ((MainActivity) MainActivity.context).adjustPostureImmediately();
+        if (mainActivity.adjMode == 3) {
+            mainActivity.adjustPostureImmediately();
         }
-        if(((MainActivity) MainActivity.context).adjMode == 4) {  // 허리디스크 자세 교정
-            ((MainActivity) MainActivity.context).act = MainActivity.ACT_DISC;
-            ((MainActivity) MainActivity.context).maintainPosture();
+        if(mainActivity.adjMode == 4) {  // 허리디스크 자세 교정
+            mainActivity.act = MainActivity.ACT_DISC;
+            mainActivity.maintainPosture();
         }
 
         // 가습기 사용 여부 메시지 전송
-        ((MainActivity) MainActivity.context).sendHumidifierMode();
+        mainActivity.sendHumidifierMode();
 
         // 중지 버튼
         stopButton.setOnClickListener(new View.OnClickListener() {
@@ -116,10 +118,10 @@ public class SleepingActivity extends AppCompatActivity {
                 changeState(3);  // 리소스 변경
 
                 // 수면 중지
-                ((MainActivity) MainActivity.context).stopSleep();
+                mainActivity.stopSleep();
 
                 // 침대에 알람 메시지 전송
-                ((MainActivity) MainActivity.context).bluetoothService.writeBLT1("alarm");
+                mainActivity.bluetoothService.writeBLT1("alarm");
             }
         };
 
@@ -169,12 +171,12 @@ public class SleepingActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        ((MainActivity) MainActivity.context).bluetoothService.writeBLT1("down");
-        Log.d(((MainActivity) MainActivity.context).STATE_TAG, "down 전송");
-        ((MainActivity) MainActivity.context).bluetoothService.writeBLT2("H2O_OFF");  // 가습기 off
-        Log.d(((MainActivity) MainActivity.context).STATE_TAG, "가습기 Off");
-        ((MainActivity) MainActivity.context).bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
-        Log.d(((MainActivity) MainActivity.context).STATE_TAG, "산소발생기 Off");
+        mainActivity.bluetoothService.writeBLT1("down");
+        Log.d(MainActivity.STATE_TAG, "down 전송");
+        mainActivity.bluetoothService.writeBLT2("H2O_OFF");  // 가습기 off
+        Log.d(MainActivity.STATE_TAG, "가습기 Off");
+        mainActivity.bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
+        Log.d(MainActivity.STATE_TAG, "산소발생기 Off");
         super.onDestroy();
     }
 

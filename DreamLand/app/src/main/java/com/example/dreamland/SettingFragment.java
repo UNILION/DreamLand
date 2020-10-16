@@ -41,6 +41,7 @@ public class SettingFragment extends Fragment {
     Switch posSwitch;
     Switch conBtSwitch;
     ProgressBar progressBar;
+    MainActivity mainActivity;
     int numOfAttempt = 0;
 
     View line1;
@@ -85,18 +86,20 @@ public class SettingFragment extends Fragment {
         actButtons = new ToggleButton[10];
         sf = getContext().getSharedPreferences("bed", getContext().MODE_PRIVATE);
 
-        ((MainActivity) getActivity()).autoHumidifier = sf.getBoolean("autoHumidifier", true);
-        ((MainActivity) getActivity()).useHumidifier = sf.getBoolean("useHumidifier", false);
+        mainActivity = (MainActivity) getActivity();
+
+        mainActivity.autoHumidifier = sf.getBoolean("autoHumidifier", true);
+        mainActivity.useHumidifier = sf.getBoolean("useHumidifier", false);
 
         // 가습기 뷰를 저장된 상태로 변경
-        if (((MainActivity) getActivity()).autoHumidifier) {
+        if (mainActivity.autoHumidifier) {
             autoSwitch.setChecked(true);
         } else {
             autoSwitch.setChecked(false);
             manualSwitch.setVisibility(View.VISIBLE);
         }
 
-        if (((MainActivity) getActivity()).useHumidifier) {
+        if (mainActivity.useHumidifier) {
             manualSwitch.setChecked(true);
         } else {
             manualSwitch.setChecked(false);
@@ -108,17 +111,17 @@ public class SettingFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {  // 자동 사용
                     manualSwitch.setVisibility(View.GONE);
-                    ((MainActivity) getActivity()).autoHumidifier = true;
+                    mainActivity.autoHumidifier = true;
                     sf.edit().putBoolean("autoHumidifier", true).apply();
                 } else {  // 수동 사용
                     manualSwitch.setVisibility(View.VISIBLE);
-                    ((MainActivity) getActivity()).autoHumidifier = false;
+                    mainActivity.autoHumidifier = false;
                     sf.edit().putBoolean("autoHumidifier", false).apply();
                     if (manualSwitch.isChecked()) {
-                        ((MainActivity) getActivity()).useHumidifier = true;
+                        mainActivity.useHumidifier = true;
                         sf.edit().putBoolean("useHumidifier", true).apply();
                     } else {
-                        ((MainActivity) getActivity()).useHumidifier = false;
+                        mainActivity.useHumidifier = false;
                         sf.edit().putBoolean("useHumidifier", false).apply();
                     }
                 }
@@ -130,10 +133,10 @@ public class SettingFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {  // 사용
-                    ((MainActivity) getActivity()).useHumidifier = true;
+                    mainActivity.useHumidifier = true;
                     sf.edit().putBoolean("useHumidifier", true).apply();
                 } else {  // 사용 안함
-                    ((MainActivity) getActivity()).useHumidifier = false;
+                    mainActivity.useHumidifier = false;
                     sf.edit().putBoolean("useHumidifier", false).apply();
                 }
             }
@@ -151,12 +154,12 @@ public class SettingFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
                     bedActButton.setVisibility(View.VISIBLE);
-                    ((MainActivity) getActivity()).customAct = true;
+                    mainActivity.customAct = true;
                 } else {
                     bedActButton.setVisibility(View.GONE);
-                    ((MainActivity) getActivity()).customAct = false;
+                    mainActivity.customAct = false;
                 }
-                sf.edit().putBoolean("customAct", ((MainActivity) getActivity()).customAct).apply();
+                sf.edit().putBoolean("customAct", mainActivity.customAct).apply();
             }
         });
 
@@ -191,7 +194,7 @@ public class SettingFragment extends Fragment {
                         // Main Activity 재시작
                         startActivity(new Intent(getContext(), MainActivity.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                        ((MainActivity) getActivity()).resetData();
+                        mainActivity.resetData();
                     }
                 });
             }
@@ -301,8 +304,8 @@ public class SettingFragment extends Fragment {
                 if (b) {
                     progressBar.setVisibility(View.VISIBLE);
                     conBtSwitch.setVisibility(View.GONE);
-                    ((MainActivity) getActivity()).enableBluetooth();
-                    final StatusView statusView = (StatusView) ((MainActivity) getContext()).findViewById(R.id.status);
+                    mainActivity.enableBluetooth();
+                    final StatusView statusView = (StatusView) mainActivity.findViewById(R.id.status);
                     numOfAttempt++;
                     new Thread() {
                         @Override
@@ -310,9 +313,9 @@ public class SettingFragment extends Fragment {
                             try {
                                 int num = numOfAttempt;
                                 sleep(20000L);  // 20초 후 연결이 안되면 에러 메시지 출력
-                                if (!((MainActivity) getContext()).isConnected && conBtSwitch.isChecked()
+                                if (!mainActivity.isConnected && conBtSwitch.isChecked()
                                 && numOfAttempt == num) {
-                                    ((MainActivity) getContext()).bluetoothService.mHandler.post(new Runnable() {
+                                    mainActivity.bluetoothService.mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
                                             statusView.setStatus(Status.ERROR);
@@ -322,7 +325,7 @@ public class SettingFragment extends Fragment {
                                                 public void run() {
                                                     try {
                                                         sleep(2000);  // 2초 후 에러메지시 숨김
-                                                        ((MainActivity) getContext()).bluetoothService.mHandler.post(new Runnable() {
+                                                        mainActivity.bluetoothService.mHandler.post(new Runnable() {
                                                             @Override
                                                             public void run() {
                                                                 statusView.setStatus(Status.IDLE);
@@ -344,7 +347,7 @@ public class SettingFragment extends Fragment {
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
                     conBtSwitch.setVisibility(View.GONE);
-                    ((MainActivity) getActivity()).bluetoothService.cancel();
+                    mainActivity.bluetoothService.cancel();
                 }
             }
         });
