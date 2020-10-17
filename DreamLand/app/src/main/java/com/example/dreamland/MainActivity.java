@@ -929,7 +929,7 @@ public class MainActivity extends AppCompatActivity {
             );
             new InsertConAsyncTask(db.conditionDao()).execute(condition);
             Log.d(STATE_TAG, "상태 이상 정보 삽입 -> 시작시간: " + sdf1.format(startTime
-            + "  종료시간: " + sdf1.format(endTime));
+            + "  종료시간: " + sdf1.format(endTime)));
         }
     }
 }
