@@ -8,7 +8,7 @@
     android:forceDarkAllowed="false"
     android:soundEffectsEnabled="true"
     android:splitMotionEvents="false"
-    tools:context=".HomeFragment">
+    tools:context=".StartFragment">
 
     <TimePicker
         android:id="@+id/timePicker"

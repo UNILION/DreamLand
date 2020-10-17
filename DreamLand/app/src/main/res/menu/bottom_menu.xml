@@ -3,13 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/tab_home"
-        android:title="홈"
-        android:icon="@drawable/ic_home_24dp"
-        />
+        android:id="@+id/tab_start"
+        android:icon="@drawable/ic_moon_24dp"
+        android:title="수면시작" />
     <item
         android:id="@+id/tab_management"
-        android:icon="@drawable/ic_moon_24dp"
+        android:icon="@drawable/ic_diary_24dp"
         android:title="수면일지" />
     <item
         android:id="@+id/tab_health"

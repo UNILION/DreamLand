@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -66,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String ACT_DISC = "0,0,0,0,0,0,0,0,1,1";  // 허리디스크 교정 자세
 
 
-    private HomeFragment homeFragment;
+    private StartFragment startFragment;
     private ManagementFragment managementFragment;
     public SettingFragment settingFragment;
     private HealthFragment healthFragment;
@@ -155,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigation = (BottomNavigationView) findViewById(R.id.bottomNavigation);
 
-        homeFragment = new HomeFragment();
+        startFragment = new StartFragment();
         managementFragment = new ManagementFragment();
         settingFragment = new SettingFragment();
         healthFragment = new HealthFragment();
@@ -163,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 화면에 프래그먼트 추가
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, homeFragment)
+                .add(R.id.container, startFragment)
                 .add(R.id.container, managementFragment)
                 .hide(managementFragment)
                 .add(R.id.container, settingFragment)
@@ -171,22 +170,22 @@ public class MainActivity extends AppCompatActivity {
                 .add(R.id.container, healthFragment)
                 .hide(healthFragment).commit();
 
-        curFragment = homeFragment;
-        actionBar.setTitle("홈");
+        curFragment = startFragment;
+        actionBar.setTitle("수면시작");
 
         // 하단 탭 클릭시 화면 전환
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    // 홈 버튼
-                    case R.id.tab_home:
-                        if (curFragment != homeFragment) {
+                    // 수면시작 버튼
+                    case R.id.tab_start:
+                        if (curFragment != startFragment) {
                             getSupportFragmentManager().beginTransaction()
-                                    .show(homeFragment)
+                                    .show(startFragment)
                                     .hide(curFragment).commit();
-                            curFragment = homeFragment;
-                            actionBar.setTitle("홈");
+                            curFragment = startFragment;
+                            actionBar.setTitle("수면시작");
                         }
                         return true;
 

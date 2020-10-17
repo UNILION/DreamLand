@@ -27,7 +27,7 @@ import java.util.Calendar;
 import static com.example.dreamland.MySimpleDateFormat.sdf1;
 import static com.example.dreamland.MySimpleDateFormat.sdf3;
 
-public class HomeFragment extends Fragment {
+public class StartFragment extends Fragment {
 
     Button startButton;
     TimePicker timePicker;
@@ -42,7 +42,7 @@ public class HomeFragment extends Fragment {
     Guideline guideline3;
     private MainActivity mainActivity;
 
-    public HomeFragment() {
+    public StartFragment() {
         // Required empty public constructor
     }
 
