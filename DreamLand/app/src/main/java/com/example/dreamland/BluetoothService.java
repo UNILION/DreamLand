@@ -24,7 +24,7 @@ import iammert.com.library.StatusView;
 
 public class BluetoothService {
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-    private static final int NUM_OF_DEVICES = 1;
+    private static final int NUM_OF_DEVICES = 3;
     private Context context;
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter bluetoothAdapter;
@@ -102,31 +102,17 @@ public class BluetoothService {
         statusView.setStatus(Status.COMPLETE);
         ((MainActivity) context).settingFragment.progressBar.setVisibility(View.GONE);
         ((MainActivity) context).settingFragment.conBtSwitch.setVisibility(View.VISIBLE);
-
-//        LinearLayout connectButton = (LinearLayout) ((MainActivity)context).findViewById(R.id.connecting_bt_Layout);
-//        connectButton.setEnabled(false);
-//        ((MainActivity) context).settingFragment.disconnectingBtLayout.setEnabled(true);
-//        TextView conTextView = ((MainActivity)context).findViewById(R.id.tv_con_bt);
-//        conTextView.setTextColor(context.getResources().getColor(R.color.colorGray));
-//        TextView disconTextView = ((MainActivity)context).findViewById(R.id.tv_discon_bt);
-//        disconTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
     }
 
     void disconnectionCompleted() {
         ((MainActivity) context).isConnected = false;
         ((MainActivity) context).settingFragment.progressBar.setVisibility(View.GONE);
         ((MainActivity) context).settingFragment.conBtSwitch.setVisibility(View.VISIBLE);
-//        ((MainActivity) context).settingFragment.connectingBtLayout.setEnabled(true);
-//        ((MainActivity) context).settingFragment.disconnectingBtLayout.setEnabled(false);
-//        TextView conTextView = ((MainActivity)context).findViewById(R.id.tv_con_bt);
-//        conTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
-//        TextView disconTextView = ((MainActivity)context).findViewById(R.id.tv_discon_bt);
-//        disconTextView.setTextColor(context.getResources().getColor(R.color.colorGray));
     }
 
     // 엑추에이터에 전송
     void writeBLT1(String msg) {
-        //connectedThreads[0].write(msg.getBytes());
+        connectedThreads[0].write(msg.getBytes());
     }
 
     // 침대 센서에 전송
