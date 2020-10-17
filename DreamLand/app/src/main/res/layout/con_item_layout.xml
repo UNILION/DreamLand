@@ -3,8 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tool="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    tool:background="@color/colorPrimary">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,22 +26,12 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/tv_time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="5"
-            android:gravity="center"
-            android:text="time"
-            android:textColor="@color/colorWhite"
-            android:textSize="18sp" />
-
-        <TextView
             android:id="@+id/tv_before_pos"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:gravity="center"
-            android:text="수면자세"
+            android:text="시작 시간"
             android:textColor="@color/colorWhite"
             android:textSize="18sp" />
 
@@ -56,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:gravity="center"
-            android:text="수면자세"
+            android:text="종료 시간"
             android:textColor="@color/colorWhite"
             android:textSize="18sp" />
 

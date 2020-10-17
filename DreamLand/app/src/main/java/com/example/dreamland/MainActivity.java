@@ -28,11 +28,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.dreamland.asynctask.DeleteAdjAsyncTask;
+import com.example.dreamland.asynctask.DeleteConAsyncTask;
 import com.example.dreamland.asynctask.DeleteSleepAsyncTask;
 import com.example.dreamland.asynctask.InsertAdjAsyncTask;
+import com.example.dreamland.asynctask.InsertConAsyncTask;
 import com.example.dreamland.asynctask.InsertSleepAsyncTask;
 import com.example.dreamland.database.Adjustment;
 import com.example.dreamland.database.AppDatabase;
+import com.example.dreamland.database.Condition;
 import com.example.dreamland.database.Sleep;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.willy.ratingbar.ScaleRatingBar;
@@ -254,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
         sf.edit().putInt("disease", 0).apply();
         new DeleteSleepAsyncTask(db.sleepDao()).execute();
         new DeleteAdjAsyncTask(db.adjustmentDao()).execute();
+        new DeleteConAsyncTask(db.conditionDao()).execute();
         finish();
     }
 
@@ -744,6 +748,7 @@ public class MainActivity extends AppCompatActivity {
                                             isCon = false;
                                             noConditionCount = 0;
                                             conMilliTime += conEndTime - conStartTime;
+                                            insertCondition(conStartTime, conEndTime);  // 무호흡 데이터 삽입
                                         }
                                     }
                                 } else {  // 산소포화도가 정상수치보다 낮음
@@ -795,6 +800,7 @@ public class MainActivity extends AppCompatActivity {
                                                     isCon = false;
                                                     noConditionCount = 0;
                                                     conMilliTime += conEndTime - conStartTime;
+                                                    insertCondition(conStartTime, conEndTime);  // 코골이 데이터 삽입
                                                 } else {
                                                     Log.d(STATE_TAG, "noConditionCount  -> " + noConditionCount);
                                                     noConditionCount++;
@@ -912,6 +918,18 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+        }
+
+        private void insertCondition(long startTime, long endTime) {
+            Calendar c = Calendar.getInstance();
+            String sleepDate = sdf3.format(c.getTime());
+            Condition condition = new Condition(
+                    sleepDate, sdf1.format(startTime),
+                    sdf1.format(endTime)
+            );
+            new InsertConAsyncTask(db.conditionDao()).execute(condition);
+            Log.d(STATE_TAG, "상태 이상 정보 삽입 -> 시작시간: " + sdf1.format(startTime
+            + "  종료시간: " + sdf1.format(endTime));
         }
     }
 }

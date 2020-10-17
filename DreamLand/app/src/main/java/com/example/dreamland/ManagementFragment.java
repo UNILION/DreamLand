@@ -2,8 +2,6 @@ package com.example.dreamland;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -26,9 +24,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dreamland.asynctask.GetAdjsBySleepDateAsyncTask;
+import com.example.dreamland.asynctask.GetConsBySleepDateAsyncTask;
 import com.example.dreamland.asynctask.GetSleepByDateAsyncTask;
 import com.example.dreamland.database.Adjustment;
 import com.example.dreamland.database.AppDatabase;
+import com.example.dreamland.database.Condition;
 import com.example.dreamland.database.Sleep;
 import com.willy.ratingbar.ScaleRatingBar;
 
@@ -68,6 +68,7 @@ public class ManagementFragment extends Fragment {
     private ImageView ivCondition;
     private LinearLayout infoLayout;
     private LinearLayout sleepDataLayout;
+    private LinearLayout conLayout;
     private LinearLayout posLayout;
     private LinearLayout adjustLayout;
     private ScaleRatingBar ratingBar;
@@ -81,8 +82,10 @@ public class ManagementFragment extends Fragment {
     HorizontalCalendar horizontalCalendar;
     List<Sleep> sleepList;
     int[] posImages;
-    List<Adjustment> items;
-    PosDetailAdapter adapter;
+    List<Adjustment> adjItems;
+    List<Condition> conItems;
+    PosDetailAdapter posAdapter;
+    ConDetailAdapter conAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -152,6 +155,7 @@ public class ManagementFragment extends Fragment {
         tvMoved = (TextView) view.findViewById(R.id.tvMoved);
         tvHealthScore = (TextView) view.findViewById(R.id.tv_health_score);
         infoLayout = (LinearLayout) view.findViewById(R.id.infoLayout);
+        conLayout = (LinearLayout) view.findViewById(R.id.con_layout);
         posLayout = (LinearLayout) view.findViewById(R.id.posLayout);
         sleepDataLayout = (LinearLayout) view.findViewById(R.id.sleepDataLayout);
         adjustLayout = (LinearLayout) view.findViewById(R.id.adjust_layout);
@@ -211,7 +215,9 @@ public class ManagementFragment extends Fragment {
                 if (selectedSleep != null) {
                     setUI(selectedSleep);
                     try {
-                        items = new GetAdjsBySleepDateAsyncTask(db.adjustmentDao(),
+                        adjItems = new GetAdjsBySleepDateAsyncTask(db.adjustmentDao(),
+                                selectedSleep.getSleepDate()).execute().get();
+                        conItems = new GetConsBySleepDateAsyncTask(db.conditionDao(),
                                 selectedSleep.getSleepDate()).execute().get();
                     } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();
@@ -228,16 +234,54 @@ public class ManagementFragment extends Fragment {
             public void onClick(View view) {
                 if (!tvPos.getText().equals("0")) {
                     View dlgView = getLayoutInflater().from(getContext()).inflate(
-                            R.layout.dialog_pos_detail, null);
+                            R.layout.dialog_details, null);
 
-                    RecyclerView recyclerview = dlgView.findViewById(R.id.posRecyclerview);
+                    RecyclerView recyclerview = dlgView.findViewById(R.id.recyclerview);
                     recyclerview.setLayoutManager(
                             new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
-                    adapter = new PosDetailAdapter(items);
-                    recyclerview.setAdapter(adapter);
+                    posAdapter = new PosDetailAdapter(adjItems);
+
+                    recyclerview.setAdapter(posAdapter);
 
                     Button okButton = dlgView.findViewById(R.id.okButton);
 
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    final AlertDialog dialog = builder.setView(dlgView).create();
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialog.show();
+
+                    // 확인 버튼
+                    okButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+                }
+            }
+        });
+
+        // 상태 확인
+        conLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!tvConTime.equals("00:00")) {
+                    View dlgView = getLayoutInflater().from(getContext()).inflate(
+                            R.layout.dialog_details, null);
+
+                    RecyclerView recyclerview = dlgView.findViewById(R.id.recyclerview);
+                    recyclerview.setLayoutManager(
+                            new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+                    conAdapter = new ConDetailAdapter(conItems);
+                    recyclerview.setAdapter(conAdapter);
+
+                    Button okButton = dlgView.findViewById(R.id.okButton);
+                    TextView tvTitle = dlgView.findViewById(R.id.tv_title);
+                    if (((MainActivity) getActivity()).mode == 1) {
+                        tvTitle.setText("코골이");
+                    } else {
+                        tvTitle.setText("무호흡");
+                    }
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     final AlertDialog dialog = builder.setView(dlgView).create();
                     dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
