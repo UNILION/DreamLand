@@ -97,13 +97,13 @@
 
                     <TextView
                         android:id="@+id/strTrafficDaily"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="16dp"
+                        android:layout_margin="16dp"
                         android:background="@drawable/round_button_toggle"
                         android:gravity="center"
-                        android:padding="16dp"
+                        android:padding="12dp"
                         android:text="일일평가\n\n사용자의 과거 기록 대비 평균수면 시간이 저조함.\n건강을 위해 충분한 수면을 취해주세요."
                         android:textColor="#ffff"
                         android:textSize="15dp"
@@ -121,7 +121,9 @@
                         android:text="근처 병원 찾기"
                         android:textColor="@color/colorWhite"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                 </LinearLayout>
 

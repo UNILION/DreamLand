@@ -268,16 +268,29 @@ public class HealthFragment extends Fragment {
                     int score = sleep.getScore();
                     int color;
                     int imgRes;
-                    if (score <= 40) {
+                    String evaluation = "";
+                    if (score <= 40) {  // 적색등
                         color= R.color.colorRed;
                         imgRes = R.drawable.ic_signal_red;
-                    } else if (score <= 70){
+                        evaluation = "산소포화도가 위험 수치보다 낮아요\n" +
+                                "적색등이 지속된다면 병원에 방문하는 것을 추천해요";
+                        mapsButton.setVisibility(View.VISIBLE);
+                    } else if (score <= 70){  // 황색등
                         color = R.color.colorOrange;
                         imgRes = R.drawable.ic_signal_yellow;
-                    } else {
+                        evaluation = "심박수와 산소포화도가 정상 수치보다 낮아요\n"
+                        + "산소 포화도를 높이려면 고른 영양섭취를 위한 규칙적이고 균형 있는 식사, " +
+                                "꾸준한 운동, 충분한 수면, 충분한 수분 섭취, 스트레스 관리 등 " +
+                                "체력 상승에 도움이 되는 생활 습관을 유지하는 것이 중요해요";
+                        mapsButton.setVisibility(View.GONE);
+                    } else {  // 녹색등
                         color = R.color.trafficColorGreen;
                         imgRes = R.drawable.ic_signal_green;
+                        evaluation = "건강한 상태에요!\n계속해서 녹색등을 유지하세요";
+                        mapsButton.setVisibility(View.GONE);
                     }
+                    strTrafficDaily.setText("일일평가\n\n"
+                            + evaluation);
                     strTrafficScore.setTextColor(getResources().getColor(color)); // 텍스트 색 변경
                     strTrafficScore.setText(score+ "점"); // 점수 변경
                     imgTrafficImg.setImageResource(imgRes); // 이미지 변경
