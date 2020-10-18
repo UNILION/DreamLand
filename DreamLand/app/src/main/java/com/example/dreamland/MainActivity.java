@@ -380,33 +380,36 @@ public class MainActivity extends AppCompatActivity {
         return sleepTime;
     }
 
+    private void insertSampleData() {
+        Calendar c = Calendar.getInstance();
+        String sleepDate;
+        c.add(Calendar.DAY_OF_MONTH, -190);
+        for (int i = 0; i < 190; i++) {
+            sleepDate = sdf3.format(c.getTime());
+            c.add(Calendar.DAY_OF_MONTH, 1);
+
+            String whenStart = createRandomStartTime();
+            String whenSleep = createRandomWhenSleep(whenStart);
+            String whenWake = createRandomWhenWake();
+            int heartRate = (int) (Math.random() * 70) + 40;
+            int spo = (int) (Math.random() * 14) + 88;
+            // 샘플 데이터 생성
+            new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
+                    sleepDate, whenSleep, whenStart, getAsleepAfter(whenSleep, whenStart),
+                    whenWake, getSleepTime(whenSleep, whenWake), createRandomConTime(),
+                    (int) (Math.random() * 7), (int) (Math.random() * 5) + 1,
+                    spo, heartRate, (int) (Math.random() * 50) + 10,
+                    (int) (Math.random() * 5) + 20, (int) (Math.random() * 7),
+                    getScore(spo, heartRate))
+            );
+        }
+    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            // 테스트 데이터 삽입
+            // 샘플 데이터 삽입
             case R.id.insert_sleeps:
-                Calendar c = Calendar.getInstance();
-                String sleepDate;
-                c.set(2020, 2, 1);
-                for (int i = 0; i < 190; i++) {
-                    sleepDate = sdf3.format(c.getTime());
-                    c.add(Calendar.DAY_OF_MONTH, 1);
-
-                    String whenStart = createRandomStartTime();
-                    String whenSleep = createRandomWhenSleep(whenStart);
-                    String whenWake = createRandomWhenWake();
-                    int heartRate = (int) (Math.random() * 70) + 40;
-                    int spo = (int) (Math.random() * 14) + 88;
-                    // 샘플 데이터 생성
-                    new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
-                            sleepDate, whenSleep, whenStart, getAsleepAfter(whenSleep, whenStart),
-                            whenWake, getSleepTime(whenSleep, whenWake), createRandomConTime(),
-                            (int) (Math.random() * 7), (int) (Math.random() * 5) + 1,
-                            spo, heartRate, (int) (Math.random() * 50) + 10,
-                            (int) (Math.random() * 5) + 20, (int) (Math.random() * 7),
-                            getScore(spo, heartRate))
-                    );
-                }
+                insertSampleData();
                 return true;
 
             // 수면 데이터 모두 삭제
