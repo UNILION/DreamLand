@@ -25,7 +25,7 @@ import iammert.com.library.StatusView;
 
 public class BluetoothService {
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-    private static final int NUM_OF_DEVICES = 3;
+    private static final int NUM_OF_DEVICES = 1;
     private Context context;
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter bluetoothAdapter;
@@ -117,7 +117,7 @@ public class BluetoothService {
 
     // 엑추에이터에 전송
     void writeBLT1(String msg) {
-        connectedThreads[0].write(msg.getBytes());
+        //connectedThreads[0].write(msg.getBytes());
     }
 
     // 침대 센서에 전송
