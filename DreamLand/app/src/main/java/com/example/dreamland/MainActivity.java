@@ -485,7 +485,7 @@ public class MainActivity extends AppCompatActivity {
             Date date = new Date(conMilliTime - (1000 * 60 * 60 * 9));
             String conTime = sdf1.format(date);
             sleep.setConTime(conTime);
-
+            Toast.makeText(context, "수면 종료", Toast.LENGTH_SHORT).show();
             Log.d(STATE_TAG,
                     "일자: " + sleep.getSleepDate()
                             + "  시작 시간: " + sleep.getWhenStart()
@@ -500,6 +500,7 @@ public class MainActivity extends AppCompatActivity {
                             + "  교정 횟수: " + sleep.getAdjCount()
                             + "  건강 점수: " + sleep.getScore());
 
+            // 만족도 평가 다이얼로그
             View dlgView = getLayoutInflater().from(this).inflate(
                     R.layout.dialog_sat_level, null);
             Button satConfirmButton = dlgView.findViewById(R.id.sat_confirm_button);
@@ -597,6 +598,7 @@ public class MainActivity extends AppCompatActivity {
                     sleep(DOWN_WAIT_TIME); // 2분 대기
                     bluetoothService.writeBLT1("down"); // 교정 해제
                     Log.d(STATE_TAG, "자세 교정 -> down 전송");
+                    Toast.makeText(MainActivity.this, "교정 해제", Toast.LENGTH_SHORT).show();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -610,15 +612,19 @@ public class MainActivity extends AppCompatActivity {
         switch (act) {
             case ACT_LEFT:
                 Log.d(STATE_TAG, "자세 교정 -> 왼쪽으로 교정");
+                Toast.makeText(context, "왼쪽 방향으로 교정", Toast.LENGTH_SHORT).show();
                 break;
             case ACT_RIGHT:
                 Log.d(STATE_TAG, "자세 교정 -> 오른쪽으로 교정");
+                Toast.makeText(context, "오른쪽 방향으로 교정", Toast.LENGTH_SHORT).show();
                 break;
             case ACT_DISC:
                 Log.d(STATE_TAG, "자세 교정 -> 허리디스크 교정");
+                Toast.makeText(context, "허리디스크 완화 자세로 교정", Toast.LENGTH_SHORT).show();
                 break;
             default:
-                Log.d(STATE_TAG, "자세 교정 -> 정해지지 않은 자세로 교정");
+                Log.d(STATE_TAG, "자세 교정 -> 사용자 설정 자세로 교정");
+                Toast.makeText(context, "사용자 설정 자세로 교정", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -626,13 +632,16 @@ public class MainActivity extends AppCompatActivity {
         if (autoHumidifier) {
             bluetoothService.writeBLT2("H2O_AUTO");
             Log.d(STATE_TAG, "가습기 Auto");
+            Toast.makeText(context, "가습기 자동 사용", Toast.LENGTH_SHORT).show();
         } else {
             if (useHumidifier) {
                 bluetoothService.writeBLT2("H2O_ON");
                 Log.d(STATE_TAG, "가습기 On");
+                Toast.makeText(context, "가습기 On", Toast.LENGTH_SHORT).show();
             } else {
                 bluetoothService.writeBLT2("H2O_OFF");
                 Log.d(STATE_TAG, "가습기 Off");
+                Toast.makeText(context, "가습기 Off", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -677,8 +686,17 @@ public class MainActivity extends AppCompatActivity {
                                         .execute(new Adjustment(sleep.getSleepDate(), adjTime, beforePos, afterPos));
                                 Log.d(STATE_TAG, "교정 정보 삽입 -> Date: " + sleep.getSleepDate() + "  교정 시각: "
                                         + adjTime + "  교정 전 자세: " + beforePos + "  교정 후 자세: " + afterPos);
-                                beforePos = null;  // 자세정보 삽입 후 교정 전, 후 자세 정보 초기화
-                                afterPos = null;
+                                bluetoothService.mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(MainActivity.this,
+                                                "교정 정보 삽입: 교정 전 자세: " + beforePos + "  교정 후 자세: " + afterPos,
+                                                Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(MainActivity.this, "교정 해제", Toast.LENGTH_SHORT).show();
+                                        beforePos = null;  // 자세정보 삽입 후 교정 전, 후 자세 정보 초기화
+                                        afterPos = null;
+                                    }
+                                });
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -733,6 +751,8 @@ public class MainActivity extends AppCompatActivity {
                                         useO2 = false;
                                         bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
                                         Log.d(STATE_TAG, "산소발생기 Off");
+                                        Toast.makeText(MainActivity.this,
+                                                "산소발생기 Off", Toast.LENGTH_SHORT).show();
                                     }
 
                                     // 무호흡 모드에서 적용
@@ -743,6 +763,8 @@ public class MainActivity extends AppCompatActivity {
                                             lowDecibelCount = 0;
                                             conEndTime = System.currentTimeMillis();
                                             Log.d(STATE_TAG, "무호흡 종료");
+                                            Toast.makeText(MainActivity.this,
+                                                    "무호흡 상태 종료", Toast.LENGTH_SHORT).show();
 
                                             // 리소스 변경
                                             ((SleepingActivity) SleepingActivity.mContext).changeState(
@@ -758,6 +780,8 @@ public class MainActivity extends AppCompatActivity {
                                         useO2 = true;
                                         bluetoothService.writeBLT2("O2_ON");  // 산소발생기 on
                                         Log.d(STATE_TAG, "산소발생기 On");
+                                        Toast.makeText(MainActivity.this,
+                                                "산소발생기 On", Toast.LENGTH_SHORT).show();
                                     }
 
                                     // 무호흡 모드에서 적용
@@ -768,6 +792,8 @@ public class MainActivity extends AppCompatActivity {
                                         if(lowDecibelCount > 5) {  // 데시벨이 낮게 유지되고 산소포화도가 낮으면 무호흡이라고 판단
                                             lowDecibelCount = 0;
                                             noConditionCount = 0;
+                                            Toast.makeText(MainActivity.this,
+                                                    "무호흡 상태", Toast.LENGTH_SHORT).show();
                                             adjustPosture();// 자세 교정
                                         }
                                     }
@@ -791,18 +817,22 @@ public class MainActivity extends AppCompatActivity {
                                 if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
                                     if (mode == InitActivity.SNORING_PREVENTION_MODE) { // 코골이 방지 모드
                                         if (decibel > 60) {  // 60데시벨이 넘으면 자세 교정
+                                            Toast.makeText(MainActivity.this,
+                                                    "코골이 중", Toast.LENGTH_SHORT).show();
                                             adjustPosture();
                                         } else {  // 코골이 데시벨 이하일때
                                             if (isCon) {
                                                 if (noConditionCount == 5) {  // 카운트가 5이 되면 코골이 끝
                                                     conEndTime = System.currentTimeMillis();
                                                     Log.d(STATE_TAG, "코골이 종료");
+                                                    Toast.makeText(MainActivity.this,
+                                                            "코골이 종료", Toast.LENGTH_SHORT).show();
                                                     ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
                                                             SleepingActivity.STATE_SLEEP);
                                                     isCon = false;
                                                     noConditionCount = 0;
                                                     conMilliTime += conEndTime - conStartTime;
-                                                    insertCondition(conStartTime, conEndTime);  // 코골이 데이터 삽입
+                                                    insertCondition(conStartTime, conEndTime);  // 코골이, 무호흡 데이터 삽입
                                                 } else {
                                                     Log.d(STATE_TAG, "noConditionCount  -> " + noConditionCount);
                                                     noConditionCount++;
@@ -823,6 +853,8 @@ public class MainActivity extends AppCompatActivity {
                                 String position = msgArray[1];
                                 Log.d(COMMAND_TAG, "position: " + position);
                                 String pos = postureInfo.setCurrentPos(position, isSense);  // 자세 정보 입력
+                                Toast.makeText(MainActivity.this,
+                                        "현제 자세: " + pos, Toast.LENGTH_SHORT).show();
                                 if (mode == InitActivity.DISEASE_ALLEVIATION_MODE) {
                                     switch (settingFragment.diseaseIndex) {
                                         case 1:  // 강직성척추염
@@ -900,6 +932,8 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(STATE_TAG, "사용자가 잠에 들었습니다 / " + sleep.getWhenSleep());
                                 ((SleepingActivity) SleepingActivity.mContext).changeState(
                                         SleepingActivity.STATE_SLEEP);
+                                Toast.makeText(MainActivity.this,
+                                        "사용자가 잠에 들었습니다", Toast.LENGTH_SHORT).show();
 
                                 // 잠들기까지 걸린 시간
                                 String asleepAfter = getAsleepAfter(whenSleep, sleep.getWhenStart());
@@ -925,13 +959,14 @@ public class MainActivity extends AppCompatActivity {
         private void insertCondition(long startTime, long endTime) {
             Calendar c = Calendar.getInstance();
             String sleepDate = sdf3.format(c.getTime());
-            Condition condition = new Condition(
-                    sleepDate, sdf1.format(startTime),
-                    sdf1.format(endTime)
-            );
+            String strStart = sdf1.format(startTime);
+            String strEnd = sdf1.format(endTime);
+
+            Condition condition = new Condition(sleepDate, strStart, strEnd);
+
             new InsertConAsyncTask(db.conditionDao()).execute(condition);
-            Log.d(STATE_TAG, "상태 이상 정보 삽입 -> 시작시간: " + sdf1.format(startTime
-            + "  종료시간: " + sdf1.format(endTime)));
+            Log.d(STATE_TAG, "코골이, 무호흡 정보 삽입 -> 시작시간: " + strStart
+            + "  종료시간: " + strEnd);
         }
     }
 }

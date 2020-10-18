@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +25,7 @@ import iammert.com.library.StatusView;
 
 public class BluetoothService {
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-    private static final int NUM_OF_DEVICES = 3;
+    private static final int NUM_OF_DEVICES = 1;
     private Context context;
     private Handler handler; // handler that gets info from Bluetooth service
     private BluetoothAdapter bluetoothAdapter;
@@ -102,17 +103,21 @@ public class BluetoothService {
         statusView.setStatus(Status.COMPLETE);
         ((MainActivity) context).settingFragment.progressBar.setVisibility(View.GONE);
         ((MainActivity) context).settingFragment.conBtSwitch.setVisibility(View.VISIBLE);
+        Log.d(MainActivity.STATE_TAG, "블루투스 연결 완료");
+        Toast.makeText(context, "블루투스 연결 완료", Toast.LENGTH_SHORT).show();
     }
 
     void disconnectionCompleted() {
         ((MainActivity) context).isConnected = false;
         ((MainActivity) context).settingFragment.progressBar.setVisibility(View.GONE);
         ((MainActivity) context).settingFragment.conBtSwitch.setVisibility(View.VISIBLE);
+        Log.d(MainActivity.STATE_TAG, "블루투스 연결 해제");
+        Toast.makeText(context, "블루투스 연결 해제", Toast.LENGTH_SHORT).show();
     }
 
     // 엑추에이터에 전송
     void writeBLT1(String msg) {
-        connectedThreads[0].write(msg.getBytes());
+        //connectedThreads[0].write(msg.getBytes());
     }
 
     // 침대 센서에 전송
@@ -156,7 +161,6 @@ public class BluetoothService {
             deviceCount++;
             Log.d(MainActivity.STATE_TAG, "연결된 디바이스 수 -> " + deviceCount);
             if (deviceCount == NUM_OF_DEVICES) { // 3개의 기기 연결 완료
-                Log.d(MainActivity.STATE_TAG, "연결 완료");
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {

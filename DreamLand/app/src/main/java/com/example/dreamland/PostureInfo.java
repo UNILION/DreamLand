@@ -1,6 +1,7 @@
 package com.example.dreamland;
 
 import android.util.Log;
+import android.widget.Toast;
 
 public class PostureInfo {
     private String currentPos = null;
