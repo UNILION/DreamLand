@@ -3,6 +3,7 @@ package com.example.dreamland;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -36,6 +37,7 @@ public class StartFragment extends Fragment {
     Button posCheckButton;
     AlertDialog selDialog;
     ImageView ivPredicPos;
+    TextView tvTitle;
     TextView tvSel;
     Guideline guideline3;
     private MainActivity mainActivity;
@@ -102,13 +104,21 @@ public class StartFragment extends Fragment {
     }
 
     private void setRandomAdjDirection() {
-        if ((int) (Math.random() * 2) == 0) {
-            ivPredicPos.setImageResource(R.drawable.pos1);  // 왼쪽으로 교정
-            mainActivity.act = MainActivity.ACT_LEFT;
-        } else {
-            ivPredicPos.setImageResource(R.drawable.pos2);  // 오른쪽으로 교정
-            mainActivity.act = MainActivity.ACT_RIGHT;
+        if (!mainActivity.customAct) {  // 사용자 설정 교정 자세 이용 안함
+            if ((int) (Math.random() * 2) == 0) {
+                ivPredicPos.setImageResource(R.drawable.pos1);  // 왼쪽으로 교정
+                mainActivity.act = MainActivity.ACT_LEFT;
+            } else {
+                ivPredicPos.setImageResource(R.drawable.pos2);  // 오른쪽으로 교정
+                mainActivity.act = MainActivity.ACT_RIGHT;
+            }
+        } else {  // 이용함
+            mainActivity.act = mainActivity.sf.getString("act", "0,0,0,0,0,0,0,0,0,0");
+            tvTitle.setVisibility(View.GONE);
+            ivPredicPos.setVisibility(View.GONE);
+            guideline3.setGuidelinePercent(0.2f);
         }
+
     }
 
     // 교정방식 선택 화면
@@ -124,10 +134,11 @@ public class StartFragment extends Fragment {
         ivPredicPos = dlgView.findViewById(R.id.ivPredicPos);
         tvSel = dlgView.findViewById(R.id.tv_sel);
         guideline3 = (Guideline) dlgView.findViewById(R.id.guideline3);
+        tvTitle = (TextView) dlgView.findViewById(R.id.tv_title);
 
         switch (mainActivity.mode) {
             case 1:
-            case 2:
+            case 2:  // 코골이, 무호흡 모드이면 자세를 오른쪽 또는 왼쪽 방향으로 교정
                 setRandomAdjDirection();
                 break;
             case 3:

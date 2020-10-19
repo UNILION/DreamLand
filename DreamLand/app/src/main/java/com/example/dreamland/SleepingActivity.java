@@ -122,6 +122,7 @@ public class SleepingActivity extends AppCompatActivity {
 
                 // 침대에 알람 메시지 전송
                 mainActivity.bluetoothService.writeBLT1("alarm");
+                Log.d(MainActivity.STATE_TAG, "alarm 전송");
             }
         };
 
@@ -175,8 +176,18 @@ public class SleepingActivity extends AppCompatActivity {
         Log.d(MainActivity.STATE_TAG, "down 전송");
         mainActivity.bluetoothService.writeBLT2("H2O_OFF");  // 가습기 off
         Log.d(MainActivity.STATE_TAG, "가습기 Off");
-        mainActivity.bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
-        Log.d(MainActivity.STATE_TAG, "산소발생기 Off");
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    sleep(5000);
+                    mainActivity.bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
+                    Log.d(MainActivity.STATE_TAG, "산소발생기 Off");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
         super.onDestroy();
     }
 

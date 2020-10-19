@@ -10,4 +10,36 @@
     <item
         android:id="@+id/insert_today_sleep"
         android:title="오늘 수면 정보 삽입" />
+
+    <item
+        android:id="@+id/test_act"
+        android:title="액추에이터 제어">
+    </item>
+
+    <item
+        android:title="가습기 제어">
+        <menu>
+            <item
+                android:id="@+id/test_hum_on"
+                android:title="On" />
+
+            <item
+                android:id="@+id/test_hum_off"
+                android:title="Off" />
+        </menu>
+    </item>
+
+    <item
+        android:title="산소발생기 제어">
+        <menu>
+            <item
+                android:id="@+id/test_O2_on"
+                android:title="On" />
+
+            <item
+                android:id="@+id/test_O2_off"
+                android:title="Off" />
+        </menu>
+    </item>
+
 </menu>

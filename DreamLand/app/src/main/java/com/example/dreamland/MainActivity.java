@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.dreamland.asynctask.DeleteAdjAsyncTask;
 import com.example.dreamland.asynctask.DeleteConAsyncTask;
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private AppDatabase db;
     private ActionBar actionBar;
     private BottomNavigationView bottomNavigation;
-    private SharedPreferences sf;
+    public SharedPreferences sf;
     public List<Sleep> sleepList;
     BluetoothAdapter bluetoothAdapter;
     BluetoothService bluetoothService;
@@ -144,7 +145,9 @@ public class MainActivity extends AppCompatActivity {
 
         sf = getSharedPreferences("bed", MODE_PRIVATE);
 
+
         mode = sf.getInt("mode", 0);
+        customAct = sf.getBoolean("customAct", false);
 
         // 모드 설정값이 없으면 모드 선택 액티비티로 이동
         if (mode == 0) {
@@ -427,6 +430,69 @@ public class MainActivity extends AppCompatActivity {
                 );
                 return true;
 
+            case R.id.test_act:
+                final View dlgView = getLayoutInflater().from(this).inflate(
+                        R.layout.dialog_bed_act_test, null);
+
+                final ToggleButton[] actButtons = new ToggleButton[9];
+                int[] buttonIds = {R.id.actButton0, R.id.actButton1,
+                        R.id.actButton2, R.id.actButton3, R.id.actButton4, R.id.actButton5,
+                        R.id.actButton6, R.id.actButton7, R.id.actButton8};
+
+                for (int i = 0; i < 9; i++) {
+                    actButtons[i] = (ToggleButton) dlgView.findViewById(buttonIds[i]);
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                final AlertDialog dialog = builder.setView(dlgView).create();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
+
+                // 완료 버튼
+                Button completeButton = dlgView.findViewById(R.id.yesButton);
+                completeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        StringBuilder actStr = new StringBuilder();
+                        for (int i = 0; i < 9; i++) {
+                            if (actButtons[i].isChecked()) {
+                                actStr.append("1,");
+                                if (i == 8) {
+                                    actStr.append("1,");
+                                }
+                            } else {
+                                actStr.append("0,");
+                                if (i == 8) {
+                                    actStr.append("0,");
+                                }
+                            }
+                        }
+                        actStr.deleteCharAt(actStr.length() - 1);
+                        bluetoothService.writeBLT1("act:" + actStr);
+                    }
+                });
+
+                Button downButton = dlgView.findViewById(R.id.downButton);
+                downButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                       bluetoothService.writeBLT1("down");
+                    }
+                });
+
+                return true;
+            case R.id.test_hum_on:
+                bluetoothService.writeBLT2("H2O_ON");
+                return true;
+            case R.id.test_hum_off:
+                bluetoothService.writeBLT2("H2O_OFF");
+                return true;
+            case R.id.test_O2_on:
+                bluetoothService.writeBLT2("O2_ON");
+                return true;
+            case R.id.test_O2_off:
+                bluetoothService.writeBLT2("O2_OFF");
+                return true;
             default:
                 return false;
         }
@@ -598,7 +664,6 @@ public class MainActivity extends AppCompatActivity {
                     sleep(DOWN_WAIT_TIME); // 2분 대기
                     bluetoothService.writeBLT1("down"); // 교정 해제
                     Log.d(STATE_TAG, "자세 교정 -> down 전송");
-                    Toast.makeText(MainActivity.this, "교정 해제", Toast.LENGTH_SHORT).show();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -883,11 +948,11 @@ public class MainActivity extends AppCompatActivity {
                                             if (pos.equals(PostureInfo.upPos)) {
                                                 if ((int) (Math.random() * 2) == 0) {
                                                     if (!customAct) {
-                                                        act = MainActivity.ACT_LEFT;
+                                                        act = ACT_LEFT;
                                                     }
                                                 } else {
                                                     if (!customAct) {
-                                                        act = MainActivity.ACT_RIGHT;
+                                                        act = ACT_RIGHT;
                                                     }
                                                 }
                                                 adjustPosture();
@@ -939,11 +1004,6 @@ public class MainActivity extends AppCompatActivity {
                                 String asleepAfter = getAsleepAfter(whenSleep, sleep.getWhenStart());
                                 sleep.setAsleepAfter(asleepAfter);
                                 Log.d(STATE_TAG, "잠들기까지 걸린 시간 / " + sleep.getAsleepAfter());
-
-                                // 사용자 교정자세 정보
-                                if (customAct) {  // 사용
-                                    act = sf.getString("act", "0,0,0,0,0,0,0,0,0,0");
-                                }
                             }
                             break;
                         case "stop": // 밴드에서 수면 종료
