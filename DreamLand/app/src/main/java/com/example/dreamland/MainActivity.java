@@ -769,7 +769,7 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         Toast.makeText(MainActivity.this,
-                                                "교정 정보 삽입: 교정 전 자세: " + beforePos + "  교정 후 자세: " + afterPos,
+                                                "교정 정보 삽입\n교정 전 자세: " + beforePos + "\n교정 후 자세: " + afterPos,
                                                 Toast.LENGTH_SHORT).show();
                                         Toast.makeText(MainActivity.this, "교정 해제", Toast.LENGTH_SHORT).show();
                                         beforePos = null;  // 자세정보 삽입 후 교정 전, 후 자세 정보 초기화
@@ -1031,12 +1031,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void insertCondition(long startTime, long endTime) {
-            Calendar c = Calendar.getInstance();
-            String sleepDate = sdf3.format(c.getTime());
             String strStart = sdf1.format(startTime);
             String strEnd = sdf1.format(endTime);
 
-            Condition condition = new Condition(sleepDate, strStart, strEnd);
+            Condition condition = new Condition(sleep.getSleepDate(), strStart, strEnd);
 
             new InsertConAsyncTask(db.conditionDao()).execute(condition);
             Log.d(STATE_TAG, "코골이, 무호흡 정보 삽입 -> 시작시간: " + strStart

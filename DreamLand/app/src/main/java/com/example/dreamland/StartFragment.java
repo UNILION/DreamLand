@@ -85,7 +85,8 @@ public class StartFragment extends Fragment {
         String whenStart = sdf1.format(calendar.getTime());
         mainActivity.sleep.setWhenStart(whenStart);
         if (calendar.get(Calendar.HOUR_OF_DAY) < 6) { // 자정이 지나면 전날로 표기
-            calendar.roll(Calendar.HOUR_OF_DAY, 7);
+            calendar.add(Calendar.HOUR_OF_DAY, -7);
+            Log.d(MainActivity.STATE_TAG, calendar.get(Calendar.HOUR_OF_DAY) + "");
         }
         String sleepDate = sdf3.format(calendar.getTime());
         mainActivity.sleep.setSleepDate(sleepDate);
