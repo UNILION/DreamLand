@@ -394,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
             String whenStart = createRandomStartTime();
             String whenSleep = createRandomWhenSleep(whenStart);
             String whenWake = createRandomWhenWake();
-            int heartRate = (int) (Math.random() * 70) + 40;
+            int heartRate = (int) (Math.random() * 50) + 40;
             int spo = (int) (Math.random() * 14) + 88;
             // 샘플 데이터 생성
             new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
@@ -419,6 +419,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.delete_sleeps:
                 new DeleteSleepAsyncTask(db.sleepDao()).execute();
                 new DeleteAdjAsyncTask(db.adjustmentDao()).execute();
+                new DeleteConAsyncTask(db.conditionDao()).execute();
                 return true;
 
             // 오늘 수면 데이터 삽입
@@ -608,12 +609,12 @@ public class MainActivity extends AppCompatActivity {
             spoScore = 60;
         }
 
-        if (heartRate >= 60 && heartRate <= 100) { // 심박수 정상 수치
+        if (heartRate >= 50 && heartRate <= 100) { // 심박수 정상 수치
             heartRateScore = 0;
         } else if (heartRate > 100) {  // 정상 수치보다 높음
             heartRateScore = heartRate - 100;
         } else {  // 정상 수치보다 낮음
-            heartRateScore = 60 - heartRate;  // 정상 수치의 최소인 60에서 1이 떨어지면 1점 증가
+            heartRateScore = 50 - heartRate;  // 정상 수치의 최소인 50에서 1이 떨어지면 1점 증가
         }
         return Math.max(100 - heartRateScore - spoScore, 0);
     }
