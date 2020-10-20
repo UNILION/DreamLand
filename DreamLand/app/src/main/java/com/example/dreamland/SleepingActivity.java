@@ -73,7 +73,7 @@ public class SleepingActivity extends AppCompatActivity {
         if (mainActivity.adjMode == 3) {
             mainActivity.adjustPostureImmediately();
         }
-        if(mainActivity.adjMode == 4) {  // 허리디스크 자세 교정
+        if (mainActivity.adjMode == 4) {  // 허리디스크 자세 교정
             mainActivity.act = MainActivity.ACT_DISC;
             mainActivity.maintainPosture();
         }
@@ -114,11 +114,7 @@ public class SleepingActivity extends AppCompatActivity {
         onAlarmListener = new AlarmManager.OnAlarmListener() {
             @Override
             public void onAlarm() { // 알람 시간이 되었을때
-                Log.d("AlarmTest", "onAlarm");
                 changeState(3);  // 리소스 변경
-
-                // 수면 중지
-                mainActivity.stopSleep();
 
                 // 침대에 알람 메시지 전송
                 mainActivity.bluetoothService.writeBLT1("alarm");

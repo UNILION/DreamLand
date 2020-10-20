@@ -592,15 +592,16 @@ public class MainActivity extends AppCompatActivity {
             });
 
             isSleep = false;
-            clearData();
-            ((SleepingActivity) SleepingActivity.mContext).finish();
         }
         isStarted = false;
+        clearData();
+        ((SleepingActivity) SleepingActivity.mContext).finish();
 
         // 알람이 울렸으면 알람 정지 메시지 보냄
         if(isAlarm) {
             isAlarm = false;
             bluetoothService.writeBLT1("alarmout");
+            Log.d(STATE_TAG, "alarmout 전송");
         }
     }
 
@@ -655,6 +656,11 @@ public class MainActivity extends AppCompatActivity {
         lowDecibelCount = 0;
         noConditionCount = 0;
         adjEnd = false;
+        isCon = false;
+        isAdjust = false;
+        isStarted = false;
+        isSleep = false;
+        isSense = false;
     }
 
     void maintainPosture() {
