@@ -600,26 +600,8 @@ public class MainActivity extends AppCompatActivity {
         // 알람이 울렸으면 알람 정지 메시지 보냄
         if(isAlarm) {
             isAlarm = false;
-            sendAlarmStopMessage();
+            bluetoothService.writeBLT1("alarmout");
         }
-    }
-
-
-    // 알람 정지 메시지를 보내는 함수
-    public void sendAlarmStopMessage() {
-        new Thread() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 10; i++) {
-                    bluetoothService.writeBLT1("alarmout");
-                    try {
-                        sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }.start();
     }
 
     // 건강 점수
