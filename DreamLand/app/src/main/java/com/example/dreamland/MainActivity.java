@@ -926,6 +926,8 @@ public class MainActivity extends AppCompatActivity {
                                             lowDecibelCount = 0;
                                         }
                                     }
+                                } else {
+                                    Log.d(STATE_TAG, "position 값을 전송받지 못함");
                                 }
                                 break;
                             case "position": // 무게 센서
