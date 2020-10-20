@@ -123,6 +123,7 @@ public class SleepingActivity extends AppCompatActivity {
                 // 침대에 알람 메시지 전송
                 mainActivity.bluetoothService.writeBLT1("alarm");
                 Log.d(MainActivity.STATE_TAG, "alarm 전송");
+                mainActivity.isAlarm = true;
             }
         };
 

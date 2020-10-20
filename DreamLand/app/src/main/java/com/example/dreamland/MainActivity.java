@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     boolean isCon = false;  // 상태 지속 여부
     boolean isStarted = false;  // 수면 측정 여부
     boolean adjEnd = false;  // 교정 횟수를 제한하기 위한 변수
+    boolean isAlarm = false;  // 알람이 울렸는지 여부
 
     ArrayList<Integer> heartRates;
     int currentHeartRate;
@@ -595,6 +596,30 @@ public class MainActivity extends AppCompatActivity {
             ((SleepingActivity) SleepingActivity.mContext).finish();
         }
         isStarted = false;
+
+        // 알람이 울렸으면 알람 정지 메시지 보냄
+        if(isAlarm) {
+            isAlarm = false;
+            sendAlarmStopMessage();
+        }
+    }
+
+
+    // 알람 정지 메시지를 보내는 함수
+    public void sendAlarmStopMessage() {
+        new Thread() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 10; i++) {
+                    bluetoothService.writeBLT1("alarmout");
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
     }
 
     // 건강 점수
