@@ -32,6 +32,7 @@ public class SleepingActivity extends AppCompatActivity {
     AlarmManager alarmManager;
     AlarmManager.OnAlarmListener onAlarmListener;
     boolean isSleep = false;
+    boolean isReceivedBandMsg = false;
     MainActivity mainActivity;
 
     @Override
@@ -69,9 +70,22 @@ public class SleepingActivity extends AppCompatActivity {
         // 알람 설정
         setAlarm(hour, minute);
 
-//        // 밴드에 시작 메시지 전송
-//        mainActivity.bluetoothService.writeBLT3("alarm");
-//        mainActivity.bluetoothService.writeBLT3("alarm");
+        // 밴드에 시작 메시지 전송
+        new Thread() {
+            @Override
+            public void run() {
+                while (!isReceivedBandMsg) {
+                    try {
+                        mainActivity.bluetoothService.writeBLT3("alarm");
+                        sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.d(MainActivity.STATE_TAG, "밴드 메시지 응답받음");
+            }
+        }.start();
+        Log.d(mainActivity.STATE_TAG, "밴드에 alarm 전송");
 
         // 즉시 교정을 선택하면 교정
         if (mainActivity.adjMode == 3) {
@@ -173,8 +187,12 @@ public class SleepingActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        mainActivity.bluetoothService.writeBLT1("down");
-        Log.d(MainActivity.STATE_TAG, "down 전송");
+        if (mainActivity.isAlarm) {
+            mainActivity.isAlarm = false;
+        } else {
+            mainActivity.bluetoothService.writeBLT1("down");
+            Log.d(MainActivity.STATE_TAG, "down 전송");
+        }
         mainActivity.bluetoothService.writeBLT2("H2O_OFF");  // 가습기 off
         Log.d(MainActivity.STATE_TAG, "가습기 Off");
         new Thread() {
