@@ -93,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
     boolean isStarted = false;  // 수면 측정 여부
     boolean adjEnd = false;  // 교정 횟수를 제한하기 위한 변수
     boolean isAlarm = false;  // 알람이 울렸는지 여부
+    boolean isLEDOnL = false;  // 왼쪽 이산화탄소 LED 켜짐 여부
+    boolean isLEDOnR = false;  // 오른쪽 이산화탄소 LED 켜짐 여부
+    boolean isLEDOnM = false;  // 중앙 이산화탄소 LED 켜짐 여부
 
     ArrayList<Integer> heartRates;
     int currentHeartRate;
@@ -117,6 +120,9 @@ public class MainActivity extends AppCompatActivity {
     int noConditionCount = 0;  // 정상 상태 감지 카운트
     int lowDecibelCount = 0;
     int moved = 0;
+    int initCO2M = -1;
+    int initCO2R = -1;
+    int initCO2L = -1;
 
     String act;
     String beforePos = null;  // 교정 전 자세
@@ -661,6 +667,12 @@ public class MainActivity extends AppCompatActivity {
         isStarted = false;
         isSleep = false;
         isSense = false;
+        initCO2L = -1;
+        initCO2R = -1;
+        initCO2M = -1;
+        isLEDOnL = false;
+        isLEDOnR = false;
+        isLEDOnM = false;
     }
 
     void maintainPosture() {
@@ -980,12 +992,64 @@ public class MainActivity extends AppCompatActivity {
 
                                 break;
                             case "CO2_L": // 이산화탄소 센서 왼쪽
+                                if (initCO2L == -1) {  // 초기값이 없음
+                                    initCO2L = (int) Double.parseDouble(msgArray[1]);
+                                } else {  // 초기값이 있음
+                                    int co2 = (int) Double.parseDouble(msgArray[1]);
+                                    if (co2 > initCO2L + 1) {  // 초기값보다 1초과 측정
+                                        if (!isLEDOnL) {
+                                            isLEDOnL = true;
+                                            bluetoothService.writeBLT2("L_ON");
+                                            Log.d(STATE_TAG, "L_ON 전송");
+                                        }
+                                    } else {
+                                        if (isLEDOnL) {
+                                            isLEDOnL = false;
+                                            bluetoothService.writeBLT2("L_OFF");
+                                            Log.d(STATE_TAG, "L_OFF 전송");
+                                        }
+                                    }
+                                }
                                 break;
                             case "CO2_R": // 이산화탄소 센서 오른쪽
+                                if (initCO2R == -1) {  // 초기값이 없음
+                                    initCO2R = (int) Double.parseDouble(msgArray[1]);
+                                } else {  // 초기값이 있음
+                                    int co2 = (int) Double.parseDouble(msgArray[1]);
+                                    if (co2 > initCO2R + 1) {  // 초기값보다 1초과 측정
+                                        if (!isLEDOnR) {
+                                            isLEDOnR = true;
+                                            bluetoothService.writeBLT2("R_ON");
+                                            Log.d(STATE_TAG, "R_ON 전송");
+                                        }
+                                    } else {
+                                        if (isLEDOnR) {
+                                            isLEDOnR = false;
+                                            bluetoothService.writeBLT2("R_OFF");
+                                            Log.d(STATE_TAG, "R_OFF 전송");
+                                        }
+                                    }
+                                }
                                 break;
                             case "CO2_M": // 이산화탄소 센서 중앙
-                                int co2 = (int) Double.parseDouble(msgArray[1]);
-                                isSense = co2 >= 6;
+                                if (initCO2M == -1) {  // 초기값이 없음
+                                    initCO2M = (int) Double.parseDouble(msgArray[1]);
+                                } else {  // 초기값이 있음
+                                    int co2 = (int) Double.parseDouble(msgArray[1]);
+                                    if (co2 > initCO2M + 1) {  // 초기값보다 1초과 측정
+                                        if (!isLEDOnM) {
+                                            isLEDOnM = true;
+                                            bluetoothService.writeBLT2("M_ON");
+                                            Log.d(STATE_TAG, "M_ON 전송");
+                                        }
+                                    } else {
+                                        if (isLEDOnM) {
+                                            isLEDOnM = false;
+                                            bluetoothService.writeBLT2("M_OFF");
+                                            Log.d(STATE_TAG, "M_OFF 전송");
+                                        }
+                                    }
+                                }
                                 break;
                             case "moved": // 뒤척임
                                 moved = Integer.parseInt(msgArray[1]);
