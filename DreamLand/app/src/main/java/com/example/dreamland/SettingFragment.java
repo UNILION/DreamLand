@@ -211,6 +211,7 @@ public class SettingFragment extends Fragment {
 
                 for (int i = 0; i < 9; i++) {
                     actButtons[i] = (ToggleButton) dlgView.findViewById(buttonIds[i]);
+
                     if (actArray[i].equals("1")) {
                         actButtons[i].setChecked(true);
                     } else {

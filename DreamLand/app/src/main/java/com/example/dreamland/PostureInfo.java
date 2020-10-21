@@ -30,9 +30,9 @@ public class PostureInfo {
                 currentPos = upPos;
             }
         } else if (posArr[0].equals("1") && posArr[2].equals("1") && posArr[4].equals("1")) {
-            currentPos = rightPos;
-        } else if (posArr[1].equals("1") && posArr[3].equals("1") && posArr[5].equals("1")) {
             currentPos = leftPos;
+        } else if (posArr[1].equals("1") && posArr[3].equals("1") && posArr[5].equals("1")) {
+            currentPos = rightPos;
         } else {
             currentPos = "자세 정보 없음";
         }
