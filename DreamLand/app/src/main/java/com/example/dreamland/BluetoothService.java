@@ -124,6 +124,11 @@ public class BluetoothService {
         connectedThreads[1].write(msg.getBytes());
     }
 
+    // 밴드에 전송
+    void writeBLT3(String msg) {
+        connectedThreads[2].write(msg.getBytes());
+    }
+
     // 기기 연결 후 사용
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;

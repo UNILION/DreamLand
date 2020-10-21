@@ -69,6 +69,10 @@ public class SleepingActivity extends AppCompatActivity {
         // 알람 설정
         setAlarm(hour, minute);
 
+        // 밴드에 시작 메시지 전송
+        mainActivity.bluetoothService.writeBLT3("alarm");
+        mainActivity.bluetoothService.writeBLT3("alarm");
+
         // 즉시 교정을 선택하면 교정
         if (mainActivity.adjMode == 3) {
             mainActivity.adjustPostureImmediately();
@@ -177,9 +181,12 @@ public class SleepingActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    sleep(5000);
+                    sleep(3000);
                     mainActivity.bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
                     Log.d(MainActivity.STATE_TAG, "산소발생기 Off");
+                    sleep(3000);
+                    mainActivity.bluetoothService.writeBLT2("Lamp_OFF");  // LED off
+                    Log.d(MainActivity.STATE_TAG, "모든 LED Off");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

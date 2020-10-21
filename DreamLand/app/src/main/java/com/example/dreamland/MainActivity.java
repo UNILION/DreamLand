@@ -61,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
     private final int DOWN_WAIT_TIME = 1000 * 20;  // 엑추에이터 내림 대기시간
     public static final String COMMAND_TAG = "BT-CMD";  // 블루투스 메시지
     public static final String STATE_TAG = "BT-STATE";  // 수면 상태 메시지
-    public static final String ACT_LEFT = "1,0,1,0,1,0,1,0,0,0";  // 자세를 왼쪽으로 교정
-    public static final String ACT_RIGHT = "0,1,0,1,0,1,0,1,0,0";  // 자세를 오른쪽으로 교정
+    public static final String ACT_LEFT = "0,1,0,1,0,1,0,1,0,0";  // 자세를 왼쪽으로 교정
+    public static final String ACT_RIGHT = "1,0,1,0,1,0,1,0,0,0";  // 자세를 오른쪽으로 교정
     public static final String ACT_DISC = "0,0,0,0,0,0,0,0,1,1";  // 허리디스크 교정 자세
 
 
