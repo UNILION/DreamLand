@@ -108,6 +108,7 @@ public class SleepingActivity extends AppCompatActivity {
                 } else {
                     alarmManager.cancel(onAlarmListener); // 알람 취소
                 }
+                setResult(99);
                 finish();
             }
         });

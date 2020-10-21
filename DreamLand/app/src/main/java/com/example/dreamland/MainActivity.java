@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     final int REQUEST_ENABLE_BT = 111;
     final int RC_INIT_ACTIVITY = 1000;
-    final int RC_SLEEPING_ACTIVITY = 2000;
+    public static final int RC_SLEEPING_ACTIVITY = 2000;
     //TODO: 테스트로 30초 설정
     private final int DOWN_WAIT_TIME = 1000 * 30;  // 엑추에이터 내림 대기시간
     public static final String COMMAND_TAG = "BT-CMD";  // 블루투스 메시지
@@ -555,7 +555,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case RC_SLEEPING_ACTIVITY: // 수면 중지
-                stopSleep();  // 측정 중지
+                if (resultCode == 99) {
+                    stopSleep();  // 측정 중지
+                }
                 break;
         }
     }

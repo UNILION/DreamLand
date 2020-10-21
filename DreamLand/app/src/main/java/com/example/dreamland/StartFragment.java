@@ -91,7 +91,7 @@ public class StartFragment extends Fragment {
         String sleepDate = sdf3.format(calendar.getTime());
         mainActivity.sleep.setSleepDate(sleepDate);
         Log.d(MainActivity.STATE_TAG, "측정 시작 / " + sleepDate + " " + whenStart);
-        mainActivity.startActivityForResult(intent, 2000);
+        mainActivity.startActivityForResult(intent, MainActivity.RC_SLEEPING_ACTIVITY);
         mainActivity.overridePendingTransition(R.anim.down_in, R.anim.stop);
     }
 
