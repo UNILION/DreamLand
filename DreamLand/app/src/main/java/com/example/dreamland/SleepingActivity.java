@@ -69,9 +69,9 @@ public class SleepingActivity extends AppCompatActivity {
         // 알람 설정
         setAlarm(hour, minute);
 
-        // 밴드에 시작 메시지 전송
-        mainActivity.bluetoothService.writeBLT3("alarm");
-        mainActivity.bluetoothService.writeBLT3("alarm");
+//        // 밴드에 시작 메시지 전송
+//        mainActivity.bluetoothService.writeBLT3("alarm");
+//        mainActivity.bluetoothService.writeBLT3("alarm");
 
         // 즉시 교정을 선택하면 교정
         if (mainActivity.adjMode == 3) {
