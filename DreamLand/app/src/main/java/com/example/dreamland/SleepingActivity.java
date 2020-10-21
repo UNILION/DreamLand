@@ -199,10 +199,10 @@ public class SleepingActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    sleep(3000);
+                    sleep(10000);
                     mainActivity.bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
                     Log.d(MainActivity.STATE_TAG, "산소발생기 Off");
-                    sleep(3000);
+                    sleep(10000);
                     mainActivity.bluetoothService.writeBLT2("Lamp_OFF");  // LED off
                     Log.d(MainActivity.STATE_TAG, "모든 LED Off");
                 } catch (InterruptedException e) {

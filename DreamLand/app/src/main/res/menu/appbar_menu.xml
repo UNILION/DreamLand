@@ -42,4 +42,34 @@
         </menu>
     </item>
 
+    <item
+        android:title="LED">
+        <menu>
+            <item
+                android:id="@+id/test_m_led_on"
+                android:title="M_On" />
+            <item
+                android:id="@+id/test_m_led_off"
+                android:title="M_Off" />
+
+            <item
+                android:id="@+id/test_l_led_on"
+                android:title="L_On" />
+            <item
+                android:id="@+id/test_l_led_off"
+                android:title="L_Off" />
+
+            <item
+                android:id="@+id/test_r_led_on"
+                android:title="R_On" />
+            <item
+                android:id="@+id/test_r_led_off"
+                android:title="R_Off" />
+
+            <item
+                android:id="@+id/test_lamp_off"
+                android:title="Lamp_OFF" />
+        </menu>
+    </item>
+
 </menu>
