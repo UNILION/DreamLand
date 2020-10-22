@@ -96,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
     boolean isLEDOnL = false;  // 왼쪽 이산화탄소 LED 켜짐 여부
     boolean isLEDOnR = false;  // 오른쪽 이산화탄소 LED 켜짐 여부
     boolean isLEDOnM = false;  // 중앙 이산화탄소 LED 켜짐 여부
+    // TODO: TEST
+    boolean isVisible = true;
 
     ArrayList<Integer> heartRates;
     int currentHeartRate;
@@ -363,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 잠들기까지 걸린 시간을 반환하는 함수
-    private String getAsleepAfter(String whenSleep, String whenStart) {
+    public String getAsleepAfter(String whenSleep, String whenStart) {
         long diffTime = 0L;
         String asleepAfter = "";
         try {
@@ -414,6 +416,7 @@ public class MainActivity extends AppCompatActivity {
             );
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -484,11 +487,11 @@ public class MainActivity extends AppCompatActivity {
                 downButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                       bluetoothService.writeBLT1("down");
+                        bluetoothService.writeBLT1("down");
                     }
                 });
-
                 return true;
+
             case R.id.test_hum_on:
                 bluetoothService.writeBLT2("H2O_ON");
                 return true;
@@ -521,6 +524,10 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.test_lamp_off:
                 bluetoothService.writeBLT2("Lamp_OFF");
+                return true;
+            // TODO: TEST
+            case R.id.test_view_visibility:
+                isVisible = false;
                 return true;
             default:
                 return false;
@@ -626,7 +633,7 @@ public class MainActivity extends AppCompatActivity {
         clearData();
 
         // 알람이 울렸으면 알람 정지 메시지 보냄
-        if(isAlarm) {
+        if (isAlarm) {
             bluetoothService.writeBLT1("alarmout");
             Log.d(STATE_TAG, "alarmout 전송");
         }
@@ -821,7 +828,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     // 블루투스 메시지 핸들러
     class BluetoothMessageHandler extends Handler {
         @Override
@@ -903,7 +909,7 @@ public class MainActivity extends AppCompatActivity {
                                         if (isCon) {
                                             noConditionCount = 0;
                                         }
-                                        if(lowDecibelCount > 5) {  // 데시벨이 낮게 유지되고 산소포화도가 낮으면 무호흡이라고 판단
+                                        if (lowDecibelCount > 5) {  // 데시벨이 낮게 유지되고 산소포화도가 낮으면 무호흡이라고 판단
                                             lowDecibelCount = 0;
                                             noConditionCount = 0;
                                             Toast.makeText(MainActivity.this,
@@ -1127,7 +1133,7 @@ public class MainActivity extends AppCompatActivity {
 
             new InsertConAsyncTask(db.conditionDao()).execute(condition);
             Log.d(STATE_TAG, "코골이, 무호흡 정보 삽입 -> 시작시간: " + strStart
-            + "  종료시간: " + strEnd);
+                    + "  종료시간: " + strEnd);
         }
     }
 }

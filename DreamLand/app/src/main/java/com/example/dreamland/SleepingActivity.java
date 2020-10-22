@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlarmManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,11 +12,17 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
+import com.example.dreamland.database.Sleep;
 
 import java.util.Calendar;
+
+import static com.example.dreamland.MySimpleDateFormat.sdf1;
 
 public class SleepingActivity extends AppCompatActivity {
 
@@ -31,9 +38,12 @@ public class SleepingActivity extends AppCompatActivity {
     TextView tvTime;
     AlarmManager alarmManager;
     AlarmManager.OnAlarmListener onAlarmListener;
-    boolean isSleep = false;
     boolean isReceivedBandMsg = false;
     MainActivity mainActivity;
+    // TODO: 테스트
+    ToggleButton testButton;
+    Button testStart;
+    Button testStop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +59,65 @@ public class SleepingActivity extends AppCompatActivity {
         ivSleepSate = findViewById(R.id.ivSleepState);
         tvSleepState = findViewById(R.id.tvSleepState);
         tvTime = findViewById(R.id.tv_time);
+
+        // TODO: 테스트
+        testButton = findViewById(R.id.btn_test_action);
+        testButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                switch (mainActivity.mode) {
+                    case InitActivity.SNORING_PREVENTION_MODE:
+                        if (b) {
+                            changeState(SleepingActivity.STATE_SNORING);
+                            Toast.makeText(SleepingActivity.this, "코골이 중", Toast.LENGTH_SHORT).show();
+                            mainActivity.adjustPosture();
+                        } else {
+                            changeState(SleepingActivity.STATE_SLEEP);
+                            Toast.makeText(SleepingActivity.this, "코골이 종료", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case InitActivity.APNEA_PREVENTION_MODE:
+                        if (b) {
+                            changeState(SleepingActivity.STATE_APNEA);
+                            Toast.makeText(SleepingActivity.this, "무호흡 중", Toast.LENGTH_SHORT).show();
+                            mainActivity.adjustPosture();
+                        } else {
+                            changeState(SleepingActivity.STATE_SLEEP);
+                            Toast.makeText(SleepingActivity.this, "무호흡 종료", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                }
+            }
+        });
+        testStart = findViewById(R.id.btn_start);
+        testStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!mainActivity.isSleep) {
+                    String whenSleep = sdf1.format(Calendar.getInstance().getTime());
+                    mainActivity.sleep.setWhenSleep(whenSleep); // 잠에 든 시각
+                    mainActivity.isSleep = true;
+                    Log.d(MainActivity.STATE_TAG, "사용자가 잠에 들었습니다 / " + mainActivity.sleep.getWhenSleep());
+                    ((SleepingActivity) SleepingActivity.mContext).changeState(
+                            SleepingActivity.STATE_SLEEP);
+                    Toast.makeText(SleepingActivity.this,
+                            "사용자가 잠에 들었습니다", Toast.LENGTH_SHORT).show();
+
+                    // 잠들기까지 걸린 시간
+                    String asleepAfter = mainActivity.getAsleepAfter(whenSleep, mainActivity.sleep.getWhenStart());
+                    mainActivity.sleep.setAsleepAfter(asleepAfter);
+                    Log.d(MainActivity.STATE_TAG, "잠들기까지 걸린 시간 / " + mainActivity.sleep.getAsleepAfter());
+                }
+            }
+        });
+        testStop = findViewById(R.id.btn_stop);
+        testStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mainActivity.stopSleep();
+            }
+        });
+        setButtonsVisibility(mainActivity.isVisible);
 
         mainActivity.isStarted = true;
 
@@ -103,15 +172,25 @@ public class SleepingActivity extends AppCompatActivity {
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isSleep) {
-                    // 수면 데이터 저장
-                } else {
+                if (!mainActivity.isSleep) {
                     alarmManager.cancel(onAlarmListener); // 알람 취소
                 }
                 setResult(99);
                 finish();
             }
         });
+    }
+
+    // TODO: Test
+    public void setButtonsVisibility(boolean b) {
+        if (!b) {
+            testButton.setBackgroundColor(Color.TRANSPARENT);
+            testStart.setBackgroundColor(Color.TRANSPARENT);
+            testStop.setBackgroundColor(Color.TRANSPARENT);
+            testButton.setText("");
+            testStart.setText("");
+            testStop.setText("");
+        }
     }
 
     // 알람 시작 함수

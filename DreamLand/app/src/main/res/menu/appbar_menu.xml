@@ -13,11 +13,9 @@
 
     <item
         android:id="@+id/test_act"
-        android:title="액추에이터 제어">
-    </item>
+        android:title="액추에이터 제어" />
 
-    <item
-        android:title="가습기 제어">
+    <item android:title="가습기 제어">
         <menu>
             <item
                 android:id="@+id/test_hum_on"
@@ -29,8 +27,7 @@
         </menu>
     </item>
 
-    <item
-        android:title="산소발생기 제어">
+    <item android:title="산소발생기 제어">
         <menu>
             <item
                 android:id="@+id/test_O2_on"
@@ -42,8 +39,7 @@
         </menu>
     </item>
 
-    <item
-        android:title="LED">
+    <item android:title="LED">
         <menu>
             <item
                 android:id="@+id/test_m_led_on"
@@ -72,4 +68,7 @@
         </menu>
     </item>
 
+    <item
+        android:id="@+id/test_view_visibility"
+        android:title="버튼 숨기기" />
 </menu>
