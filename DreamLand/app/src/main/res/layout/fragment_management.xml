@@ -8,6 +8,7 @@
     android:hapticFeedbackEnabled="true"
     android:orientation="vertical"
     android:saveEnabled="true"
+    android:splitMotionEvents="true"
     tools:context=".SettingFragment">
 
     <FrameLayout
@@ -44,7 +45,8 @@
                     app:cpv_barWidth="12dp"
                     app:cpv_maxValue="100"
                     app:cpv_rimColor="@color/colorGray"
-                    app:cpv_rimWidth="10dp" />
+                    app:cpv_rimWidth="10dp"
+                    app:cpv_textSize="0sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -252,8 +254,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:orientation="horizontal"
-                                android:clickable="true">
+                                android:clickable="true"
+                                android:orientation="horizontal">
 
                                 <ImageView
                                     android:id="@+id/iv_condition"
