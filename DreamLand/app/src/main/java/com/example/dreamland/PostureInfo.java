@@ -24,7 +24,7 @@ public class PostureInfo {
         String[] posArr = position.split(",");
         if (posArr[0].equals("1") && posArr[2].equals("1") && posArr[4].equals("1")
                 && posArr[1].equals("1") && posArr[3].equals("1") && posArr[5].equals("1")) {
-            if (isSense) {
+            if (isSense) {  // 이산화탄소가 감지되면 엎드림
                 currentPos = downPos;
             } else {
                 currentPos = upPos;
@@ -33,8 +33,8 @@ public class PostureInfo {
             currentPos = leftPos;
         } else if (posArr[1].equals("1") && posArr[3].equals("1") && posArr[5].equals("1")) {
             currentPos = rightPos;
-        } else {
-            currentPos = "자세 정보 없음";
+        } else {  // 자세 판별이 되지 않을 경우 정자세
+            currentPos = upPos;
         }
         Log.d(MainActivity.STATE_TAG, "현제 자세 -> " + currentPos);
         return currentPos;
