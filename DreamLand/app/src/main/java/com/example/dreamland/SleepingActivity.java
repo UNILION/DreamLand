@@ -40,7 +40,7 @@ public class SleepingActivity extends AppCompatActivity {
     AlarmManager.OnAlarmListener onAlarmListener;
     boolean isReceivedBandMsg = false;
     MainActivity mainActivity;
-    // TODO: 테스트
+    // 테스트를 위한 버튼
     ToggleButton testButton;
     Button testStart;
     Button testStop;
@@ -68,12 +68,10 @@ public class SleepingActivity extends AppCompatActivity {
                 switch (mainActivity.mode) {
                     case InitActivity.SNORING_PREVENTION_MODE:
                         if (b) {
-                            changeState(SleepingActivity.STATE_SNORING);
-                            Toast.makeText(SleepingActivity.this, "코골이 중", Toast.LENGTH_SHORT).show();
-                            mainActivity.adjustPosture();
+                            mainActivity.bluetoothMessageHandler.processCommand("SOU:80");
                         } else {
-                            changeState(SleepingActivity.STATE_SLEEP);
-                            Toast.makeText(SleepingActivity.this, "코골이 종료", Toast.LENGTH_SHORT).show();
+                            mainActivity.noConditionCount = 5;
+                            mainActivity.bluetoothMessageHandler.processCommand("SOU:40");
                         }
                         break;
                     case InitActivity.APNEA_PREVENTION_MODE:

@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     final int RC_INIT_ACTIVITY = 1000;
     public static final int RC_SLEEPING_ACTIVITY = 2000;
     //TODO: 테스트로 30초 설정
-    private final int DOWN_WAIT_TIME = 1000 * 30;  // 엑추에이터 내림 대기시간
+    private final int DOWN_WAIT_TIME = 1000 * 10;  // 엑추에이터 내림 대기시간
     public static final String COMMAND_TAG = "BT-CMD";  // 블루투스 메시지
     public static final String STATE_TAG = "BT-STATE";  // 수면 상태 메시지
     public static final String ACT_LEFT = "0,1,0,1,0,1,0,1,0,0";  // 자세를 왼쪽으로 교정
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     BluetoothAdapter bluetoothAdapter;
     BluetoothService bluetoothService;
     ArrayList<BluetoothSocket> bluetoothSocketArrayList = null;
-    Handler bluetoothMessageHandler;
+    public BluetoothMessageHandler bluetoothMessageHandler;
     PostureInfo postureInfo;  // 현제 자세 정보
 
     boolean isConnected = false; // 블루투스 연결 여부
@@ -441,6 +441,7 @@ public class MainActivity extends AppCompatActivity {
                 );
                 return true;
 
+            // 엑추에이터 제어
             case R.id.test_act:
                 final View dlgView = getLayoutInflater().from(this).inflate(
                         R.layout.dialog_bed_act_test, null);
@@ -525,7 +526,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.test_lamp_off:
                 bluetoothService.writeBLT2("Lamp_OFF");
                 return true;
-            // TODO: TEST
             case R.id.test_view_visibility:
                 isVisible = false;
                 return true;
@@ -767,6 +767,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void adjustPosture() {
+        // 이미지 리소스 변경
+        if (mode == InitActivity.SNORING_PREVENTION_MODE) {
+            ((SleepingActivity) SleepingActivity.mContext).changeState(
+                    SleepingActivity.STATE_SNORING);
+        } else if (mode == InitActivity.APNEA_PREVENTION_MODE) {
+            ((SleepingActivity) SleepingActivity.mContext).changeState(
+                    SleepingActivity.STATE_APNEA);
+        }
         if (!isAdjust) {  // 교정중이 아닐때
             if (!adjEnd) {
                 if (adjMode == 2) {  // 수면 중 한 번 교정을 선택하면 1회 교정 후 교정 불가
@@ -778,15 +786,6 @@ public class MainActivity extends AppCompatActivity {
                     conStartTime = System.currentTimeMillis();
                     beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
                     sendAct();
-
-                    // 이미지 리소스 변경
-                    if (mode == InitActivity.SNORING_PREVENTION_MODE) {
-                        ((SleepingActivity) SleepingActivity.mContext).changeState(
-                                SleepingActivity.STATE_SNORING);
-                    } else if (mode == InitActivity.APNEA_PREVENTION_MODE) {
-                        ((SleepingActivity) SleepingActivity.mContext).changeState(
-                                SleepingActivity.STATE_APNEA);
-                    }
 
                     Calendar calendar = Calendar.getInstance();
                     final String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
@@ -823,6 +822,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }.start();
                 }
+            } else {  // 교정을 더이상 하지 않을 때
+                isCon = true;
             }
         }
     }
@@ -851,7 +852,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        private void processCommand(String message) {
+        public void processCommand(String message) {
             if (isStarted) {  // 측정 중
                 Log.d(COMMAND_TAG, "명령 -> " + message);
                 if (message.contains(":")) {
@@ -1125,7 +1126,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        private void insertCondition(long startTime, long endTime) {
+        public void insertCondition(long startTime, long endTime) {
             String strStart = sdf1.format(startTime);
             String strEnd = sdf1.format(endTime);
 
