@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Integer> humidities; // 습도 리스트
     int currentHumidity;
     ArrayList<Integer> temps; // 온도 리스트
+
     int currentTemp;
     ArrayList<Integer> problems; // 코골이, 무호흡 리스트
     Sleep sleep;

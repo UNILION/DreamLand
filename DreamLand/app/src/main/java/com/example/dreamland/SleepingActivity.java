@@ -76,12 +76,11 @@ public class SleepingActivity extends AppCompatActivity {
                         break;
                     case InitActivity.APNEA_PREVENTION_MODE:
                         if (b) {
-                            changeState(SleepingActivity.STATE_APNEA);
-                            Toast.makeText(SleepingActivity.this, "무호흡 중", Toast.LENGTH_SHORT).show();
-                            mainActivity.adjustPosture();
+                            mainActivity.lowDecibelCount = 6;
+                            mainActivity.bluetoothMessageHandler.processCommand("spo:90");
                         } else {
-                            changeState(SleepingActivity.STATE_SLEEP);
-                            Toast.makeText(SleepingActivity.this, "무호흡 종료", Toast.LENGTH_SHORT).show();
+                            mainActivity.noConditionCount = 4;
+                            mainActivity.bluetoothMessageHandler.processCommand("spo:100");
                         }
                         break;
                 }
