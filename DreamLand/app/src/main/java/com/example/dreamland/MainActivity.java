@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
     final int REQUEST_ENABLE_BT = 111;
     final int RC_INIT_ACTIVITY = 1000;
     public static final int RC_SLEEPING_ACTIVITY = 2000;
-    //TODO: 테스트로 30초 설정
-    private final int DOWN_WAIT_TIME = 1000 * 10;  // 엑추에이터 내림 대기시간
+    //TODO: 테스트로 40초 설정
+    private final int DOWN_WAIT_TIME = 1000 * 40;  // 엑추에이터 내림 대기시간
     public static final String COMMAND_TAG = "BT-CMD";  // 블루투스 메시지
     public static final String STATE_TAG = "BT-STATE";  // 수면 상태 메시지
     public static final String ACT_LEFT = "0,1,0,1,0,1,0,1,0,0";  // 자세를 왼쪽으로 교정
