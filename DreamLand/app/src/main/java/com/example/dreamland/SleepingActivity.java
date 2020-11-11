@@ -155,7 +155,7 @@ public class SleepingActivity extends AppCompatActivity {
 
         // 즉시 교정을 선택하면 교정
         if (mainActivity.adjMode == 3) {
-            mainActivity.adjustPostureImmediately();
+            mainActivity.maintainPosture();
         }
         if (mainActivity.adjMode == 4) {  // 허리디스크 자세 교정
             mainActivity.act = MainActivity.ACT_DISC;

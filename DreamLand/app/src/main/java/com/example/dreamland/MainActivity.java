@@ -710,23 +710,6 @@ public class MainActivity extends AppCompatActivity {
         sendAct();
     }
 
-    void adjustPostureImmediately() {
-        adjEnd = true;
-        sendAct();
-        new Thread() { // 2분 후 down 메시지를 전송
-            @Override
-            public synchronized void run() {
-                try {
-                    sleep(DOWN_WAIT_TIME); // 2분 대기
-                    bluetoothService.writeBLT1("down"); // 교정 해제
-                    Log.d(STATE_TAG, "자세 교정 -> down 전송");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-    }
-
     void sendAct() {
         Log.d(STATE_TAG, "자세 교정 -> act:" + act + " 전송");
         bluetoothService.writeBLT1("act:" + act); // 교정 정보 전송
