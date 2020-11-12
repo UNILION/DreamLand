@@ -918,41 +918,38 @@ public class MainActivity extends AppCompatActivity {
                                 if (!isAdjust) {  // 교정 중이 아닐 때 소릿값 처리
                                     int decibel = (int) Double.parseDouble(msgArray[1]);
                                     problems.add(decibel); // 데시벨 저장
-                                    if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
-                                        if (mode == InitActivity.SNORING_PREVENTION_MODE) { // 코골이 방지 모드
-                                            if (decibel > 60) {  // 60데시벨이 넘으면 자세 교정
-                                                Toast.makeText(MainActivity.this,
-                                                        "코골이 중", Toast.LENGTH_SHORT).show();
-                                                adjustPosture();
-                                            } else {  // 코골이 데시벨 이하일때
-                                                if (isCon) {
-                                                    if (noConditionCount == 5) {  // 카운트가 5이 되면 코골이 끝
-                                                        conEndTime = System.currentTimeMillis();
-                                                        Log.d(STATE_TAG, "코골이 종료");
-                                                        Toast.makeText(MainActivity.this,
-                                                                "코골이 종료", Toast.LENGTH_SHORT).show();
-                                                        ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
-                                                                SleepingActivity.STATE_SLEEP);
-                                                        isCon = false;
-                                                        noConditionCount = 0;
-                                                        conMilliTime += conEndTime - conStartTime;
-                                                        insertCondition(conStartTime, conEndTime);  // 코골이, 무호흡 데이터 삽입
-                                                    } else {
-                                                        Log.d(STATE_TAG, "noConditionCount  -> " + noConditionCount);
-                                                        noConditionCount++;
-                                                    }
+
+                                    if (mode == InitActivity.SNORING_PREVENTION_MODE) { // 코골이 방지 모드
+                                        if (decibel > 60) {  // 60데시벨이 넘으면 자세 교정
+                                            Toast.makeText(MainActivity.this,
+                                                    "코골이 중", Toast.LENGTH_SHORT).show();
+                                            adjustPosture();
+                                        } else {  // 코골이 데시벨 이하일때
+                                            if (isCon) {
+                                                if (noConditionCount == 5) {  // 카운트가 5이 되면 코골이 끝
+                                                    conEndTime = System.currentTimeMillis();
+                                                    Log.d(STATE_TAG, "코골이 종료");
+                                                    Toast.makeText(MainActivity.this,
+                                                            "코골이 종료", Toast.LENGTH_SHORT).show();
+                                                    ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
+                                                            SleepingActivity.STATE_SLEEP);
+                                                    isCon = false;
+                                                    noConditionCount = 0;
+                                                    conMilliTime += conEndTime - conStartTime;
+                                                    insertCondition(conStartTime, conEndTime);  // 코골이, 무호흡 데이터 삽입
+                                                } else {
+                                                    Log.d(STATE_TAG, "noConditionCount  -> " + noConditionCount);
+                                                    noConditionCount++;
                                                 }
                                             }
-                                        } else if (mode == InitActivity.APNEA_PREVENTION_MODE) { // 무호흡 모드
-                                            if (decibel < 50) {  // 데시벨이 50이하이고 카운트가 5 미만이면 카운트 증가
-                                                lowDecibelCount++;
-                                                Log.d(STATE_TAG, "lowDecibelCount -> " + lowDecibelCount);
-                                            } else {
-                                                lowDecibelCount = 0;
-                                            }
                                         }
-                                    } else {
-                                        Log.d(STATE_TAG, "position 값을 전송받지 못함");
+                                    } else if (mode == InitActivity.APNEA_PREVENTION_MODE) { // 무호흡 모드
+                                        if (decibel < 50) {  // 데시벨이 50이하이고 카운트가 5 미만이면 카운트 증가
+                                            lowDecibelCount++;
+                                            Log.d(STATE_TAG, "lowDecibelCount -> " + lowDecibelCount);
+                                        } else {
+                                            lowDecibelCount = 0;
+                                        }
                                     }
                                 }
                                 break;
@@ -1050,6 +1047,7 @@ public class MainActivity extends AppCompatActivity {
                                     initCO2M = (int) Double.parseDouble(msgArray[1]);
                                 } else {  // 초기값이 있음
                                     int co2 = (int) Double.parseDouble(msgArray[1]);
+                                    isSense = true;
                                     if (co2 > initCO2M + 1) {  // 초기값보다 1초과 측정
                                         if (!isLEDOnM) {
                                             isLEDOnM = true;
@@ -1057,6 +1055,7 @@ public class MainActivity extends AppCompatActivity {
                                             Log.d(STATE_TAG, "M_ON 전송");
                                         }
                                     } else {
+                                        isSense = false;
                                         if (isLEDOnM) {
                                             isLEDOnM = false;
                                             bluetoothService.writeBLT2("M_OFF");
