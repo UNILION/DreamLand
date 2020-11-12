@@ -766,6 +766,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 noConditionCount = 0;
                 if (!isCon || mode == InitActivity.DISEASE_ALLEVIATION_MODE) {
+                    isAdjust = true; // 교정중으로 상태 변경
                     isCon = true;
                     conStartTime = System.currentTimeMillis();
                     beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
@@ -773,7 +774,6 @@ public class MainActivity extends AppCompatActivity {
 
                     Calendar calendar = Calendar.getInstance();
                     final String adjTime = sdf1.format(calendar.getTime()); // 교정 시간
-                    isAdjust = true; // 교정중으로 상태 변경
 
                     new Thread() { // 2분 후 down 메시지를 전송 후 자세정보 삽입
                         @Override
@@ -781,7 +781,6 @@ public class MainActivity extends AppCompatActivity {
                             try {
                                 sleep(DOWN_WAIT_TIME); // 2분 대기
                                 bluetoothService.writeBLT1("down"); // 교정 해제
-                                isAdjust = false; // 교정중 아님
                                 Log.d(STATE_TAG, "자세 교정 -> down 전송");
                                 adjCount++; // 교정 횟수 증가
                                 afterPos = postureInfo.getCurrentPos();  // 교정 후 자세
@@ -916,44 +915,45 @@ public class MainActivity extends AppCompatActivity {
                                 if (mode == InitActivity.DISEASE_ALLEVIATION_MODE) {  // 질환 완화 모드는 무시
                                     break;
                                 }
-
-                                int decibel = (int) Double.parseDouble(msgArray[1]);
-                                problems.add(decibel); // 데시벨 저장
-                                if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
-                                    if (mode == InitActivity.SNORING_PREVENTION_MODE) { // 코골이 방지 모드
-                                        if (decibel > 60) {  // 60데시벨이 넘으면 자세 교정
-                                            Toast.makeText(MainActivity.this,
-                                                    "코골이 중", Toast.LENGTH_SHORT).show();
-                                            adjustPosture();
-                                        } else {  // 코골이 데시벨 이하일때
-                                            if (isCon) {
-                                                if (noConditionCount == 5) {  // 카운트가 5이 되면 코골이 끝
-                                                    conEndTime = System.currentTimeMillis();
-                                                    Log.d(STATE_TAG, "코골이 종료");
-                                                    Toast.makeText(MainActivity.this,
-                                                            "코골이 종료", Toast.LENGTH_SHORT).show();
-                                                    ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
-                                                            SleepingActivity.STATE_SLEEP);
-                                                    isCon = false;
-                                                    noConditionCount = 0;
-                                                    conMilliTime += conEndTime - conStartTime;
-                                                    insertCondition(conStartTime, conEndTime);  // 코골이, 무호흡 데이터 삽입
-                                                } else {
-                                                    Log.d(STATE_TAG, "noConditionCount  -> " + noConditionCount);
-                                                    noConditionCount++;
+                                if (!isAdjust) {  // 교정 중이 아닐 때 소릿값 처리
+                                    int decibel = (int) Double.parseDouble(msgArray[1]);
+                                    problems.add(decibel); // 데시벨 저장
+                                    if (postureInfo.getCurrentPos() != null) { // 교정을 하기 위해 자세 정보가 필요함
+                                        if (mode == InitActivity.SNORING_PREVENTION_MODE) { // 코골이 방지 모드
+                                            if (decibel > 60) {  // 60데시벨이 넘으면 자세 교정
+                                                Toast.makeText(MainActivity.this,
+                                                        "코골이 중", Toast.LENGTH_SHORT).show();
+                                                adjustPosture();
+                                            } else {  // 코골이 데시벨 이하일때
+                                                if (isCon) {
+                                                    if (noConditionCount == 5) {  // 카운트가 5이 되면 코골이 끝
+                                                        conEndTime = System.currentTimeMillis();
+                                                        Log.d(STATE_TAG, "코골이 종료");
+                                                        Toast.makeText(MainActivity.this,
+                                                                "코골이 종료", Toast.LENGTH_SHORT).show();
+                                                        ((SleepingActivity) SleepingActivity.mContext).changeState(  // 리소스 변경
+                                                                SleepingActivity.STATE_SLEEP);
+                                                        isCon = false;
+                                                        noConditionCount = 0;
+                                                        conMilliTime += conEndTime - conStartTime;
+                                                        insertCondition(conStartTime, conEndTime);  // 코골이, 무호흡 데이터 삽입
+                                                    } else {
+                                                        Log.d(STATE_TAG, "noConditionCount  -> " + noConditionCount);
+                                                        noConditionCount++;
+                                                    }
                                                 }
                                             }
+                                        } else if (mode == InitActivity.APNEA_PREVENTION_MODE) { // 무호흡 모드
+                                            if (decibel < 50) {  // 데시벨이 50이하이고 카운트가 5 미만이면 카운트 증가
+                                                lowDecibelCount++;
+                                                Log.d(STATE_TAG, "lowDecibelCount -> " + lowDecibelCount);
+                                            } else {
+                                                lowDecibelCount = 0;
+                                            }
                                         }
-                                    } else if (mode == InitActivity.APNEA_PREVENTION_MODE) { // 무호흡 모드
-                                        if (decibel < 50) {  // 데시벨이 50이하이고 카운트가 5 미만이면 카운트 증가
-                                            lowDecibelCount++;
-                                            Log.d(STATE_TAG, "lowDecibelCount -> " + lowDecibelCount);
-                                        } else {
-                                            lowDecibelCount = 0;
-                                        }
+                                    } else {
+                                        Log.d(STATE_TAG, "position 값을 전송받지 못함");
                                     }
-                                } else {
-                                    Log.d(STATE_TAG, "position 값을 전송받지 못함");
                                 }
                                 break;
                             case "position": // 무게 센서
@@ -1102,6 +1102,10 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case "stop": // 밴드에서 수면 종료
                             stopSleep();
+                            break;
+                        case "DOWN":
+                        case "OWN":
+                            isAdjust = false;
                             break;
                         default:
                             Log.d(COMMAND_TAG, "동작 없음3");
