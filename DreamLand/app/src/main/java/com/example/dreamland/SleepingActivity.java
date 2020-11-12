@@ -70,6 +70,7 @@ public class SleepingActivity extends AppCompatActivity {
                         if (b) {
                             mainActivity.bluetoothMessageHandler.processCommand("SOU:80");
                         } else {
+                            mainActivity.isAdjust = false;
                             mainActivity.noConditionCount = 5;
                             mainActivity.bluetoothMessageHandler.processCommand("SOU:40");
                         }
@@ -90,6 +91,7 @@ public class SleepingActivity extends AppCompatActivity {
                                 }
                             }.start();
                         } else {
+                            mainActivity.isAdjust = false;
                             mainActivity.noConditionCount = 4;
                             mainActivity.bluetoothMessageHandler.processCommand("spo:100");
                         }
@@ -189,7 +191,6 @@ public class SleepingActivity extends AppCompatActivity {
         });
     }
 
-    // TODO: Test
     public void setButtonsVisibility(boolean b) {
         if (!b) {
             testButton.setBackgroundColor(Color.TRANSPARENT);

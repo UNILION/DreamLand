@@ -1,6 +1,7 @@
 package com.example.dreamland;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -23,8 +24,10 @@ import android.widget.TextView;
 
 import com.example.dreamland.database.AppDatabase;
 import com.example.dreamland.database.Sleep;
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -33,7 +36,11 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.snackbar.Snackbar;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
@@ -68,6 +75,8 @@ public class HealthFragment extends Fragment {
     BarChart barChart; // 자세 교정
     BarChart barChart2; // 수면 만족도
     BarChart barChart3; // 산소 포화도
+    PieChart posPieChart; // 최적 자세 통계
+
     MaterialSpinner spinner; // 통계 선택 드랍다운 스피너
     Button mapsButton;  // 맵 보기 버튼
 
@@ -113,6 +122,8 @@ public class HealthFragment extends Fragment {
         strTrafficDaily = view.findViewById(R.id.strTrafficDaily);
         imgTrafficImg = view.findViewById(R.id.imgTrafficImg);
         mapsButton = view.findViewById(R.id.maps_button);
+        posPieChart = view.findViewById(R.id.best_pos_chart);
+
 
         mapsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -318,6 +329,27 @@ public class HealthFragment extends Fragment {
                 dateMap.clear();
                 avgOfMonthlyDatas.clear();
 
+                // 최적 수면 자세 차트
+                posPieChart.animateY(1000, Easing.EaseInOutCubic);
+                posPieChart.setEntryLabelColor(getResources().getColor(R.color.colorBlack));
+                posPieChart.setEntryLabelTextSize(10f);
+                posPieChart.setUsePercentValues(true);
+
+                int postures[] = getPostureCount(sleeps);
+                ArrayList<PieEntry> pieEntries = new ArrayList<>();
+                pieEntries.add(new PieEntry(postures[0], "정자세"));
+                pieEntries.add(new PieEntry(postures[1], "왼쪽"));
+                pieEntries.add(new PieEntry(postures[2], "오른쪽"));
+
+                PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
+                pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+                pieDataSet.setValueTextColor(R.color.colorWhite);
+                pieDataSet.setValueTextSize(15f);
+
+                PieData pieData = new PieData(pieDataSet);
+                pieData.setValueTextColor(getResources().getColor(R.color.colorBlack));
+                posPieChart.setData(pieData);
+
                 if (!sleeps.isEmpty()) {
                     String thisMonth = sdf3.format(Calendar.getInstance().getTime()).substring(0, 6);
 
@@ -401,6 +433,9 @@ public class HealthFragment extends Fragment {
                 healthScoreChart.invalidate(); // refresh
             }
         });
+
+        // 최적 자세 차트
+
 
         // 취침시간 차트
         lineChart = view.findViewById(R.id.lineChart);
@@ -833,5 +868,27 @@ public class HealthFragment extends Fragment {
                 healthInfoLayout.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    // 최적의 자세 수를 카운트
+    private int[] getPostureCount(List<Sleep> sleeps) {
+        int posCount[] = new int[3];
+        if (sleeps != null) {
+            for (Sleep sleep : sleeps) {
+                String pos = sleep.getBestPosture();
+                switch (pos) {
+                    case "정자세":
+                        posCount[0]++;
+                        break;
+                    case "왼쪽":
+                        posCount[1]++;
+                        break;
+                    case "오른쪽":
+                        posCount[2]++;
+                        break;
+                }
+            }
+        }
+        return posCount;
     }
 }

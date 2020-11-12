@@ -23,11 +23,13 @@ public class Sleep {
     private int temperature; // 온도
     private int moved;  // 뒤척임 수
     private int score; // 건강 점수
+    private String bestPosture = "정자세";  // 수면 최적 자세
 
     public Sleep(
             String sleepDate, String whenStart, String whenSleep, String asleepAfter,
             String whenWake, String sleepTime, String conTime, int adjCount, int satLevel,
-            int oxyStr, int heartRate, int humidity, int temperature, int moved, int score) {
+            int oxyStr, int heartRate, int humidity, int temperature, int moved,
+            int score, String bestPosture) {
         this.sleepDate = sleepDate;
         this.whenStart = whenStart;
         this.whenSleep = whenSleep;
@@ -43,6 +45,7 @@ public class Sleep {
         this.temperature = temperature;
         this.moved = moved;
         this.score = score;
+        this.bestPosture = bestPosture;
     }
 
     public Sleep() {
@@ -55,7 +58,8 @@ public class Sleep {
                 + "asleepAfter: " + asleepAfter + " whenWake: " + whenWake + " sleepTime: "
                 + sleepTime + " conTime: " + conTime + " adjCount: " + adjCount + " satLevel: "
                 + satLevel + " oxyStr: " + oxyStr + " heartRate: " + heartRate + "humidity: "
-                + humidity + " temperature: " + temperature + " moved: " + moved + " score: " + score;
+                + humidity + " temperature: " + temperature + " moved: " + moved + " score: " + score
+                + " bestPosture: " + bestPosture;
     }
 
     public int getSleepId() {
@@ -161,4 +165,8 @@ public class Sleep {
     public int getScore() { return score; }
 
     public void setScore(int score) { this.score = score; }
+
+    public String getBestPosture() { return bestPosture; }
+
+    public void setBestPosture(String bestPosture) { this.bestPosture = bestPosture; }
 }

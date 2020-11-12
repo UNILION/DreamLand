@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
                     (int) (Math.random() * 7), (int) (Math.random() * 5) + 1,
                     spo, heartRate, (int) (Math.random() * 50) + 10,
                     (int) (Math.random() * 5) + 20, (int) (Math.random() * 7),
-                    getScore(spo, heartRate))
+                    getScore(spo, heartRate), postureInfo.postures[(((int) (Math.random() * 5)) % 3 + 1) % 3])
             );
         }
     }
@@ -438,7 +438,7 @@ public class MainActivity extends AppCompatActivity {
                 new InsertSleepAsyncTask(db.sleepDao()).execute(new Sleep(
                         sdf3.format(new Date()), "00:11", "00:41", "00:31",
                         "09:02", "08:20", "00:06", 3, 1,
-                        88, 47, 49, 20, 6, 27)
+                        88, 47, 49, 20, 6, 27, "정자세")
                 );
                 return true;
 
@@ -590,6 +590,7 @@ public class MainActivity extends AppCompatActivity {
             Date date = new Date(conMilliTime - (1000 * 60 * 60 * 9));
             String conTime = sdf1.format(date);
             sleep.setConTime(conTime);
+            sleep.setBestPosture(postureInfo.getBestPosture());
             Toast.makeText(context, "수면 종료", Toast.LENGTH_SHORT).show();
             Log.d(STATE_TAG,
                     "일자: " + sleep.getSleepDate()
@@ -603,7 +604,8 @@ public class MainActivity extends AppCompatActivity {
                             + "  산소포화도: " + sleep.getOxyStr()
                             + "  습도: " + sleep.getHumidity()
                             + "  교정 횟수: " + sleep.getAdjCount()
-                            + "  건강 점수: " + sleep.getScore());
+                            + "  건강 점수: " + sleep.getScore()
+                            + "  최적 자세: " + sleep.getBestPosture());
 
             // 만족도 평가 다이얼로그
             View dlgView = getLayoutInflater().from(this).inflate(
@@ -768,6 +770,8 @@ public class MainActivity extends AppCompatActivity {
                 if (!isCon || mode == InitActivity.DISEASE_ALLEVIATION_MODE) {
                     isAdjust = true; // 교정중으로 상태 변경
                     isCon = true;
+
+                    postureInfo.start();
                     conStartTime = System.currentTimeMillis();
                     beforePos = postureInfo.getCurrentPos();  // 교정 전 자세
                     sendAct();
@@ -866,6 +870,7 @@ public class MainActivity extends AppCompatActivity {
                                         if (noConditionCount == 5) {  // 무호흡에서 정상 상태로 돌아옴
                                             lowDecibelCount = 0;
                                             conEndTime = System.currentTimeMillis();
+                                            postureInfo.stop();
                                             Log.d(STATE_TAG, "무호흡 종료");
                                             Toast.makeText(MainActivity.this,
                                                     "무호흡 상태 종료", Toast.LENGTH_SHORT).show();
@@ -928,6 +933,7 @@ public class MainActivity extends AppCompatActivity {
                                             if (isCon) {
                                                 if (noConditionCount == 5) {  // 카운트가 5이 되면 코골이 끝
                                                     conEndTime = System.currentTimeMillis();
+                                                    postureInfo.stop();
                                                     Log.d(STATE_TAG, "코골이 종료");
                                                     Toast.makeText(MainActivity.this,
                                                             "코골이 종료", Toast.LENGTH_SHORT).show();
@@ -936,7 +942,7 @@ public class MainActivity extends AppCompatActivity {
                                                     isCon = false;
                                                     noConditionCount = 0;
                                                     conMilliTime += conEndTime - conStartTime;
-                                                    insertCondition(conStartTime, conEndTime);  // 코골이, 무호흡 데이터 삽입
+                                                    insertCondition(conStartTime, conEndTime);  // 코골이 데이터 삽입
                                                 } else {
                                                     Log.d(STATE_TAG, "noConditionCount  -> " + noConditionCount);
                                                     noConditionCount++;

@@ -16,4 +16,5 @@
     <color name="colorSignalRed">#f1404b</color>
     <color name="colorSignalYellow">#f9d423</color>
     <color name="colorSignalGreen">#3ac569</color>
+    <color name="colorBlack">#000000</color>
 </resources>
