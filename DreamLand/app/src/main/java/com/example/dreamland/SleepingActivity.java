@@ -78,6 +78,17 @@ public class SleepingActivity extends AppCompatActivity {
                         if (b) {
                             mainActivity.lowDecibelCount = 6;
                             mainActivity.bluetoothMessageHandler.processCommand("spo:90");
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        sleep(3000);
+                                        mainActivity.bluetoothService.writeBLT2("M_ON");
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }.start();
                         } else {
                             mainActivity.noConditionCount = 4;
                             mainActivity.bluetoothMessageHandler.processCommand("spo:100");
