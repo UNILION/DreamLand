@@ -129,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
     String beforePos = null;  // 교정 전 자세
     String afterPos = null;  // 교정 후 자세
 
+    int warningCount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -159,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
         mode = sf.getInt("mode", 0);
         customAct = sf.getBoolean("customAct", false);
+        warningCount = sf.getInt("warningCount", 0);
 
         // 모드 설정값이 없으면 모드 선택 액티비티로 이동
         if (mode == 0) {
@@ -657,7 +660,14 @@ public class MainActivity extends AppCompatActivity {
         } else {  // 정상 수치보다 낮음
             heartRateScore = 50 - heartRate;  // 정상 수치의 최소인 50에서 1이 떨어지면 1점 증가
         }
-        return Math.max(100 - heartRateScore - spoScore, 0);
+
+        // 감점이 있는 경우 경고
+        if (heartRate > 0 || spoScore > 0) {
+            warningCount++;
+            sf.edit().putInt("warningCount", warningCount).apply();
+        }
+
+        return Math.max(100 - warningCount * (heartRateScore - spoScore), 0);
     }
 
     // 입력값들의 평균을 구하는 함수
@@ -790,9 +800,6 @@ public class MainActivity extends AppCompatActivity {
                                 bluetoothService.mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(MainActivity.this,
-                                                "교정 정보 삽입\n교정 전 자세: " + beforePos + "\n교정 후 자세: " + afterPos,
-                                                Toast.LENGTH_SHORT).show();
                                         Toast.makeText(MainActivity.this, "교정 해제", Toast.LENGTH_SHORT).show();
                                         beforePos = null;  // 자세정보 삽입 후 교정 전, 후 자세 정보 초기화
                                         afterPos = null;
