@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
     boolean isLEDOnM = false;  // 중앙 이산화탄소 LED 켜짐 여부
 
     boolean isVisible = true;
+    boolean isGetStart = false;
 
     ArrayList<Integer> heartRates;
     int currentHeartRate;
@@ -1097,7 +1098,8 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     switch (message) {
                         case "start": // 잠에 듦
-                            if (!isSleep) {
+                            if (!isSleep && !isGetStart) {
+                                isGetStart = true;
                                 String whenSleep = sdf1.format(Calendar.getInstance().getTime());
                                 sleep.setWhenSleep(whenSleep); // 잠에 든 시각
                                 isSleep = true;

@@ -288,6 +288,7 @@ public class SleepingActivity extends AppCompatActivity {
                 }
             }
         }.start();
+        mainActivity.isGetStart = false;
         super.onDestroy();
     }
 
