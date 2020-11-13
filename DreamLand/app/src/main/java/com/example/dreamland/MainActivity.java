@@ -522,8 +522,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.test_lamp_off:
                 bluetoothService.writeBLT2("Lamp_OFF");
                 return true;
-            case R.id.test_view_visibility:
-                isVisible = false;
+            case R.id.test_alarmout:
+                bluetoothService.writeBLT1("alarmout");
                 return true;
             default:
                 return false;

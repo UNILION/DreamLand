@@ -69,6 +69,6 @@
     </item>
 
     <item
-        android:id="@+id/test_view_visibility"
-        android:title="버튼 숨기기" />
+        android:id="@+id/test_alarmout"
+        android:title="알람 끄기" />
 </menu>
