@@ -129,8 +129,6 @@ public class MainActivity extends AppCompatActivity {
     String beforePos = null;  // 교정 전 자세
     String afterPos = null;  // 교정 후 자세
 
-    int warningCount;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -161,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
 
         mode = sf.getInt("mode", 0);
         customAct = sf.getBoolean("customAct", false);
-        warningCount = sf.getInt("warningCount", 0);
 
         // 모드 설정값이 없으면 모드 선택 액티비티로 이동
         if (mode == 0) {
@@ -259,6 +256,9 @@ public class MainActivity extends AppCompatActivity {
                 managementFragment.updateUI();
             }
         });
+
+        // 샘플 데이터 삽입
+        insertSampleData();
     }
 
     // 초기화 함수
@@ -661,13 +661,20 @@ public class MainActivity extends AppCompatActivity {
             heartRateScore = 50 - heartRate;  // 정상 수치의 최소인 50에서 1이 떨어지면 1점 증가
         }
 
+        int warningCount;
         // 감점이 있는 경우 경고
         if (heartRate > 0 || spoScore > 0) {
+            warningCount = sf.getInt("warningCount", 0);
             warningCount++;
-            sf.edit().putInt("warningCount", warningCount).apply();
+            if (warningCount > 3) {
+                warningCount = 3;
+            }
+        } else {
+            warningCount = 0;
         }
+        sf.edit().putInt("warningCount", warningCount).apply();
 
-        return Math.max(100 - warningCount * (heartRateScore - spoScore), 0);
+        return Math.max(100 - (warningCount * (heartRateScore + spoScore)), 0);
     }
 
     // 입력값들의 평균을 구하는 함수
