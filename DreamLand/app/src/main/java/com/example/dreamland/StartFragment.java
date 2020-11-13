@@ -66,7 +66,7 @@ public class StartFragment extends Fragment {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mainActivity.isConnected) {
+                if (mainActivity.bluetoothService.isConnected) {
                     showDialog();
                 } else {
                     Toast.makeText(context, "블루투스 연결을 해주세요", Toast.LENGTH_SHORT).show();

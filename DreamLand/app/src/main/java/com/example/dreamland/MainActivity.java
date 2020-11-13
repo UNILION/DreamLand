@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     final int REQUEST_ENABLE_BT = 111;
     final int RC_INIT_ACTIVITY = 1000;
     public static final int RC_SLEEPING_ACTIVITY = 2000;
-    //TODO: 테스트로 30초 설정
     private final int DOWN_WAIT_TIME = 1000 * 30;  // 엑추에이터 내림 대기시간
     public static final String COMMAND_TAG = "BT-CMD";  // 블루투스 메시지
     public static final String STATE_TAG = "BT-STATE";  // 수면 상태 메시지
@@ -85,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
     public BluetoothMessageHandler bluetoothMessageHandler;
     PostureInfo postureInfo;  // 현제 자세 정보
 
-    boolean isConnected = false; // 블루투스 연결 여부
     boolean isSleep = false; // 잠에 들었는지 여부
     boolean isAdjust = false; // 교정 중인지 여부
     boolean isSense = false; // 이산화탄소 감지 여부
@@ -96,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     boolean isLEDOnL = false;  // 왼쪽 이산화탄소 LED 켜짐 여부
     boolean isLEDOnR = false;  // 오른쪽 이산화탄소 LED 켜짐 여부
     boolean isLEDOnM = false;  // 중앙 이산화탄소 LED 켜짐 여부
-    // TODO: TEST
+
     boolean isVisible = true;
 
     ArrayList<Integer> heartRates;
@@ -151,7 +149,10 @@ public class MainActivity extends AppCompatActivity {
         bluetoothSocketArrayList = new ArrayList<>();
         bluetoothMessageHandler = new BluetoothMessageHandler();
 
-        bluetoothService = new BluetoothService(this, bluetoothMessageHandler);
+
+        bluetoothService = BluetoothService.getInstance();
+        bluetoothService.setContext(this);
+        bluetoothService.setHandler(bluetoothMessageHandler);
 
         sf = getSharedPreferences("bed", MODE_PRIVATE);
 
@@ -255,12 +256,6 @@ public class MainActivity extends AppCompatActivity {
                 managementFragment.updateUI();
             }
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        bluetoothService.cancel(); // 소켓 close
-        super.onDestroy();
     }
 
     // 초기화 함수
@@ -963,8 +958,7 @@ public class MainActivity extends AppCompatActivity {
                                 String position = msgArray[1];
                                 Log.d(COMMAND_TAG, "position: " + position);
                                 String pos = postureInfo.setCurrentPos(position, isSense);  // 자세 정보 입력
-                                Toast.makeText(MainActivity.this,
-                                        "현제 자세: " + pos, Toast.LENGTH_SHORT).show();
+
                                 if (mode == InitActivity.DISEASE_ALLEVIATION_MODE) {
                                     switch (settingFragment.diseaseIndex) {
                                         case 1:  // 강직성척추염
@@ -1108,8 +1102,8 @@ public class MainActivity extends AppCompatActivity {
                         case "stop": // 밴드에서 수면 종료
                             stopSleep();
                             break;
-                        case "DOWN":
-                        case "OWN":
+                        case "down-1":
+                        case "own-1":
                             isAdjust = false;
                             break;
                         default:

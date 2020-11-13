@@ -59,8 +59,7 @@ public class SleepingActivity extends AppCompatActivity {
         ivSleepSate = findViewById(R.id.ivSleepState);
         tvSleepState = findViewById(R.id.tvSleepState);
         tvTime = findViewById(R.id.tv_time);
-
-        // TODO: 테스트
+        
         testButton = findViewById(R.id.btn_test_action);
         testButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -79,17 +78,7 @@ public class SleepingActivity extends AppCompatActivity {
                         if (b) {
                             mainActivity.lowDecibelCount = 6;
                             mainActivity.bluetoothMessageHandler.processCommand("spo:90");
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        sleep(3000);
-                                        mainActivity.bluetoothService.writeBLT2("M_ON");
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }.start();
+                            mainActivity.bluetoothService.writeBLT2("M_ON");
                         } else {
                             mainActivity.isAdjust = false;
                             mainActivity.noConditionCount = 4;

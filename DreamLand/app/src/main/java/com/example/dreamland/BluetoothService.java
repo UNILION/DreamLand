@@ -25,6 +25,7 @@ import iammert.com.library.StatusView;
 
 public class BluetoothService {
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+    private static BluetoothService instance = new BluetoothService();
     private static final int NUM_OF_DEVICES = 3;
     private Context context;
     private Handler handler; // handler that gets info from Bluetooth service
@@ -33,15 +34,34 @@ public class BluetoothService {
     ArrayList<BluetoothSocket> bltSockets;
     int deviceCount;
     Handler mHandler;
+    public boolean isConnected = false;
 
-    public BluetoothService(Context context, Handler handler) {
+    public BluetoothService() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        this.context = context;
-        this.handler = handler;
         bltSockets = new ArrayList<>();
         connectedThreads = new ConnectedThread[3];  // 0: 엑추에이터, 1: 침대 센서, 2: 손목 밴드
         deviceCount = 0;
         mHandler = new Handler();
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
+    public static BluetoothService getInstance() {
+        return instance;
     }
 
     // Defines several constants used when transmitting messages between the
@@ -98,7 +118,7 @@ public class BluetoothService {
 
     // 연결이 모두 완료되면 호출
     void connectionCompleted() {
-        ((MainActivity) context).isConnected = true;
+        isConnected = true;
         StatusView statusView = (StatusView) ((MainActivity)context).findViewById(R.id.status);
         statusView.setStatus(Status.COMPLETE);
         ((MainActivity) context).settingFragment.progressBar.setVisibility(View.GONE);
@@ -108,7 +128,7 @@ public class BluetoothService {
     }
 
     void disconnectionCompleted() {
-        ((MainActivity) context).isConnected = false;
+        isConnected = false;
         ((MainActivity) context).settingFragment.progressBar.setVisibility(View.GONE);
         ((MainActivity) context).settingFragment.conBtSwitch.setVisibility(View.VISIBLE);
         Log.d(MainActivity.STATE_TAG, "블루투스 연결 해제");

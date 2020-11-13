@@ -91,6 +91,10 @@ public class SettingFragment extends Fragment {
         mainActivity.autoHumidifier = sf.getBoolean("autoHumidifier", true);
         mainActivity.useHumidifier = sf.getBoolean("useHumidifier", false);
 
+        if (mainActivity.bluetoothService.isConnected == true) {
+            conBtSwitch.setChecked(true);
+        }
+
         // 가습기 뷰를 저장된 상태로 변경
         if (mainActivity.autoHumidifier) {
             autoSwitch.setChecked(true);
@@ -314,7 +318,7 @@ public class SettingFragment extends Fragment {
                             try {
                                 int num = numOfAttempt;
                                 sleep(20000L);  // 20초 후 연결이 안되면 에러 메시지 출력
-                                if (!mainActivity.isConnected && conBtSwitch.isChecked()
+                                if (!mainActivity.bluetoothService.isConnected && conBtSwitch.isChecked()
                                 && numOfAttempt == num) {
                                     mainActivity.bluetoothService.mHandler.post(new Runnable() {
                                         @Override
