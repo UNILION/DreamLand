@@ -921,6 +921,79 @@ public class MainActivity extends AppCompatActivity {
                             case "HUM": // 습도
                                 currentHumidity = (int) Double.parseDouble(msgArray[1]);
                                 humidities.add(currentHumidity);
+
+                                // 수면 기록 밴드 고장나서 심박수 값을 임의로 값을 주는 부분.
+                                double random = Math.random();
+                                currentHeartRate = (int)(random*40)+70;
+                                Log.d("BT-", "currentHeartRate: "+currentHeartRate);
+
+                                // ... 산소포화도 값을 임의로 주는 부분
+                                double random2 = Math.random();
+
+                                ((SleepingActivity) SleepingActivity.mContext).isReceivedBandMsg = true;
+                                currentOxy = (int)(random2*4)+96;
+                                Log.d("BT-", "currentOxy: "+currentOxy);
+
+                                oxygenSaturations.add(currentOxy);
+                                if (currentOxy >= 95) {  // 산소포화도가 정상
+                                    if (useO2) {  // 산소 발생기를 사용중이면 전원 off
+                                        useO2 = false;
+                                        bluetoothService.writeBLT2("O2_OFF");  // 산소발생기 off
+                                        Log.d(STATE_TAG, "산소발생기 Off");
+                                        Toast.makeText(MainActivity.this,
+                                                "산소발생기 Off", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    // 무호흡 모드에서 적용
+                                    if (mode == InitActivity.APNEA_PREVENTION_MODE && isCon) {
+                                        noConditionCount++;
+                                        Log.d(STATE_TAG, "noConditionCount  -> " + noConditionCount);
+                                        if (noConditionCount == 5) {  // 무호흡에서 정상 상태로 돌아옴
+                                            lowDecibelCount = 0;
+                                            conEndTime = System.currentTimeMillis();
+                                            postureInfo.stop();
+                                            Log.d(STATE_TAG, "무호흡 종료");
+                                            Toast.makeText(MainActivity.this,
+                                                    "무호흡 상태 종료", Toast.LENGTH_SHORT).show();
+
+                                            // 리소스 변경
+                                            ((SleepingActivity) SleepingActivity.mContext).changeState(
+                                                    SleepingActivity.STATE_SLEEP);
+                                            isCon = false;
+                                            noConditionCount = 0;
+                                            conMilliTime += conEndTime - conStartTime;
+                                            insertCondition(conStartTime, conEndTime);  // 무호흡 데이터 삽입
+                                        }
+                                    }
+                                } else {  // 산소포화도가 정상수치보다 낮음
+                                    if (!useO2) {  // 산소 발생기가 off일때 on
+                                        useO2 = true;
+                                        bluetoothService.writeBLT2("O2_ON");  // 산소발생기 on
+                                        Log.d(STATE_TAG, "산소발생기 On");
+                                        Toast.makeText(MainActivity.this,
+                                                "산소발생기 On", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    // 무호흡 모드에서 적용
+                                    if (mode == InitActivity.APNEA_PREVENTION_MODE) {
+                                        if (isCon) {
+                                            noConditionCount = 0;
+                                        }
+                                        if (lowDecibelCount > 5) {  // 데시벨이 낮게 유지되고 산소포화도가 낮으면 무호흡이라고 판단
+                                            lowDecibelCount = 0;
+                                            noConditionCount = 0;
+                                            Toast.makeText(MainActivity.this,
+                                                    "무호흡 상태", Toast.LENGTH_SHORT).show();
+                                            adjustPosture();// 자세 교정
+                                        }
+                                    }
+                                }
+
+
+
+
+                                Log.d("BT-", "currentHeartRate: "+currentHeartRate);
+                                heartRates.add(currentHeartRate);
                                 break;
                             case "TEM": // 온도
                                 currentTemp = (int) Double.parseDouble(msgArray[1]);
